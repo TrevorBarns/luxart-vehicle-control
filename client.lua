@@ -1,10 +1,11 @@
 --[[
 ---------------------------------------------------
-LUXART VEHICLE CONTROL ELS CLICKS (2.1 Bug Fix) (FOR FIVEM)
+LUXART VEHICLE CONTROL ELS CLICKS (FOR FIVEM)
 ---------------------------------------------------
 Last revision: MAY 01 2017 (VERS. 1.01)
 Coded by Lt.Caine
 ELS Clicks by Faction
+Additonal Modification by TrevorBarns
 ---------------------------------------------------
 NOTES
 	LVC will automatically apply to all emergency vehicles (vehicle class 18)
@@ -20,6 +21,44 @@ CONTROLS
 	Auxiliary siren:	Down Arrow	(Phone Up)
 ---------------------------------------------------
 ]]
+
+
+--START OF USER CUSTOMIZATION SECTION
+---------------------------------------------------
+--LOCKOUT FUNCTIONALITY
+local lockout_master_switch = true
+--	Enables '/luxlock' chat command to lock out all sirenbox/turn signal keys.
+local lockout_hotkey_assignment = true
+--	Enables RegisterKeyMapping for '/luxlock' command
+local lockout_default_hotkey = ''
+--	Sets default key for RegisterKeyMapping. Examples: 'l','F5', etc. DEFAULT: NONE, users may set one in their GTA V > Settings > Hotkeys > FiveM settings. 
+--		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
+--		List of Keys: https://pastebin.com/u9ewvWWZ
+local locked_press_count = 5    
+--	Inital press count for reminder e.g. if this is 5 and reminder_rate is 10 then, after 5 key presses it will remind you the first time, ter that every 10 key presses. 
+local reminder_rate = 10
+--	How often, in luxart key presses, to remind you that your siren controller is locked.
+
+
+--HAZARDS HOLD-TO-ACTIVATE/DEACTIVATE
+local hold_duration = 750
+--	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
+
+--SOUND EFFECT VOLUMES
+local on_volume = 0.5
+local off_volume = 0.7
+local upgrade_volume = 0.7
+local downgrade_volume = 1
+local hazards_volumne = 0.09
+local lockreminder_volume = 0.2
+---------------------------------------------------
+--END OF USER CUSTOMIZATION SECTION
+--------------------------------------------------
+--Runtime Variables (Do not touch unless you know what you're doing.) 
+local key_lock = false				
+local show_HUD = false
+local playerped = nil
+local veh = nil
 
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
@@ -49,6 +88,37 @@ local snd_lxsiren = {}
 local snd_pwrcall = {}
 local snd_airmanu = {}
 
+
+if lockout_master_switch
+	RegisterCommand('luxlock', function(source, args)
+		local playerped = GetPlayerPed(-1)		
+		if IsPedInAnyVehicle(playerped, false) then	
+			----- IS DRIVER -----
+			local veh = GetVehiclePedIsUsing(playerped)	
+			if GetPedInVehicleSeat(veh, -1) == playerped then
+				--- IS EMERG VEHICLE ---
+				if GetVehicleClass(veh) == 18 then
+					key_lock = not key_lock
+					TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", 0.25) -- Off
+					if key_lock then
+						ShowDebug("Siren Control Box: ~r~Locked")
+					else
+						ShowDebug("Siren Control Box: ~g~Unlocked")				
+					end
+				end
+			end
+		end
+	end)
+end
+
+if lockout_master_switch and lockout_hotkey_assignment then
+	RegisterCommand('luxhud', function(source, args)
+		show_HUD = not show_HUD
+	end)
+	RegisterKeyMapping( "luxlock", "Lock out ELS Controls", "keyboard", lockout_default_hotkey)
+end
+---------------------------------------------------------------------
+
 -- these models will use their real wail siren, as determined by their assigned audio hash in vehicles.meta
 local eModelsWithFireSrn =
 {
@@ -63,13 +133,15 @@ local eModelsWithPcall =
 	"FIRETRUK",
 	"LGUARD",
 }
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function ShowDebug(text)
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
 	DrawNotification(false, false)
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function useFiretruckSiren(veh)
 	local model = GetEntityModel(veh)
 	for i = 1, #eModelsWithFireSrn, 1 do
@@ -79,7 +151,8 @@ function useFiretruckSiren(veh)
 	end
 	return false
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function usePowercallAuxSrn(veh)
 	local model = GetEntityModel(veh)
 	for i = 1, #eModelsWithPcall, 1 do
@@ -89,7 +162,8 @@ function usePowercallAuxSrn(veh)
 	end
 	return false
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function CleanupSounds()
 	if count_sndclean_timer > delay_sndclean_timer then
 		count_sndclean_timer = 0
@@ -105,7 +179,6 @@ function CleanupSounds()
 				end
 			end
 		end
-----------------------------------------------------------------------------------------------------
 		for k, v in pairs(state_pwrcall) do
 			if v == true then
 				if not DoesEntityExist(k) or IsEntityDead(k) then
@@ -118,7 +191,6 @@ function CleanupSounds()
 				end
 			end
 		end
-----------------------------------------------------------------------------------------------------
 		for k, v in pairs(state_airmanu) do
 			if v == true then
 				if not DoesEntityExist(k) or IsEntityDead(k) or IsVehicleSeatFree(k, -1) then
@@ -135,7 +207,8 @@ function CleanupSounds()
 		count_sndclean_timer = count_sndclean_timer + 1
 	end
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function TogIndicStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate == ind_state_o then
@@ -154,25 +227,25 @@ function TogIndicStateForVeh(veh, newstate)
 		state_indic[veh] = newstate
 	end
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function TogMuteDfltSrnForVeh(veh, toggle)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		DisableVehicleImpactExplosionActivation(veh, toggle)
 	end
 end
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------
 function SetLxSirenStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_lxsiren[veh] then
-----------------------------------------------------------------------------------------------------
-
+				
 			if snd_lxsiren[veh] ~= nil then
 				StopSound(snd_lxsiren[veh])
 				ReleaseSoundId(snd_lxsiren[veh])
 				snd_lxsiren[veh] = nil
 			end
-----------------------------------------------------------------------------------------------------
+						
 			if newstate == 1 then
 				if useFiretruckSiren(veh) then
 					TogMuteDfltSrnForVeh(veh, false)
@@ -181,12 +254,12 @@ function SetLxSirenStateForVeh(veh, newstate)
 					PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
 					TogMuteDfltSrnForVeh(veh, true)
 				end
-----------------------------------------------------------------------------------------------------
+				
 			elseif newstate == 2 then
 				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
 				TogMuteDfltSrnForVeh(veh, true)
-----------------------------------------------------------------------------------------------------
+			
 			elseif newstate == 3 then
 				snd_lxsiren[veh] = GetSoundId()
 				if useFiretruckSiren(veh) then
@@ -205,7 +278,8 @@ function SetLxSirenStateForVeh(veh, newstate)
 		end
 	end
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function TogPowercallStateForVeh(veh, toggle)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if toggle == true then
@@ -217,7 +291,6 @@ function TogPowercallStateForVeh(veh, toggle)
 					PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
 				end
 			end
-----------------------------------------------------------------------------------------------------
 		else
 			if snd_pwrcall[veh] ~= nil then
 				StopSound(snd_pwrcall[veh])
@@ -228,7 +301,8 @@ function TogPowercallStateForVeh(veh, toggle)
 		state_pwrcall[veh] = toggle
 	end
 end
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 function SetAirManuStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_airmanu[veh] then
@@ -238,7 +312,7 @@ function SetAirManuStateForVeh(veh, newstate)
 				ReleaseSoundId(snd_airmanu[veh])
 				snd_airmanu[veh] = nil
 			end
-----------------------------------------------------------------------------------------------------
+						
 			if newstate == 1 then
 				snd_airmanu[veh] = GetSoundId()
 				if useFiretruckSiren(veh) then
@@ -246,57 +320,24 @@ function SetAirManuStateForVeh(veh, newstate)
 				else
 					PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
 				end
-----------------------------------------------------------------------------------------------------
-			elseif newstate == 2 then
-				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
-			
-			elseif newstate == 3 then
-				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
-			end				
-----------------------------------------------------------------------------------------------------
-			state_airmanu[veh] = newstate
-		end
-	end
-end
-----------------------------------------------------------------------------------------------------
-function SetAirManuStateForVehClick(veh, newstate)
-	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if newstate ~= state_airmanu[veh] then
 				
-			if snd_airmanu[veh] ~= nil then
-				StopSound(snd_airmanu[veh])
-				ReleaseSoundId(snd_airmanu[veh])
-				snd_airmanu[veh] = nil
-			end
-----------------------------------------------------------------------------------------------------
-			if newstate == 1 then
-				snd_airmanu[veh] = GetSoundId()
-				if useFiretruckSiren(veh) then
-					PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
-					TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7)
-				else
-					TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7)
-					PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
-				end
-----------------------------------------------------------------------------------------------------
 			elseif newstate == 2 then
 				snd_airmanu[veh] = GetSoundId()
-				TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7)
 				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
 			
 			elseif newstate == 3 then
 				snd_airmanu[veh] = GetSoundId()
-				TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7)
 				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
+				
 			end				
-----------------------------------------------------------------------------------------------------
+				
 			state_airmanu[veh] = newstate
 		end
 	end
 end
-----------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_TogIndicState_c")
 AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
@@ -310,7 +351,7 @@ AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
 		end
 	end
 end)
-----------------------------------------------------------------------------------------------------
+
 AddEventHandler('lux_vehcontrol:ELSClick', function(soundFile, soundVolume)
 SendNUIMessage({
   transactionType     = 'playSound',
@@ -318,7 +359,8 @@ SendNUIMessage({
   transactionVolume   = soundVolume
 })
 end)
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_TogDfltSrnMuted_c")
 AddEventHandler("lvc_TogDfltSrnMuted_c", function(sender, toggle)
 	local player_s = GetPlayerFromServerId(sender)
@@ -332,7 +374,8 @@ AddEventHandler("lvc_TogDfltSrnMuted_c", function(sender, toggle)
 		end
 	end
 end)
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_SetLxSirenState_c")
 AddEventHandler("lvc_SetLxSirenState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
@@ -346,7 +389,8 @@ AddEventHandler("lvc_SetLxSirenState_c", function(sender, newstate)
 		end
 	end
 end)
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_TogPwrcallState_c")
 AddEventHandler("lvc_TogPwrcallState_c", function(sender, toggle)
 	local player_s = GetPlayerFromServerId(sender)
@@ -360,7 +404,8 @@ AddEventHandler("lvc_TogPwrcallState_c", function(sender, toggle)
 		end
 	end
 end)
-----------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_SetAirManuState_c")
 AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
@@ -374,30 +419,90 @@ AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
 		end
 	end
 end)
-----------------------------------------------------------------------------------------------------
-RegisterNetEvent("Setlvc_SetAirManuState_clientclick")
-AddEventHandler("Setlvc_SetAirManuState_clientclick", function(sender, newstate)
-	local player_s = GetPlayerFromServerId(sender)
-	local ped_s = GetPlayerPed(player_s)
-	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
-		if ped_s ~= GetPlayerPed(-1) then
-			if IsPedInAnyVehicle(ped_s, false) then
-				local veh = GetVehiclePedIsUsing(ped_s)
-				SetAirManuStateForVehClick(veh, newstate)
-			end
-		end
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+--Onscreen UI
+--Get variables needed for UI every 1 second (efficiency) 
+Citizen.CreateThread(function()
+	while true do
+		playerped = GetPlayerPed(-1)		
+		veh = GetVehiclePedIsUsing(playerped)	
+		Citizen.Wait(1000)
 	end
 end)
-----------------------------------------------------------------------------------------------------
+--Draw Onscreen UI
+Citizen.CreateThread(function()
+	while true do
+		while show_HUD do
+		--- IS KEY LOCKED --- 
+			if IsPedInAnyVehicle(playerped, false) then	
+				----- IS DRIVER -----
+				if GetPedInVehicleSeat(veh, -1) == playerped then
+					--- IS EMERG VEHICLE ---
+					if GetVehicleClass(veh) == 18 then	
+						DisableControlAction(0, 80, true)  
+						DisableControlAction(0, 81, true) 
+						DisableControlAction(0, 86, true) 
+						DrawRect(0.0680, 0.724, 0.1225, 0.06, 26, 26, 26, 155)
+						if IsVehicleSirenOn(veh) then
+							DrawSprite("commonmenu", "lux_switch_3_hud", 0.025, 0.725, 0.035, 0.06, 0.0, 200, 200, 200, 255)									
+						else
+							DrawSprite("commonmenu", "lux_switch_1_hud", 0.025, 0.725, 0.035, 0.06, 0.0, 200, 200, 200, 200)														
+						end
+						if state_lxsiren[veh] ~= nil then
+							if state_lxsiren[veh] > 0 or state_pwrcall[veh] then
+								DrawSprite("commonmenu", "lux_siren_on_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)				
+							else
+								DrawSprite("commonmenu", "lux_siren_off_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 175)										
+							end
+						else
+							DrawSprite("commonmenu", "lux_siren_off_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 175)										
+						end
+						if IsDisabledControlPressed(0, 86) and not key_lock then
+							DrawSprite("commonmenu", "lux_horn_on_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)												
+						else
+							DrawSprite("commonmenu", "lux_horn_off_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 175)																			
+						end
+						if (IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81)) and not key_lock then
+							if state_lxsiren[veh] > 0 then
+								DrawSprite("commonmenu", "lux_horn_on_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)
+							else
+								DrawSprite("commonmenu", "lux_siren_on_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)	
+							end
+						end
+						--[[
+						local retval , lightsOn , highbeamsOn = GetVehicleLightsState(veh)						
+						if highbeamsOn then
+							DrawSprite("commonmenu", "lux_tkd_on_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)
+						else
+							DrawSprite("commonmenu", "lux_tkd_off_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 175)																			
+						end]]
+						if key_lock then
+							DrawSprite("commonmenu", "lux_lock_on_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 255)
+						else
+							DrawSprite("commonmenu", "lux_lock_off_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, 175)					
+						end
+					end
+				end
+			end
+			Citizen.Wait(0)
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
+
+---------------------------------------------------------------------
 Citizen.CreateThread(function()
 	while true do
 			
 			CleanupSounds()
-----------------------------------------------------------------------------------------------------
+			DistantCopCarSirens(false)
 			----- IS IN VEHICLE -----
 			local playerped = GetPlayerPed(-1)		
 			if IsPedInAnyVehicle(playerped, false) then	
-----------------------------------------------------------------------------------------------------
+			
 				----- IS DRIVER -----
 				local veh = GetVehiclePedIsUsing(playerped)	
 				if GetPedInVehicleSeat(veh, -1) == playerped then
@@ -408,7 +513,7 @@ Citizen.CreateThread(function()
 					if state_indic[veh] ~= ind_state_o and state_indic[veh] ~= ind_state_l and state_indic[veh] ~= ind_state_r and state_indic[veh] ~= ind_state_h then
 						state_indic[veh] = ind_state_o
 					end
-----------------------------------------------------------------------------------------------------
+					
 					-- INDIC AUTO CONTROL
 					if actv_ind_timer == true then	
 						if state_indic[veh] == ind_state_l or state_indic[veh] == ind_state_r then
@@ -427,18 +532,15 @@ Citizen.CreateThread(function()
 							end
 						end
 					end
-----------------------------------------------------------------------------------------------------
+					
+					
 					--- IS EMERG VEHICLE ---
 					if GetVehicleClass(veh) == 18 then
-						
 						local actv_manu = false
 						local actv_horn = false
 						
 						DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
-						DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP 
-						--DisableControlAction(0, 173, true) -- INPUT_CELLPHONE_DOWN
-						--DisableControlAction(0, 174, true) -- INPUT_CELLPHONE_LEFT 
-						--DisableControlAction(0, 175, true) -- INPUT_CELLPHONE_RIGHT 
+						DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
 						DisableControlAction(0, 81, true) -- INPUT_VEH_NEXT_RADIO
 						DisableControlAction(0, 82, true) -- INPUT_VEH_PREV_RADIO
 						DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
@@ -474,93 +576,109 @@ Citizen.CreateThread(function()
 							TogPowercallStateForVeh(veh, false)
 							count_bcast_timer = delay_bcast_timer
 						end
-----------------------------------------------------------------------------------------------------
+					
 						----- CONTROLS -----
 						if not IsPauseMenuActive() then
-						
-							-- TOG DFLT SRN LIGHTS
-							if IsDisabledControlJustReleased(0, 85) or IsDisabledControlJustReleased(0, 246) then
-								if IsVehicleSirenOn(veh) then
-									TriggerEvent("lux_vehcontrol:ELSClick", "Off", 0.7) -- Off
-									SetVehicleSiren(veh, false)
-								else
-									TriggerEvent("lux_vehcontrol:ELSClick", "On", 0.5) -- On
-									Citizen.Wait(150)
-									SetVehicleSiren(veh, true)
-									count_bcast_timer = delay_bcast_timer
-								end		
-----------------------------------------------------------------------------------------------------
-							-- TOG LX SIREN
-							elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
-								local cstate = state_lxsiren[veh]
-								if cstate == 0 then
+							if not key_lock then
+								-- TOG DFLT SRN LIGHTS
+								if IsDisabledControlJustReleased(0, 85) or IsDisabledControlJustReleased(0, 246) then
 									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7) -- Upgrade
-										SetLxSirenStateForVeh(veh, 1)
+										TriggerEvent("lux_vehcontrol:ELSClick", "Off", off_volume) -- Off
+										SetVehicleSiren(veh, false)
+									else
+										TriggerEvent("lux_vehcontrol:ELSClick", "On", on_volume) -- On
+										Citizen.Wait(150)
+										SetVehicleSiren(veh, true)
+										count_bcast_timer = delay_bcast_timer
+									end		
+								
+								-- TOG LX SIREN
+								elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
+									local cstate = state_lxsiren[veh]
+									if cstate == 0 then
+										if IsVehicleSirenOn(veh) then
+											TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
+											SetLxSirenStateForVeh(veh, 1)
+											count_bcast_timer = delay_bcast_timer
+										end
+									else
+										TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
+										SetLxSirenStateForVeh(veh, 0)
 										count_bcast_timer = delay_bcast_timer
 									end
-								else
-									TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", 1) -- Downgrade
-									SetLxSirenStateForVeh(veh, 0)
-									count_bcast_timer = delay_bcast_timer
-								end
-----------------------------------------------------------------------------------------------------
-							-- POWERCALL
-							elseif IsDisabledControlJustReleased(0, 172) then
-								if state_pwrcall[veh] == true then
-									TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", 1) -- Downgrade
-									TogPowercallStateForVeh(veh, false)
-									count_bcast_timer = delay_bcast_timer
-								else
-									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7) -- Upgrade
-										TogPowercallStateForVeh(veh, true)
+									
+								-- POWERCALL
+								elseif IsDisabledControlJustReleased(0, 172) then
+									if state_pwrcall[veh] == true then
+										TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
+										TogPowercallStateForVeh(veh, false)
 										count_bcast_timer = delay_bcast_timer
+									else
+										if IsVehicleSirenOn(veh) then
+											TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
+											TogPowercallStateForVeh(veh, true)
+											count_bcast_timer = delay_bcast_timer
+										end
 									end
+									
 								end
 								
-							end
-----------------------------------------------------------------------------------------------------
-							-- BROWSE LX SRN TONES
-							if state_lxsiren[veh] > 0 then
-								if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
-									if IsVehicleSirenOn(veh) then
-										local cstate = state_lxsiren[veh]
-										local nstate = 1
-										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.7)
-										if cstate == 1 then
-											nstate = 2
-										elseif cstate == 2 then
-											nstate = 3
-										else	
-											nstate = 1
+								-- BROWSE LX SRN TONES
+								if state_lxsiren[veh] > 0 then
+									if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
+										if IsVehicleSirenOn(veh) then
+											local cstate = state_lxsiren[veh]
+											local nstate = 1
+											TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume)
+											if cstate == 1 then
+												nstate = 2
+											elseif cstate == 2 then
+												nstate = 3
+											else	
+												nstate = 1
+											end
+											SetLxSirenStateForVeh(veh, nstate)
+											count_bcast_timer = delay_bcast_timer
 										end
-										SetLxSirenStateForVeh(veh, nstate)
-										count_bcast_timer = delay_bcast_timer
 									end
 								end
-							end
-----------------------------------------------------------------------------------------------------	
-							-- MANU
-							if state_lxsiren[veh] < 1 then
-								if IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81) then
-									actv_manu = true
+											
+								-- MANU
+								if state_lxsiren[veh] < 1 then
+									if IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81) then
+										actv_manu = true
+									else
+										actv_manu = false
+									end
 								else
 									actv_manu = false
 								end
+								
+								-- HORN
+								if IsDisabledControlPressed(0, 86) then
+									actv_horn = true
+								else
+									actv_horn = false
+								end
 							else
-								actv_manu = false
+								if (IsDisabledControlJustReleased(0, 86) or 
+									IsDisabledControlJustReleased(0, 81) or 
+									IsDisabledControlJustReleased(0, 80) or 
+									IsDisabledControlJustReleased(0, 81) or
+									IsDisabledControlJustReleased(0, 172) or 
+									IsDisabledControlJustReleased(0, 19) or 
+									IsDisabledControlJustReleased(0, 82) or
+									IsDisabledControlJustReleased(0, 85) or 
+									IsDisabledControlJustReleased(0, 246)) then
+										if locked_press_count % reminder_rate == 0 then
+											TriggerEvent("lux_vehcontrol:ELSClick", "Locked_Press", lockreminder_volume) -- lock reminder
+											ShowDebug("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.")
+										end
+										locked_press_count = locked_press_count + 1
+								end								
 							end
-----------------------------------------------------------------------------------------------------
-							-- HORN
-							if IsDisabledControlPressed(0, 86) then
-								actv_horn = true
-							else
-								actv_horn = false
-							end
-						
 						end
-----------------------------------------------------------------------------------------------------
+						
 						---- ADJUST HORN / MANU STATE ----
 						local hmanu_state_new = 0
 						if actv_horn == true and actv_manu == false then
@@ -578,7 +696,6 @@ Citizen.CreateThread(function()
 									actv_lxsrnmute_temp = true
 								end
 							end
-----------------------------------------------------------------------------------------------------
 						else
 							if not useFiretruckSiren(veh) then
 								if actv_lxsrnmute_temp == true then
@@ -588,17 +705,18 @@ Citizen.CreateThread(function()
 							end
 						end
 						if state_airmanu[veh] ~= hmanu_state_new then
-							SetAirManuStateForVehClick(veh, hmanu_state_new)
+							SetAirManuStateForVeh(veh, hmanu_state_new)
 							count_bcast_timer = delay_bcast_timer
 						end	
 					end
-----------------------------------------------------------------------------------------------------
+					
+						
 					--- IS ANY LAND VEHICLE ---	
 					if GetVehicleClass(veh) ~= 14 and GetVehicleClass(veh) ~= 15 and GetVehicleClass(veh) ~= 16 and GetVehicleClass(veh) ~= 21 then
-----------------------------------------------------------------------------------------------------
+					
 						----- CONTROLS -----
 						if not IsPauseMenuActive() then
-----------------------------------------------------------------------------------------------------
+						
 							-- IND L
 							if IsDisabledControlJustReleased(0, 84) then -- INPUT_VEH_PREV_RADIO_TRACK
 								local cstate = state_indic[veh]
@@ -611,8 +729,7 @@ Citizen.CreateThread(function()
 								end
 								TogIndicStateForVeh(veh, state_indic[veh])
 								count_ind_timer = 0
-								count_bcast_timer = delay_bcast_timer	
-----------------------------------------------------------------------------------------------------		
+								count_bcast_timer = delay_bcast_timer			
 							-- IND R
 							elseif IsDisabledControlJustReleased(0, 83) then -- INPUT_VEH_NEXT_RADIO_TRACK
 								local cstate = state_indic[veh]
@@ -626,43 +743,49 @@ Citizen.CreateThread(function()
 								TogIndicStateForVeh(veh, state_indic[veh])
 								count_ind_timer = 0
 								count_bcast_timer = delay_bcast_timer
-----------------------------------------------------------------------------------------------------
 							-- IND H
-							elseif IsControlJustReleased(0, 202) then -- INPUT_FRONTEND_CANCEL / Backspace
+							elseif IsControlPressed(0, 202) then -- INPUT_FRONTEND_CANCEL / Backspace
 								if GetLastInputMethod(0) then -- last input was with kb
-									local cstate = state_indic[veh]
-									if cstate == ind_state_h then
-										state_indic[veh] = ind_state_o
-									else
-										state_indic[veh] = ind_state_h
+									Citizen.Wait(hold_duration)
+									if IsControlPressed(0, 202) then -- INPUT_FRONTEND_CANCEL / Backspace
+										local cstate = state_indic[veh]
+										if cstate == ind_state_h then
+											state_indic[veh] = ind_state_o
+											TriggerEvent("lux_vehcontrol:ELSClick", "Hazards_Off", hazards_volumne) -- Hazards On
+										else
+											state_indic[veh] = ind_state_h
+											TriggerEvent("lux_vehcontrol:ELSClick", "Hazards_On", hazards_volumne) -- Hazards On
+										end
+										TogIndicStateForVeh(veh, state_indic[veh])
+										actv_ind_timer = false
+										count_ind_timer = 0
+										count_bcast_timer = delay_bcast_timer
+										Citizen.Wait(500)
 									end
-									TogIndicStateForVeh(veh, state_indic[veh])
-									actv_ind_timer = false
-									count_ind_timer = 0
-									count_bcast_timer = delay_bcast_timer
 								end
 							end
+						
 						end
-----------------------------------------------------------------------------------------------------
+						
+						
 						----- AUTO BROADCAST VEH STATES -----
 						if count_bcast_timer > delay_bcast_timer then
 							count_bcast_timer = 0
-----------------------------------------------------------------------------------------------------
 							--- IS EMERG VEHICLE ---
 							if GetVehicleClass(veh) == 18 then
 								TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
 								TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
 								TriggerServerEvent("lvc_TogPwrcallState_s", state_pwrcall[veh])
 								TriggerServerEvent("lvc_SetAirManuState_s", state_airmanu[veh])
-								TriggerEvent("Setlvc_SetAirManuState_clientclick")
 							end
-----------------------------------------------------------------------------------------------------
 							--- IS ANY OTHER VEHICLE ---
 							TriggerServerEvent("lvc_TogIndicState_s", state_indic[veh])
 						else
 							count_bcast_timer = count_bcast_timer + 1
 						end
+					
 					end
+					
 				end
 			end
 			
