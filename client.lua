@@ -22,37 +22,6 @@ CONTROLS
 ---------------------------------------------------
 ]]
 
-
---START OF USER CUSTOMIZATION SECTION
----------------------------------------------------
---LOCKOUT FUNCTIONALITY
-local lockout_master_switch = true
---	Enables '/luxlock' chat command to lock out all sirenbox/turn signal keys.
-local lockout_hotkey_assignment = true
---	Enables RegisterKeyMapping for '/luxlock' command
-local lockout_default_hotkey = ''
---	Sets default key for RegisterKeyMapping. Examples: 'l','F5', etc. DEFAULT: NONE, users may set one in their GTA V > Settings > Hotkeys > FiveM settings. 
---		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
---		List of Keys: https://pastebin.com/u9ewvWWZ
-local locked_press_count = 5    
---	Inital press count for reminder e.g. if this is 5 and reminder_rate is 10 then, after 5 key presses it will remind you the first time, ter that every 10 key presses. 
-local reminder_rate = 10
---	How often, in luxart key presses, to remind you that your siren controller is locked.
-
-
---HAZARDS HOLD-TO-ACTIVATE/DEACTIVATE
-local hold_duration = 750
---	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
-
---SOUND EFFECT VOLUMES
-local on_volume = 0.5
-local off_volume = 0.7
-local upgrade_volume = 0.7
-local downgrade_volume = 1
-local hazards_volumne = 0.09
-local lockreminder_volume = 0.2
----------------------------------------------------
---END OF USER CUSTOMIZATION SECTION
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
 local key_lock = false				
@@ -89,7 +58,7 @@ local snd_pwrcall = {}
 local snd_airmanu = {}
 
 
-if lockout_master_switch
+if lockout_master_switch then
 	RegisterCommand('luxlock', function(source, args)
 		local playerped = GetPlayerPed(-1)		
 		if IsPedInAnyVehicle(playerped, false) then	
@@ -99,7 +68,7 @@ if lockout_master_switch
 				--- IS EMERG VEHICLE ---
 				if GetVehicleClass(veh) == 18 then
 					key_lock = not key_lock
-					TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", 0.25) -- Off
+					TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", lock_volume) -- Off
 					if key_lock then
 						ShowDebug("Siren Control Box: ~r~Locked")
 					else
@@ -671,7 +640,7 @@ Citizen.CreateThread(function()
 									IsDisabledControlJustReleased(0, 85) or 
 									IsDisabledControlJustReleased(0, 246)) then
 										if locked_press_count % reminder_rate == 0 then
-											TriggerEvent("lux_vehcontrol:ELSClick", "Locked_Press", lockreminder_volume) -- lock reminder
+											TriggerEvent("lux_vehcontrol:ELSClick", "Locked_Press", lock_reminder_volume) -- lock reminder
 											ShowDebug("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.")
 										end
 										locked_press_count = locked_press_count + 1
@@ -718,7 +687,7 @@ Citizen.CreateThread(function()
 						if not IsPauseMenuActive() then
 						
 							-- IND L
-							if IsDisabledControlJustReleased(0, 84) then -- INPUT_VEH_PREV_RADIO_TRACK
+							if IsDisabledControlJustReleased(0, left_signal_key) then -- INPUT_VEH_PREV_RADIO_TRACK
 								local cstate = state_indic[veh]
 								if cstate == ind_state_l then
 									state_indic[veh] = ind_state_o
@@ -731,7 +700,7 @@ Citizen.CreateThread(function()
 								count_ind_timer = 0
 								count_bcast_timer = delay_bcast_timer			
 							-- IND R
-							elseif IsDisabledControlJustReleased(0, 83) then -- INPUT_VEH_NEXT_RADIO_TRACK
+							elseif IsDisabledControlJustReleased(0, right_signal_key) then -- INPUT_VEH_NEXT_RADIO_TRACK
 								local cstate = state_indic[veh]
 								if cstate == ind_state_r then
 									state_indic[veh] = ind_state_o
@@ -746,7 +715,7 @@ Citizen.CreateThread(function()
 							-- IND H
 							elseif IsControlPressed(0, 202) then -- INPUT_FRONTEND_CANCEL / Backspace
 								if GetLastInputMethod(0) then -- last input was with kb
-									Citizen.Wait(hold_duration)
+									Citizen.Wait(hazard_hold_duration)
 									if IsControlPressed(0, 202) then -- INPUT_FRONTEND_CANCEL / Backspace
 										local cstate = state_indic[veh]
 										if cstate == ind_state_h then
