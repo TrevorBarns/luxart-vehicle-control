@@ -14,6 +14,8 @@ reminder_rate = 10
 
 
 -----------------HUD FUNCTIONALITY-----------------
+hud_first_default = false
+-- First state of HUD, otherwise it uses the players KVS setting (previous state). 
 hud_bg_opacity = 155
 -- Opacity of rectangle background behind buttons (default: 155)
 hud_button_on_opacity = 255

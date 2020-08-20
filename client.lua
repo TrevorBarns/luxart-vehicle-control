@@ -26,7 +26,7 @@ local save_prefix = "lux_setting_"
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
 local key_lock = false				
-local show_HUD = false
+local show_HUD = hud_first_default
 local spawned = false
 local playerped = nil
 local veh = nil
@@ -429,50 +429,50 @@ Citizen.CreateThread(function()
 						DisableControlAction(0, 80, true)  
 						DisableControlAction(0, 81, true) 
 						DisableControlAction(0, 86, true) 
-						DrawRect(0.082, 0.724, 0.155, 0.06, 26, 26, 26, hud_bg_opacity)
+						DrawRect(0.0828, 0.724, 0.16, 0.06, 26, 26, 26, hud_bg_opacity)
 						if IsVehicleSirenOn(veh) then
-							DrawSprite("commonmenu", "lux_switch_3_hud", 0.025, 0.725, 0.035, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
+							DrawSprite("commonmenu", "lux_switch_3_hud", 0.025, 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
 						else
-							DrawSprite("commonmenu", "lux_switch_1_hud", 0.025, 0.725, 0.035, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity + 25)														
+							DrawSprite("commonmenu", "lux_switch_1_hud", 0.025, 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity + 25)														
 						end
 						
 						if state_lxsiren[veh] ~= nil then
 							if state_lxsiren[veh] > 0 or state_pwrcall[veh] then
-								DrawSprite("commonmenu", "lux_siren_on_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)				
+								DrawSprite("commonmenu", "lux_siren_on_hud", 0.061, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)				
 							else
-								DrawSprite("commonmenu", "lux_siren_off_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+								DrawSprite("commonmenu", "lux_siren_off_hud", 0.061, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
 							end
 						else
-							DrawSprite("commonmenu", "lux_siren_off_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+							DrawSprite("commonmenu", "lux_siren_off_hud", 0.061, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
 						end
 						
 						if IsDisabledControlPressed(0, 86) and not key_lock then
-							DrawSprite("commonmenu", "lux_horn_on_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)												
+							DrawSprite("commonmenu", "lux_horn_on_hud", 0.0895, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)												
 						else
-							DrawSprite("commonmenu", "lux_horn_off_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_horn_off_hud", 0.0895, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 						end
 						
 						if (IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81)) and not key_lock then
 							if state_lxsiren[veh] > 0 then
-								DrawSprite("commonmenu", "lux_horn_on_hud", 0.085, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+								DrawSprite("commonmenu", "lux_horn_on_hud", 0.0895, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 							else
-								DrawSprite("commonmenu", "lux_siren_on_hud", 0.0565, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)	
+								DrawSprite("commonmenu", "lux_siren_on_hud", 0.061, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)	
 							end
 						end
 						
 						local retrieval, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 						if veh_lights == 1 and veh_headlights == 0 then
-							DrawSprite("commonmenu", "lux_tkd_off_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_tkd_off_hud", 0.118, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 						elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
-							DrawSprite("commonmenu", "lux_tkd_on_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+							DrawSprite("commonmenu", "lux_tkd_on_hud", 0.118, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 						else
-							DrawSprite("commonmenu", "lux_tkd_off_hud", 0.1135, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_tkd_off_hud", 0.118, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 						end
 						
 						if key_lock then
-							DrawSprite("commonmenu", "lux_lock_on_hud", 0.142, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+							DrawSprite("commonmenu", "lux_lock_on_hud", 0.1465, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 						else
-							DrawSprite("commonmenu", "lux_lock_off_hud", 0.142, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)					
+							DrawSprite("commonmenu", "lux_lock_off_hud", 0.1465, 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)					
 						end
 					end
 				end
