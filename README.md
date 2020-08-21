@@ -57,4 +57,4 @@ __If you stream commonmenu.ytd with another resource (for example to stream cust
 __If you DO NOT stream commonmenu.ytd with another resource:__
 
 2. Keep the stream folder present, you don't need to move or change a thing.
-4. Open config.lua and configure to your liking. 
+5. Open config.lua and configure to your liking. 
