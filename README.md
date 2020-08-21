@@ -60,3 +60,8 @@ __If you stream commonmenu.ytd with another resource (for example to stream cust
 3. Remove or Rename stream folder to prevent overriding othe resource's commonmenu.ytd. 
 4. Open config.lua and configure to your liking. 
 5. Enjoy!
+
+## Credits:
+Luxart Vehicle Control was an ingenious creation by __Lt. Caine__! Thank you!
+ELS Clicks added by __Faction__, this added realism pushed me to get into developing in the first place. Thank you!
+
