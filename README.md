@@ -45,3 +45,15 @@ right_signal_key = 83
  hazards_volumne = 0.09
  lockreminder_volume = 0.2
 ```
+
+## How to install:
+1. Add lux_vehcontrol folder into your server resources.
+
+__If you stream commonmenu.ytd with another resource (for example to stream custom vMenu textures):__
+2. Navigate to lux_vehcontrol/stream/RawTextures add all textures to other resource's commonmenu.ytd. 
+3. Remove or Rename stream folder to prevent overriding othe resource's commonmenu.ytd. Continue to step #4.
+
+__If you DO NOT stream commonmenu.ytd with another resource:__
+2. Keep the stream folder present, you don't need to move or change a thing.
+
+4. Open config.lua and configure to your liking. 
