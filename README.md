@@ -2,16 +2,16 @@
 Over the past months, I have been slowing integrating additonal features into Faction's release (v2.0) of Lt. Caine's Luxart Vehicle Control resource, I would now like to release these to the public. 
 ## Additional Functionality:
 #### Lockout: 
-###### Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
+Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
 __LuxHUD:__ 
-###### A small togglable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. 
+A small togglable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. 
 ![LuxHUD](https://i.gyazo.com/27138d952f247ebbf64a26b0d85e06f6.png)
-#### Hazards Delay: 
-###### Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
+#### Hazards Delay:
+Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
 #### Hazards SoundFX: 
-###### Added activation/deactivation sound effect of toggle switch based off IRL vehicle toggle switches.
+Added activation/deactivation sound effect of toggle switch based off IRL vehicle toggle switches.
 #### Config.lua: 
-###### One stop shop for all customizable settings to reduce server developer workload.
+One stop shop for all customizable settings to reduce server developer workload.
 
 
 
