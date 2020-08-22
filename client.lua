@@ -121,8 +121,6 @@ Citizen.CreateThread(function()
 			if IsDisabledControlPressed(0, 175) then	--Arrow Right
 				HUD_op_bgd_offset = HUD_op_bgd_offset + HUD_op_increment
 			end
-			end
-			
 			if HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset > 255 then
 				HUD_op_btn_offset = 255
 			elseif HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset < 10 then
@@ -555,7 +553,7 @@ AddEventHandler("lvc_TogPwrcallState_c", function(sender, toggle)
 	end
 end)
 
-`---------------------------------------------------------------------
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_SetAirManuState_c")
 AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
