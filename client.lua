@@ -22,14 +22,21 @@ CONTROLS
 ---------------------------------------------------
 ]]
 local save_prefix = "lux_setting_"
+local HUD_move_lg_increment = 0.0025
+local HUD_move_sm_increment = 0.0001
+local HUD_op_increment = 0.0025
 
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
-local key_lock = false				
 local show_HUD = hud_first_default
 local HUD_x_offset = 0
 local HUD_y_offset = 0
 local HUD_move_mode = false
+local HUD_op_bgd_offset = 0
+local HUD_op_btn_offset = 0
+local HUD_op_mode = false
+
+local key_lock = false		
 local spawned = false
 local playerped = nil
 local veh = nil
@@ -63,67 +70,135 @@ local snd_pwrcall = {}
 local snd_airmanu = {}
 
 --------------------------------------------------
--------------------HUD SECTION-------------------
-if lockout_master_switch and lockout_hotkey_assignment then
-	RegisterCommand('luxhud', function(source, args)
-		show_HUD = not show_HUD
-		if show_HUD then
-			SetResourceKvpInt(save_prefix .. "HUD",  1)
-		else
-			SetResourceKvpInt(save_prefix .. "HUD",  0)
-		end
-	end)
-end
+-------------------HUD SECTION--------------------
+--/luxhud - Main toggle for HUD
+RegisterCommand('luxhud', function(source, args)
+	show_HUD = not show_HUD
+	if show_HUD then
+		SetResourceKvpInt(save_prefix .. "HUD",  1)
+	else
+		SetResourceKvpInt(save_prefix .. "HUD",  0)
+	end
+end)
 
-if HUD_move_master_swtich then
-	RegisterCommand('luxhudmove', function(source, args)
-		HUD_move_mode = not HUD_move_move
-		if HUD_move_mode then
-			key_lock = true
-		else
-			key_lock = false
-			SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
-			SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
-		end
-	end)
-end
+--/luxhudopacity - Set opacity mode
+RegisterCommand('luxhudopacity', function(source, args)
+	if not show_HUD then
+		show_HUD = true
+		HUD_move_mode = false
+	end
+	HUD_op_mode = not HUD_op_mode
+	if HUD_op_mode then
+		key_lock = true
+	else 
+		key_lock = false
+		SetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset",  HUD_op_bgd_offset)
+		SetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset",  HUD_op_btn_offset)
+	end
+end)
 
+--/luxhudopacity - user input function
 Citizen.CreateThread(function()
-	while HUD_move_mode do
-		--	ARROW UP
-		if IsDisabledControlPressed(0, 172) then
-			--	ARROW UP + CTRL
-			if IsDisabledControlPressed(0, 224) then
-				HUD_x_offset = HUD_x_offset + 0.01
+	while true do
+		while HUD_opacity_mode do
+			ShowText(0.5, 0.85, "~w~HUD Opacity Mode ~g~enabled~w~. To stop use '~b~/luxhudopacity~w~'.")
+			ShowText(0.5, 0.875, "~y~Background:~w~ ← → left-right ~y~Buttons:~w~ ↑ ↓ up-down")
+			if IsDisabledControlPressed(0, 172) then	--Arrow Up
+				HUD_op_btn_offset = HUD_op_btn_offset + HUD_op_increment
 			end
-			HUD_x_offset = HUD_x_offset + 0.1
+			if IsDisabledControlPressed(0, 173) then	--Arrow Down
+				HUD_op_btn_offset = HUD_op_btn_offset - HUD_op_increment
+			end
+			if IsDisabledControlPressed(0, 174) then	--Arrow Left
+				HUD_op_bgd_offset = HUD_op_bgd_offset - HUD_op_increment
+			end
+			if IsDisabledControlPressed(0, 175) then	--Arrow Right
+				HUD_op_bgd_offset = HUD_op_bgd_offset + HUD_op_increment
+			end
+			end
+			
+			if HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset > 255 then
+				HUD_op_btn_offset = 255
+			elseif HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset < 10 then
+				HUD_op_btn_offset = 10
+			end		
+			
+			if HUD_op_bgd_offset + hud_bgd_opacity > 255 then
+				HUD_op_bgd_offset = 255
+			elseif HUD_op_bgd_offset + hud_bgd_opacity < 10 then
+				HUD_op_bgd_offset = 10
+			end
+			Citizen.Wait(0)
 		end
-		--	ARROW DOWN
-		if IsDisabledControlPressed(0, 173) then
-			--	ARROW DOWN + CTRL
-			if IsDisabledControlPressed(0, 224) then
+		Citizen.Wait(1000)
+	end
+end)
+
+--/luxhudmove - Set move mode
+RegisterCommand('luxhudmove', function(source, args)
+	if not show_HUD then
+		show_HUD = true
+		HUD_opacity_mode = false
+	end
+	HUD_move_mode = not HUD_move_mode
+	if HUD_move_mode then
+		key_lock = true
+	else 
+		key_lock = false
+		SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
+		SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
+	end
+
+end)
+
+--/luxhudmove - user input function
+Citizen.CreateThread(function()
+	while true do
+		while HUD_move_mode do
+			ShowText(0.5, 0.85, "~w~HUD Move Mode ~g~enabled~w~. To stop use '~b~/luxhudmove~w~'.")
+			ShowText(0.5, 0.875, "~w~← → left-right ↑ ↓ up-down\nCTRL + Arrow for fine control.")
+			if IsControlPressed(0, 224) then
+				if IsDisabledControlPressed(0, 172) then	--Arrow Up
+					HUD_y_offset = HUD_y_offset - HUD_move_sm_increment
+				end
+				if IsDisabledControlPressed(0, 173) then	--Arrow Down
+					HUD_y_offset = HUD_y_offset + HUD_move_sm_increment
+				end
+				if IsDisabledControlPressed(0, 174) then	--Arrow Left
+					HUD_x_offset = HUD_x_offset - HUD_move_sm_increment
+				end
+				if IsDisabledControlPressed(0, 175) then	--Arrow Right
+					HUD_x_offset = HUD_x_offset + HUD_move_sm_increment
+				end
+			else
+				if IsDisabledControlPressed(0, 172) then	--Arrow Up
+					HUD_y_offset = HUD_y_offset - HUD_move_lg_increment
+				end
+				if IsDisabledControlPressed(0, 173) then	--Arrow Down
+					HUD_y_offset = HUD_y_offset + HUD_move_lg_increment
+				end
+				if IsDisabledControlPressed(0, 174) then	--Arrow Left
+					HUD_x_offset = HUD_x_offset - HUD_move_lg_increment
+				end
+				if IsDisabledControlPressed(0, 175) then	--Arrow Right
+					HUD_x_offset = HUD_x_offset + HUD_move_lg_increment
+				end
+			end
+			
+			if HUD_x_offset > 1 then
 				HUD_x_offset = HUD_x_offset - 0.01
+			elseif HUD_x_offset < -0.15 then
+				HUD_x_offset = HUD_x_offset + 0.01			
 			end
-			HUD_x_offset = HUD_x_offset - 0.1
-		end
-		--	ARROW LEFT
-		if IsDisabledControlPressed(0, 174) then
-			--	ARROW UP + CTRL
-			if IsDisabledControlPressed(0, 224) then
-				HUD_y_offset = HUD_y_offset + 0.01
-			end
-			HUD_y_offset = HUD_y_offset + 0.1
-		end
-		
-		--	ARROW RIGHT
-		if IsDisabledControlPressed(0, 175) then
-			--	ARROW RIGHT + CTRL
-			if IsDisabledControlPressed(0, 224) then
+			
+			if HUD_y_offset > 0.3 then
 				HUD_y_offset = HUD_y_offset - 0.01
+			elseif HUD_y_offset < -0.75 then
+				HUD_y_offset = HUD_y_offset + 0.01			
 			end
-			HUD_y_offset = HUD_y_offset - 0.1
+			Citizen.Wait(0)
 		end
-		Citizen.Wait(0)
+		Citizen.Wait(1000)
 	end
 end)
 
@@ -155,10 +230,16 @@ end
 ------------------LOAD SETTINGS SECTION-----------------
 AddEventHandler( "playerSpawned", function()
 	if ( not spawned ) then 
-		show_HUD = GetResourceKvpInt(save_prefix .. "HUD" )
-		HUD_x_offset = GetResourceKvpInt(save_prefix .. "HUD_x_offset" )
-		HUD_y_offset = GetResourceKvpInt(save_prefix .. "HUD_y_offset" )
-		print("Loaded " .. save_prefix .. "HUD successfully")
+		show_HUD_int = GetResourceKvpInt(save_prefix .. "HUD")
+		if show_HUD_int == 0 then
+			show_HUD = false
+		else
+			show_HUD = true
+		end
+		HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
+		HUD_y_offset = GetResourceKvpFloat(save_prefix .. "HUD_y_offset")
+		HUD_op_bgd_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset")
+		HUD_op_btn_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset")
 		spawned = true
 	end 
 end )
@@ -185,6 +266,23 @@ function ShowDebug(text)
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
 	DrawNotification(false, false)
+end
+
+---------------------------------------------------------------------
+function ShowText(x, y, text)
+	SetTextJustification(0)
+	SetTextFont(0)
+	SetTextProportional(1)
+	SetTextScale(0.0, 0.4)
+	SetTextColour(128, 128, 128, 255)
+	SetTextDropshadow(0, 0, 0, 0, 255)
+	SetTextEdge(1, 0, 0, 0, 255)
+	SetTextDropShadow()
+	SetTextOutline()
+	SetTextEntry("STRING")
+	AddTextComponentString(text)
+	DrawText(x, y)
+	ResetScriptGfxAlign()
 end
 
 ---------------------------------------------------------------------
@@ -490,27 +588,27 @@ Citizen.CreateThread(function()
 						DisableControlAction(0, 80, true)  
 						DisableControlAction(0, 81, true) 
 						DisableControlAction(0, 86, true) 
-						DrawRect(0.0828, 0.724, HUD_x_offset + 0.16, HUD_y_offset + 0.06, 26, 26, 26, hud_bg_opacity)
+						DrawRect(HUD_x_offset + 0.0828, HUD_y_offset + 0.724, 0.16, 0.06, 26, 26, 26, hud_bgd_opacity + HUD_op_bgd_offset)
 						if IsVehicleSirenOn(veh) then
-							DrawSprite("commonmenu", "lux_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
+							DrawSprite("commonmenu", "lux_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity + HUD_)									
 						else
-							DrawSprite("commonmenu", "lux_switch_1_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity + 25)														
+							DrawSprite("commonmenu", "lux_switch_1_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)														
 						end
 						
 						if state_lxsiren[veh] ~= nil then
 							if state_lxsiren[veh] > 0 or state_pwrcall[veh] then
 								DrawSprite("commonmenu", "lux_siren_on_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)				
 							else
-								DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+								DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)										
 							end
 						else
-							DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+							DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)										
 						end
 						
 						if IsDisabledControlPressed(0, 86) and not key_lock then
 							DrawSprite("commonmenu", "lux_horn_on_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)												
 						else
-							DrawSprite("commonmenu", "lux_horn_off_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_horn_off_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)																			
 						end
 						
 						if (IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81)) and not key_lock then
@@ -523,17 +621,17 @@ Citizen.CreateThread(function()
 						
 						local retrieval, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 						if veh_lights == 1 and veh_headlights == 0 then
-							DrawSprite("commonmenu", "lux_tkd_off_hud" ,HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_tkd_off_hud" ,HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)																			
 						elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
 							DrawSprite("commonmenu", "lux_tkd_on_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 						else
-							DrawSprite("commonmenu", "lux_tkd_off_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+							DrawSprite("commonmenu", "lux_tkd_off_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)																			
 						end
 						
 						if key_lock then
 							DrawSprite("commonmenu", "lux_lock_on_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 						else
-							DrawSprite("commonmenu", "lux_lock_off_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)					
+							DrawSprite("commonmenu", "lux_lock_off_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)					
 						end
 					end
 				end
@@ -548,7 +646,6 @@ end)
 ---------------------------------------------------------------------
 Citizen.CreateThread(function()
 	while true do
-			
 			CleanupSounds()
 			DistantCopCarSirens(false)
 			----- IS IN VEHICLE -----
@@ -712,7 +809,7 @@ Citizen.CreateThread(function()
 								else
 									actv_horn = false
 								end
-							else if not HUD_move_mode then
+							elseif not HUD_move_mode then
 								if (IsDisabledControlJustReleased(0, 86) or 
 									IsDisabledControlJustReleased(0, 81) or 
 									IsDisabledControlJustReleased(0, 80) or 

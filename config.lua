@@ -19,7 +19,7 @@ hud_first_default = false
 hud_bgd_opacity = 155
 -- Opacity of rectangle background behind buttons (default: 155)
 hud_button_on_opacity = 255
--- Opacity of buttons in active/o n state. (default: 255)
+-- Opacity of buttons in active/on state. (default: 255)
 hud_button_off_opacity = 175
 -- Opacity of buttons in inactive/off state. (default: 175)
 
