@@ -24,7 +24,7 @@ CONTROLS
 local save_prefix = "lux_setting_"
 local HUD_move_lg_increment = 0.0025
 local HUD_move_sm_increment = 0.0001
-local HUD_op_increment = 1
+local HUD_op_increment = 5
 
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
@@ -73,7 +73,7 @@ local snd_airmanu = {}
 TriggerEvent('chat:addSuggestion', '/luxhud', 'Toggle Luxart Vehicle Control HUD.')
 TriggerEvent('chat:addSuggestion', '/luxhudmove', 'Toggle Luxart Vehicle Control HUD Move Mode.')
 TriggerEvent('chat:addSuggestion', '/luxhudopacity', 'Toggle Luxart Vehicle Control HUD Opacity Mode.')
-TriggerEvent('chat:addSuggestion', '/luxlockout', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
+TriggerEvent('chat:addSuggestion', '/luxlock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 
 --------------------------------------------------
 -------------------HUD SECTION--------------------
@@ -106,31 +106,28 @@ end)
 --/luxhudopacity - user input function
 Citizen.CreateThread(function()
 	while true do
-		while HUD_opacity_mode do
+		while HUD_op_mode do
 			ShowText(0.5, 0.85, "~w~HUD Opacity Mode ~g~enabled~w~. To stop use '~b~/luxhudopacity~w~'.")
 			ShowText(0.5, 0.875, "~y~Background:~w~ ← → left-right ~y~Buttons:~w~ ↑ ↓ up-down")
 			if IsDisabledControlPressed(0, 172) then	--Arrow Up
-				HUD_op_btn_offset = HUD_op_btn_offset + HUD_op_increment
+				if (HUD_op_btn_offset + hud_button_off_opacity) < 255 then
+					HUD_op_btn_offset = HUD_op_btn_offset + HUD_op_increment
+				end
 			end
 			if IsDisabledControlPressed(0, 173) then	--Arrow Down
-				HUD_op_btn_offset = HUD_op_btn_offset - HUD_op_increment
-			end
-			if IsDisabledControlPressed(0, 174) then	--Arrow Left
-				HUD_op_bgd_offset = HUD_op_bgd_offset - HUD_op_increment
+				if (HUD_op_btn_offset + hud_button_off_opacity) > 10 then
+					HUD_op_btn_offset = HUD_op_btn_offset - HUD_op_increment
+				end
 			end
 			if IsDisabledControlPressed(0, 175) then	--Arrow Right
-				HUD_op_bgd_offset = HUD_op_bgd_offset + HUD_op_increment
+				if (HUD_op_bgd_offset + hud_bgd_opacity) < 255 then
+					HUD_op_bgd_offset = HUD_op_bgd_offset + HUD_op_increment
+				end
 			end
-			if HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset > 255 then
-				HUD_op_btn_offset = 255
-			elseif HUD_op_btn_offset + hud_button_off_opacity + HUD_op_btn_offset < 10 then
-				HUD_op_btn_offset = 10
-			end		
-			
-			if HUD_op_bgd_offset + hud_bgd_opacity > 255 then
-				HUD_op_bgd_offset = 255
-			elseif HUD_op_bgd_offset + hud_bgd_opacity < 10 then
-				HUD_op_bgd_offset = 10
+			if IsDisabledControlPressed(0, 174) then	--Arrow Left
+				if (HUD_op_bgd_offset + hud_bgd_opacity) > 10 then
+					HUD_op_bgd_offset = HUD_op_bgd_offset - HUD_op_increment
+				end
 			end
 			Citizen.Wait(0)
 		end
@@ -142,7 +139,7 @@ end)
 RegisterCommand('luxhudmove', function(source, args)
 	if not show_HUD then
 		show_HUD = true
-		HUD_opacity_mode = false
+		HUD_op_mode = false
 	end
 	HUD_move_mode = not HUD_move_mode
 	if HUD_move_mode then
@@ -594,7 +591,7 @@ Citizen.CreateThread(function()
 						DisableControlAction(0, 86, true) 
 						DrawRect(HUD_x_offset + 0.0828, HUD_y_offset + 0.724, 0.16, 0.06, 26, 26, 26, hud_bgd_opacity + HUD_op_bgd_offset)
 						if IsVehicleSirenOn(veh) then
-							DrawSprite("commonmenu", "lux_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity + HUD_)									
+							DrawSprite("commonmenu", "lux_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
 						else
 							DrawSprite("commonmenu", "lux_switch_1_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity + HUD_op_btn_offset)														
 						end
@@ -813,7 +810,7 @@ Citizen.CreateThread(function()
 								else
 									actv_horn = false
 								end
-							elseif not HUD_move_mode then
+							elseif not HUD_move_mode and not HUD_op_mode then
 								if (IsDisabledControlJustReleased(0, 86) or 
 									IsDisabledControlJustReleased(0, 81) or 
 									IsDisabledControlJustReleased(0, 80) or 
