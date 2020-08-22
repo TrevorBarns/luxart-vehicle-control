@@ -5,9 +5,12 @@ __Lockout:__
 Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
 
 __LuxHUD:__ 
-A small togglable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. 
+A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
 
 ![LuxHUD](https://i.gyazo.com/27138d952f247ebbf64a26b0d85e06f6.png)
+![LuxHUDMoveMode](https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg)
+![LuxHUDOpMode](https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg)
+
 
 __Hazards Delay:__
 Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
@@ -27,7 +30,7 @@ reminder_rate = 10
 
 -----------------HUD FUNCTIONALITY-----------------
 hud_first_default = false
-hud_bg_opacity = 155
+hud_bgd_opacity = 155
 hud_button_on_opacity = 255
 hud_button_off_opacity = 175
 
@@ -56,7 +59,7 @@ __If you DO NOT stream commonmenu.ytd with another resource:__
 
 __If you stream commonmenu.ytd with another resource (for example to stream custom vMenu textures):__
 
-2. Navigate to `lux_vehcontrol/stream/RawTextures` add all textures to other resource's commonmenu.ytd. 
+2. Navigate to `lux_vehcontrol/erxtras/RawTextures` add all textures to other resource's commonmenu.ytd. 
 3. Remove or Rename stream folder to prevent overriding othe resource's commonmenu.ytd. 
 4. Open config.lua and configure to your liking. 
 5. Enjoy!
