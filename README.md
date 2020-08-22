@@ -7,7 +7,7 @@ Ability to lock all siren/light controls using a player set key to prevent activ
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
 
-![LuxHUD](https://i.gyazo.com/27138d952f247ebbf64a26b0d85e06f6.png)
+![LuxHUD](https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg)
 ![LuxHUDMoveMode](https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg)
 ![LuxHUDOpMode](https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg)
 
