@@ -24,7 +24,7 @@ CONTROLS
 local save_prefix = "lux_setting_"
 local HUD_move_lg_increment = 0.0025
 local HUD_move_sm_increment = 0.0001
-local HUD_op_increment = 0.0025
+local HUD_op_increment = 1
 
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
@@ -68,6 +68,11 @@ local ind_state_h = 3
 local snd_lxsiren = {}
 local snd_pwrcall = {}
 local snd_airmanu = {}
+
+
+TriggerEvent('chat:addSuggestion', '/luxhud', 'Toggle Luxart Vehicle Control HUD.')
+TriggerEvent('chat:addSuggestion', '/luxhudmove', 'Toggle Luxart Vehicle Control HUD Move Mode.')
+TriggerEvent('chat:addSuggestion', '/luxhudopacity', 'Toggle Luxart Vehicle Control HUD Opacity Mode.')
 
 --------------------------------------------------
 -------------------HUD SECTION--------------------
@@ -549,7 +554,7 @@ AddEventHandler("lvc_TogPwrcallState_c", function(sender, toggle)
 	end
 end)
 
----------------------------------------------------------------------
+`---------------------------------------------------------------------
 RegisterNetEvent("lvc_SetAirManuState_c")
 AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
