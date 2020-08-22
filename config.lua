@@ -1,6 +1,6 @@
 ---------------LOCKOUT FUNCTIONALITY---------------
 lockout_master_switch = true			
---	Enables '/luxlock' chat command to lock out all sirenbox/turn signal keys.
+--	Enables chat command to lock out all sirenbox/turn signal keys.
 lockout_hotkey_assignment = true		
 --	Enables RegisterKeyMapping for '/luxlock' command (lockout_master_switch must be true)
 lockout_default_hotkey = ''
@@ -15,11 +15,11 @@ reminder_rate = 10
 
 -----------------HUD FUNCTIONALITY-----------------
 hud_first_default = false
--- First state of HUD, otherwise it uses the players KVS setting (previous state). 
-hud_bg_opacity = 155
+-- First state of HUD, otherwise it uses the players KVP setting (previous state). 
+hud_bgd_opacity = 155
 -- Opacity of rectangle background behind buttons (default: 155)
 hud_button_on_opacity = 255
--- Opacity of buttons in active/on state. (default: 255)
+-- Opacity of buttons in active/o n state. (default: 255)
 hud_button_off_opacity = 175
 -- Opacity of buttons in inactive/off state. (default: 175)
 
