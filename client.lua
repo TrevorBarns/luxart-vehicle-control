@@ -73,6 +73,7 @@ local snd_airmanu = {}
 TriggerEvent('chat:addSuggestion', '/luxhud', 'Toggle Luxart Vehicle Control HUD.')
 TriggerEvent('chat:addSuggestion', '/luxhudmove', 'Toggle Luxart Vehicle Control HUD Move Mode.')
 TriggerEvent('chat:addSuggestion', '/luxhudopacity', 'Toggle Luxart Vehicle Control HUD Opacity Mode.')
+TriggerEvent('chat:addSuggestion', '/luxlockout', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 
 --------------------------------------------------
 -------------------HUD SECTION--------------------
