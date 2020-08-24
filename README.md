@@ -7,15 +7,18 @@ Over the past months, I have been slowing integrating additonal features into Fa
 ## Additional Functionality:
 __Lockout:__
 Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/74ec018e67d7ec9fc299f806a3f25bdf.png">
+</p>
 
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
-
 <p align="center">
 <img align="center" width="530" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
 <img align="center" width="530" src="https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg">
 <img align="center" width="530" src="https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg">
 </p>
+
 __Hazards Delay:__
 Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
 
