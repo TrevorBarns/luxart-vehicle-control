@@ -1,3 +1,7 @@
+<p align="center">
+<img align="center" width="800" src="https://i.gyazo.com/c45881d46eeef83e03634a6a251ab849.png">
+</p>
+
 # Luxart Vehicle Control v3
 Over the past months, I have been slowing integrating additonal features into Faction's release (v2.0) of Lt. Caine's Luxart Vehicle Control resource, I would now like to release these to the public. 
 ## Additional Functionality:
@@ -7,11 +11,11 @@ Ability to lock all siren/light controls using a player set key to prevent activ
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
 
-![LuxHUD](https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg)
-![LuxHUDMoveMode](https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg)
-![LuxHUDOpMode](https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg)
-
-
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
+<img align="center" width="530" src="https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg">
+<img align="center" width="530" src="https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg">
+</p>
 __Hazards Delay:__
 Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
 
