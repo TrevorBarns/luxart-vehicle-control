@@ -100,12 +100,10 @@ RegisterCommand('luxhudopacity', function(source, args)
 		ShowHUD()
 		if HUD_op_mode then		--If already in op_mode transitioning out of op_mode (end and save)
 			HUD_op_mode = false
-			key_lock = false
 			SetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset",  HUD_op_bgd_offset)
 			SetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset",  HUD_op_btn_offset)
 		else					--If not in op_mode first entering, lock and start. 
 			HUD_op_mode = true
-			key_lock = true
 		end
 	end
 end)
@@ -148,12 +146,10 @@ RegisterCommand('luxhudmove', function(source, args)
 		ShowHUD()
 		if HUD_move_mode then		--If already in op_mode transitioning out of op_mode (end and save)
 			HUD_move_mode = false
-			key_lock = false
 			SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
 			SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
 		else					--If not in op_mode first entering, lock and start. 
 			HUD_move_mode = true
-			key_lock = true
 		end
 	end
 end)
@@ -842,7 +838,7 @@ Citizen.CreateThread(function()
 						if state_pwrcall[veh] ~= true then
 							state_pwrcall[veh] = false
 						end
-						if state_airmanu[veh] ~= 1 and state_airmanu[veh] ~= 2 and state_airmanu[veh] ~= 3 and state_airmanu[veh] ~= 4 and state_airmanu[veh] ~= 5 then
+						if state_airmanu[veh] ~= 1 and state_airmanu[veh] ~= 2 and state_airmanu[veh] ~= 3 and state_airmanu[veh] ~= 4 then
 							state_airmanu[veh] = 0
 						end
 						
@@ -894,7 +890,7 @@ Citizen.CreateThread(function()
 									end
 									
 								-- POWERCALL
-								elseif IsDisabledControlJustReleased(0, 172) and not tone_mode then --disable up arrow only in tone mode since testing would be beneficial 
+								elseif IsDisabledControlJustReleased(0, 172) and not (tone_mode or HUD_move_mode or HUD_op_mode) then --disable up arrow only in tone mode since testing would be beneficial 
 									if state_pwrcall[veh] == true then
 										TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
 										TogPowercallStateForVeh(veh, false)
