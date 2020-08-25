@@ -33,7 +33,7 @@ Added activation/deactivation sound effect of toggle switch based off IRL vehicl
 
 __Config.lua:__ 
 One stop shop for all customizable settings to reduce server developer workload.
-*/*comments removed for size, see comments & descriptions of each setting in config.lua
+_*comments removed for size, see comments & descriptions of each setting in config.lua_
 ```
 ---------------LOCKOUT FUNCTIONALITY---------------
 lockout_master_switch = true			
