@@ -19,6 +19,12 @@ A small togglable and adjustable visual representation of the scripts functional
 <img align="center" width="530" src="https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg">
 </p>
 
+__Adjustable Manual / Auxilary Tones:__
+Change which tone to use for each manual tone (primary and secondary) as well as the auxiliary tone. These are also saved to the client requiring no changes at relog. 
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/84df39e149d32772e4f95b8e578421b8.jpg">
+</p>
+
 __Hazards Delay:__
 Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu.
 
@@ -27,6 +33,8 @@ Added activation/deactivation sound effect of toggle switch based off IRL vehicl
 
 __Config.lua:__ 
 One stop shop for all customizable settings to reduce server developer workload.
+
+_*comments removed for size, see comments & descriptions of each setting in config.lua_
 ```
 ---------------LOCKOUT FUNCTIONALITY---------------
 lockout_master_switch = true			
@@ -47,13 +55,19 @@ hazard_hold_duration = 750
 left_signal_key = 84
 right_signal_key = 83
 
+-------------CUSTOM MANU/HORN/SIREN---------------
+custom_manual_tones_master_switch = true
+custom_aux_tones_master_switch = true
+
 ---------------SOUND EFFECT VOLUMES---------------
- on_volume = 0.5			
- off_volume = 0.7			
- upgrade_volume = 0.7		
- downgrade_volume = 1
- hazards_volumne = 0.09
- lockreminder_volume = 0.2
+on_volume = 0.5			
+off_volume = 0.7			
+upgrade_volume = 0.7		
+downgrade_volume = 1
+hazards_volumne = 0.09
+lock_volume = 0.25
+lock_reminder_volume = 0.2
+
 ```
 
 ## How to install:
