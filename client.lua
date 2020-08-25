@@ -22,7 +22,7 @@ CONTROLS
 ---------------------------------------------------
 ]]
 local save_prefix = "lux_setting_"
-local HUD_move_lg_increment = 0.0025
+local HUD_move_lg_increment = 0.0050
 local HUD_move_sm_increment = 0.0001
 local HUD_op_increment = 5
 
@@ -35,6 +35,12 @@ local HUD_move_mode = false
 local HUD_op_bgd_offset = 0
 local HUD_op_btn_offset = 0
 local HUD_op_mode = false
+
+local tone_mode = false
+local tone_PMANU_id = 2
+local tone_SMANU_id = 3
+local tone_AUX_id = 2
+local tone_table = { "Airhorn", "Wail", "Yelp", "Priority" } 
 
 local key_lock = false		
 local spawned = false
@@ -74,6 +80,7 @@ TriggerEvent('chat:addSuggestion', '/luxhud', 'Toggle Luxart Vehicle Control HUD
 TriggerEvent('chat:addSuggestion', '/luxhudmove', 'Toggle Luxart Vehicle Control HUD Move Mode.')
 TriggerEvent('chat:addSuggestion', '/luxhudopacity', 'Toggle Luxart Vehicle Control HUD Opacity Mode.')
 TriggerEvent('chat:addSuggestion', '/luxlock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
+TriggerEvent('chat:addSuggestion', '/luxtonemode', 'Change manual siren tones.')
 
 --------------------------------------------------
 -------------------HUD SECTION--------------------
@@ -89,17 +96,17 @@ end)
 
 --/luxhudopacity - Set opacity mode
 RegisterCommand('luxhudopacity', function(source, args)
-	if not show_HUD then
-		show_HUD = true
-		HUD_move_mode = false
-	end
-	HUD_op_mode = not HUD_op_mode
-	if HUD_op_mode then
-		key_lock = true
-	else 
-		key_lock = false
-		SetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset",  HUD_op_bgd_offset)
-		SetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset",  HUD_op_btn_offset)
+	if not HUD_move_mode and not tone_mode then
+		ShowHUD()
+		if HUD_op_mode then		--If already in op_mode transitioning out of op_mode (end and save)
+			HUD_op_mode = false
+			key_lock = false
+			SetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset",  HUD_op_bgd_offset)
+			SetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset",  HUD_op_btn_offset)
+		else					--If not in op_mode first entering, lock and start. 
+			HUD_op_mode = true
+			key_lock = true
+		end
 	end
 end)
 
@@ -107,8 +114,8 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		while HUD_op_mode do
-			ShowText(0.5, 0.85, "~w~HUD Opacity Mode ~g~enabled~w~. To stop use '~b~/luxhudopacity~w~'.")
-			ShowText(0.5, 0.875, "~y~Background:~w~ ← → left-right ~y~Buttons:~w~ ↑ ↓ up-down")
+			ShowText(0.5, 0.75, 0, "~w~HUD Opacity Mode ~g~enabled~w~. To stop use '~b~/luxhudopacity~w~'.")
+			ShowText(0.5, 0.775, 0, "~y~Background:~w~ ← → left-right ~y~Buttons:~w~ ↑ ↓ up-down")
 			if IsDisabledControlPressed(0, 172) then	--Arrow Up
 				if (HUD_op_btn_offset + hud_button_off_opacity) < 255 then
 					HUD_op_btn_offset = HUD_op_btn_offset + HUD_op_increment
@@ -137,27 +144,26 @@ end)
 
 --/luxhudmove - Set move mode
 RegisterCommand('luxhudmove', function(source, args)
-	if not show_HUD then
-		show_HUD = true
-		HUD_op_mode = false
+	if not HUD_op_mode and not tone_mode then
+		ShowHUD()
+		if HUD_move_mode then		--If already in op_mode transitioning out of op_mode (end and save)
+			HUD_move_mode = false
+			key_lock = false
+			SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
+			SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
+		else					--If not in op_mode first entering, lock and start. 
+			HUD_move_mode = true
+			key_lock = true
+		end
 	end
-	HUD_move_mode = not HUD_move_mode
-	if HUD_move_mode then
-		key_lock = true
-	else 
-		key_lock = false
-		SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
-		SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
-	end
-
 end)
 
 --/luxhudmove - user input function
 Citizen.CreateThread(function()
 	while true do
 		while HUD_move_mode do
-			ShowText(0.5, 0.85, "~w~HUD Move Mode ~g~enabled~w~. To stop use '~b~/luxhudmove~w~'.")
-			ShowText(0.5, 0.875, "~w~← → left-right ↑ ↓ up-down\nCTRL + Arrow for fine control.")
+			ShowText(0.5, 0.75, 0, "~w~HUD Move Mode ~g~enabled~w~. To stop use '~b~/luxhudmove~w~'.")
+			ShowText(0.5, 0.775, 0, "~w~← → left-right ↑ ↓ up-down\nCTRL + Arrow for fine control.")
 			if IsControlPressed(0, 224) then
 				if IsDisabledControlPressed(0, 172) then	--Arrow Up
 					HUD_y_offset = HUD_y_offset - HUD_move_sm_increment
@@ -228,19 +234,128 @@ if lockout_master_switch then
 	RegisterKeyMapping("luxlock", "Lock out LUX Controls", "keyboard", lockout_default_hotkey)
 end
 
+--------------MANU/HORN/SIREN SECTION-------------
+--/luxtonemode -Set Tone Mode
+if custom_manual_tones_master_switch or custom_aux_tones_master_switch then
+	RegisterCommand('luxtonemode', function(source, args)
+		if not HUD_move_mode and not HUD_op_mode then
+			if tone_mode then		--If already in op_mode transitioning out of op_mode (end and save)
+				tone_mode = false
+				SetResourceKvpInt(save_prefix .. "tone_PMANU_id",  tone_PMANU_id)
+				SetResourceKvpInt(save_prefix .. "tone_SMANU_id",  tone_SMANU_id)
+				SetResourceKvpInt(save_prefix .. "tone_AUX_id",  tone_AUX_id)
+			else					--If not in op_mode first entering, lock and start. 
+				tone_mode = true
+			end
+		end
+	end)
+end
+
+--/luxtonemode - user input function
+Citizen.CreateThread(function()
+	while true do
+		while tone_mode do
+			--Options: 1- Airhorn (restricted) 2- Wail 3-Yelp 4-Priority
+			if custom_manual_tones_master_switch then
+				if not IsControlPressed(0, 224) then
+					if IsDisabledControlPressed(0, 172) then	--Arrow Up
+						if tone_SMANU_id < 4 then
+							tone_SMANU_id = tone_SMANU_id + 1
+						else
+							tone_SMANU_id = 2
+						end
+						Citizen.Wait(500)
+					end
+					if IsDisabledControlPressed(0, 173) then	--Arrow Down
+						if tone_SMANU_id > 2 then
+							tone_SMANU_id = tone_SMANU_id - 1
+						else
+							tone_SMANU_id = 4
+						end
+						Citizen.Wait(500)
+					end
+					if IsDisabledControlPressed(0, 175) then	--Arrow Right
+						if tone_PMANU_id < 4 then
+							tone_PMANU_id = tone_PMANU_id + 1
+						else
+							tone_PMANU_id = 2
+						end
+						Citizen.Wait(500)
+					end
+					if IsDisabledControlPressed(0, 174) then	--Arrow Left
+						if tone_PMANU_id > 2 then
+							tone_PMANU_id = tone_PMANU_id - 1
+						else
+							tone_PMANU_id = 4
+						end
+						Citizen.Wait(500)
+					end
+				end
+			end
+			if custom_aux_tones_master_switch then
+				if IsControlPressed(0, 224) then
+					if IsDisabledControlPressed(0, 175) then	--Arrow Right
+						if tone_AUX_id < 4 then
+							tone_AUX_id = tone_AUX_id + 1
+						else
+							tone_AUX_id = 2
+						end	
+						Citizen.Wait(500)
+					end
+					if IsDisabledControlPressed(0, 174) then 	--Arrow Left
+						if tone_AUX_id > 2 then
+							tone_AUX_id = tone_AUX_id - 1
+						else
+							tone_AUX_id = 4
+						end	
+						Citizen.Wait(500)						
+					end
+				end
+			end
+			Citizen.Wait(0)
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
+--/luxtonemode - user input function
+Citizen.CreateThread(function()
+	while true do
+		while tone_mode do
+			ShowText(0.5, 0.750, 0, "~w~Tone mode ~g~enabled~w~. To stop use '~b~/luxtonemode~w~'.")
+			if custom_manual_tones_master_switch then
+				ShowText(0.35, 0.775, 1, "~w~ ← → left-right \t~y~Primary Manual Tone (default: R): ~w~" .. tone_table[tone_PMANU_id])
+				ShowText(0.35, 0.800, 1, "~w~ ↑ ↓ up-down \t~y~Secondary Manual Tone (default: E + R): ~w~" .. tone_table[tone_SMANU_id])
+			end
+			if custom_aux_tones_master_switch and not usePowercallAuxSrn(veh) then
+				ShowText(0.325, 0.825, 1, "~w~ CTRL + ← → left-right \t~y~Auxiliary Tone (default: ↑): ~w~" .. tone_table[tone_AUX_id])			
+			end
+			Citizen.Wait(0)
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
 ------------------LOAD SETTINGS SECTION-----------------
 AddEventHandler( "playerSpawned", function()
-	if ( not spawned ) then 
+	if not spawned then 
+		--Position
+		HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
+		HUD_y_offset = GetResourceKvpFloat(save_prefix .. "HUD_y_offset")
+		--Opacity
+		HUD_op_bgd_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset")
+		HUD_op_btn_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset")
+		--Tones
+		tone_PMANU_id = GetResourceKvpInt(save_prefix .. "tone_PMANU_id")
+		tone_SMANU_id = GetResourceKvpInt(save_prefix .. "tone_SMANU_id")
+		tone_AUX_id = GetResourceKvpInt(save_prefix .. "tone_AUX_id")
+		--HUD Main
 		show_HUD_int = GetResourceKvpInt(save_prefix .. "HUD")
 		if show_HUD_int == 0 then
 			show_HUD = false
 		else
 			show_HUD = true
 		end
-		HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
-		HUD_y_offset = GetResourceKvpFloat(save_prefix .. "HUD_y_offset")
-		HUD_op_bgd_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_bgd_offset")
-		HUD_op_btn_offset = GetResourceKvpFloat(save_prefix .. "HUD_op_btn_offset")
 		spawned = true
 	end 
 end )
@@ -263,6 +378,13 @@ local eModelsWithPcall =
 }
 
 ---------------------------------------------------------------------
+function ShowHUD()
+	if not show_HUD then
+		show_HUD = true
+	end
+end
+
+---------------------------------------------------------------------
 function ShowDebug(text)
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
@@ -270,8 +392,8 @@ function ShowDebug(text)
 end
 
 ---------------------------------------------------------------------
-function ShowText(x, y, text)
-	SetTextJustification(0)
+function ShowText(x, y, align, text)
+	SetTextJustification(align)
 	SetTextFont(0)
 	SetTextProportional(1)
 	SetTextScale(0.0, 0.4)
@@ -433,7 +555,13 @@ function TogPowercallStateForVeh(veh, toggle)
 				if usePowercallAuxSrn(veh) then
 					PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
 				else
-					PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+					if tone_AUX_id == 2 then
+						PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+					elseif tone_AUX_id == 3 then
+						PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
+					elseif tone_AUX_id == 4 then
+						PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_POLICE_WARNING", veh, 0, 0, 0)
+					end
 				end
 			end
 		else
@@ -472,10 +600,13 @@ function SetAirManuStateForVeh(veh, newstate)
 			
 			elseif newstate == 3 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
-				
-			end				
-				
+				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)			
+			
+			elseif newstate == 4 then
+				snd_airmanu[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_POLICE_WARNING", veh, 0, 0, 0)	
+			end
+			
 			state_airmanu[veh] = newstate
 		end
 	end
@@ -572,7 +703,12 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		playerped = GetPlayerPed(-1)		
-		veh = GetVehiclePedIsUsing(playerped)	
+		veh = GetVehiclePedIsIn(playerped, false)	
+		if veh == nil or veh == 0 then
+			HUD_move_mode = false
+			HUD_op_mode = false
+			tone_mode = false
+		end
 		Citizen.Wait(1000)
 	end
 end)
@@ -706,7 +842,7 @@ Citizen.CreateThread(function()
 						if state_pwrcall[veh] ~= true then
 							state_pwrcall[veh] = false
 						end
-						if state_airmanu[veh] ~= 1 and state_airmanu[veh] ~= 2 and state_airmanu[veh] ~= 3 then
+						if state_airmanu[veh] ~= 1 and state_airmanu[veh] ~= 2 and state_airmanu[veh] ~= 3 and state_airmanu[veh] ~= 4 and state_airmanu[veh] ~= 5 then
 							state_airmanu[veh] = 0
 						end
 						
@@ -758,7 +894,7 @@ Citizen.CreateThread(function()
 									end
 									
 								-- POWERCALL
-								elseif IsDisabledControlJustReleased(0, 172) then
+								elseif IsDisabledControlJustReleased(0, 172) and not tone_mode then --disable up arrow only in tone mode since testing would be beneficial 
 									if state_pwrcall[veh] == true then
 										TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
 										TogPowercallStateForVeh(veh, false)
@@ -834,9 +970,9 @@ Citizen.CreateThread(function()
 						if actv_horn == true and actv_manu == false then
 							hmanu_state_new = 1
 						elseif actv_horn == false and actv_manu == true then
-							hmanu_state_new = 2
+							hmanu_state_new = tone_PMANU_id
 						elseif actv_horn == true and actv_manu == true then
-							hmanu_state_new = 3
+							hmanu_state_new = tone_SMANU_id
 						end
 						if hmanu_state_new == 1 then
 							if not useFiretruckSiren(veh) then
