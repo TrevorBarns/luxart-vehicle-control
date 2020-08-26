@@ -22,8 +22,8 @@ AddEventHandler("lvc_SetLxSirenState_s", function(newstate)
 end)
 
 RegisterServerEvent("lvc_TogPwrcallState_s")
-AddEventHandler("lvc_TogPwrcallState_s", function(toggle)
-	TriggerClientEvent("lvc_TogPwrcallState_c", -1, source, toggle)
+AddEventHandler("lvc_TogPwrcallState_s", function(newstate)
+	TriggerClientEvent("lvc_TogPwrcallState_c", -1, source, newstate)
 end)
 
 RegisterServerEvent("lvc_SetAirManuState_s")

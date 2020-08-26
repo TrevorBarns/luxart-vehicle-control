@@ -40,7 +40,51 @@ custom_manual_tones_master_switch = true
 --	Enables chat command '/luxtonesmode' which allows players to change which tone is played for the primary and secondary manual tones.
 custom_aux_tones_master_switch = true
 --	Enables chat command '/luxtonesmode' which allows players to change which tone is played when AUX siren (Up-Arrow) is enabled. 
+main_allowed_tones = { 2, 3, 4, 5, 6, 7, 8, 9, 13, 14 } 
+--	Choose which tones are allowed to be used as main tones see table below. 
+manu_allowed_tones = { 2, 3, 4, 5, 6, 7, 8, 9 } 
+--	Choose which tones are allowed to be used as manual tones see table below. 
+aux_allowed_tones = { 2, 3, 4, 5, 6, 7, 8, 9, 13, 14 }
+--	Choose which tones are allowed to be used as AUX tone see table below. 
+tone_table = { "Airhorn", "Wail", "Yelp", "Phaser", "Futura", "Hetro", "Sweep1", "Sweep2", "Hi-Low", "CustomF", "CustomG", "CustomH", "Powercall", "QSiren" } 
+--	Set each siren name here. 
+--[[
+OPTIONS: 
+	ID- Generic Name	(SIREN STRING)									[vehicles.awc name]
+	1 - Airhorn 		(SIRENS_AIRHORN)								[AIRHORN_EQD]
+	2 - Wail 			(VEHICLES_HORNS_SIREN_1)						[SIREN_PA20A_WAIL]
+	3 - Yelp 			(VEHICLES_HORNS_SIREN_2)						[SIREN_2]
+	4 - Priority 		(VEHICLES_HORNS_POLICE_WARNING)					[POLICE_WARNING]
+	5 - CustomA* 		(RESIDENT_VEHICLES_SIREN_WAIL_01)				[SIREN_WAIL_01]
+	6 - CustomB* 		(RESIDENT_VEHICLES_SIREN_WAIL_02)				[SIREN_WAIL_02]
+	7 - CustomC* 		(RESIDENT_VEHICLES_SIREN_WAIL_03)				[SIREN_WAIL_03]
+	8 - CustomD* 		(RESIDENT_VEHICLES_SIREN_WAIL_04)				[SIREN_WAIL_04]
+	9 - CustomE* 		(RESIDENT_VEHICLES_SIREN_QUICK_01)				[SIREN_QUICK_01]
+	10 - CustomF* 		(RESIDENT_VEHICLES_SIREN_QUICK_02)				[SIREN_QUICK_02]
+	11 - CustomG* 		(RESIDENT_VEHICLES_SIREN_QUICK_03)				[SIREN_QUICK_03]
+	12 - CustomH* 		(RESIDENT_VEHICLES_SIREN_QUICK_04)				[SIREN_QUICK_04]
+	13 - Powercall 		(VEHICLES_HORNS_AMBULANCE_WARNING)				[AMBULANCE_WARNING]
+	14 - Firesiren 		(RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01)		[SIREN_FIRETRUCK_WAIL_01]
+	15 - Firesiren2 	(RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01)	[SIREN_FIRETRUCK_QUICK_01]
+	16 - Firesiren2 	(VEHICLES_HORNS_FIRETRUCK_WARNING)				[SIREN_FIRETRUCK_QUICK_01]
 
+	* Notice: 	Enabling these sirens will allow players to use NEW sirens, meaning peoples siren packs need to be updated or they will hear the default sound (yuck). 
+				I recommend creating/provideing instructions on how to replace these default sirens AND/OR provide premade sirenpacks. 
+]]
+
+-- these models will use their real wail siren, as determined by their assigned audio hash in vehicles.meta
+eModelsWithFireSrn =
+{
+	"FIRETRUK",
+}
+
+-- models listed below will use AMBULANCE_WARNING as auxiliary siren
+eModelsWithPcall =
+{	
+	"AMBULANCE",
+	"FIRETRUK",
+	"LGUARD",
+}
 ---------------SOUND EFFECT VOLUMES---------------
 on_volume = 0.5			
 off_volume = 0.7			
