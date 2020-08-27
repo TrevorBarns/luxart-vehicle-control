@@ -25,6 +25,7 @@ local save_prefix = "lux_setting_"
 local HUD_move_lg_increment = 0.0050
 local HUD_move_sm_increment = 0.0001
 local HUD_op_increment = 5
+local button_delay = 300
 
 --------------------------------------------------
 --Runtime Variables (Do not touch unless you know what you're doing.) 
@@ -37,14 +38,16 @@ local HUD_op_btn_offset = 0
 local HUD_op_mode = false
 
 local tone_mode = false
-local tone_PMANU_id = 5
+local tone_PMANU_id = 2
 local tone_SMANU_id = 3
 local tone_AUX_id = 2
+local tone_main_mem_id = 0
 
 local key_lock = false		
 local spawned = false
 local playerped = nil
 local veh = nil
+local player_is_emerg_driver = false
 
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
@@ -85,17 +88,19 @@ TriggerEvent('chat:addSuggestion', '/luxtonemode', 'Change manual siren tones.')
 -------------------HUD SECTION--------------------
 --/luxhud - Main toggle for HUD
 RegisterCommand('luxhud', function(source, args)
-	show_HUD = not show_HUD
-	if show_HUD then
-		SetResourceKvpInt(save_prefix .. "HUD",  1)
-	else
-		SetResourceKvpInt(save_prefix .. "HUD",  0)
+	if player_is_emerg_driver then
+		show_HUD = not show_HUD
+		if show_HUD then
+			SetResourceKvpInt(save_prefix .. "HUD",  1)
+		else
+			SetResourceKvpInt(save_prefix .. "HUD",  0)
+		end
 	end
 end)
 
 --/luxhudopacity - Set opacity mode
 RegisterCommand('luxhudopacity', function(source, args)
-	if not HUD_move_mode and not tone_mode then
+	if not HUD_move_mode and not tone_mode and player_is_emerg_driver then
 		ShowHUD()
 		if HUD_op_mode then		--If already in op_mode transitioning out of op_mode (end and save)
 			HUD_op_mode = false
@@ -141,7 +146,7 @@ end)
 
 --/luxhudmove - Set move mode
 RegisterCommand('luxhudmove', function(source, args)
-	if not HUD_op_mode and not tone_mode then
+	if not HUD_op_mode and not tone_mode and player_is_emerg_driver then
 		ShowHUD()
 		if HUD_move_mode then		--If already in op_mode transitioning out of op_mode (end and save)
 			HUD_move_mode = false
@@ -208,21 +213,13 @@ end)
 ------------------LUXLOCK SECTION-----------------
 if lockout_master_switch then
 	RegisterCommand('luxlock', function(source, args)
-		local playerped = GetPlayerPed(-1)		
-		if IsPedInAnyVehicle(playerped, false) then	
-			----- IS DRIVER -----
-			local veh = GetVehiclePedIsUsing(playerped)	
-			if GetPedInVehicleSeat(veh, -1) == playerped then
-				--- IS EMERG VEHICLE ---
-				if GetVehicleClass(veh) == 18 then
-					key_lock = not key_lock
-					TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", lock_volume) -- Off
-					if key_lock then
-						ShowDebug("Siren Control Box: ~r~Locked")
-					else
-						ShowDebug("Siren Control Box: ~g~Unlocked")				
-					end
-				end
+		if player_is_emerg_driver then	
+			key_lock = not key_lock
+			TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", lock_volume) -- Off
+			if key_lock then
+				ShowDebug("Siren Control Box: ~r~Locked")
+			else
+				ShowDebug("Siren Control Box: ~g~Unlocked")				
 			end
 		end
 	end)
@@ -233,7 +230,7 @@ end
 --/luxtonemode -Set Tone Mode
 if custom_manual_tones_master_switch or custom_aux_tones_master_switch then
 	RegisterCommand('luxtonemode', function(source, args)
-		if not HUD_move_mode and not HUD_op_mode then
+		if not HUD_move_mode and not HUD_op_mode and  player_is_emerg_driver then
 			if tone_mode then		--If already in op_mode transitioning out of op_mode (end and save)
 				tone_mode = false
 				SetResourceKvpInt(save_prefix .. "tone_PMANU_id",  tone_PMANU_id)
@@ -256,20 +253,48 @@ Citizen.CreateThread(function()
 					--SECONDARY MANU
 					if IsDisabledControlPressed(0, 172) then	--Arrow Up
 						tone_SMANU_id = GetNextTone("MANU", tone_SMANU_id)
-						Citizen.Wait(500)						
+						if tone_SMANU_id == 11 and not usePowercallAuxSrn(veh) then 
+							tone_SMANU_id = GetNextTone("MANU", tone_SMANU_id)
+							while tone_SMANU_id > 11 and not useFiretruckSiren(veh) do 
+								tone_SMANU_id = GetNextTone("MANU", tone_SMANU_id)
+								Citizen.Wait(0)
+							end
+						end
+						Citizen.Wait(button_delay)						
 					end
 					if IsDisabledControlPressed(0, 173) then	--Arrow Down
 						tone_SMANU_id = GetPreviousTone("MANU", tone_SMANU_id)
-						Citizen.Wait(500)
+						if tone_SMANU_id == 11 and not usePowercallAuxSrn(veh) then 
+							tone_SMANU_id = GetPreviousTone("MANU", tone_SMANU_id)
+							while tone_SMANU_id > 11 and not useFiretruckSiren(veh) do 
+								tone_SMANU_id = GetPreviousTone("MANU", tone_SMANU_id)
+								Citizen.Wait(0)
+							end
+						end
+						Citizen.Wait(button_delay)
 					end
 					--PRIMARY MANU
 					if IsDisabledControlPressed(0, 175) then	--Arrow Right
 						tone_PMANU_id = GetNextTone("MANU", tone_PMANU_id)
-						Citizen.Wait(500)
+						if tone_PMANU_id == 11 and not usePowercallAuxSrn(veh) then 
+							tone_PMANU_id = GetNextTone("MANU", tone_PMANU_id)
+							while tone_PMANU_id > 11 and not useFiretruckSiren(veh) do 
+								tone_PMANU_id = GetNextTone("MANU", tone_PMANU_id)
+								Citizen.Wait(0)
+							end
+						end
+						Citizen.Wait(button_delay)
 					end
 					if IsDisabledControlPressed(0, 174) then	--Arrow Left
 						tone_PMANU_id = GetPreviousTone("MANU", tone_PMANU_id)
-						Citizen.Wait(500)
+						if tone_PMANU_id == 11 and not usePowercallAuxSrn(veh) then 
+							tone_PMANU_id = GetPreviousTone("MANU", tone_PMANU_id)
+							while tone_PMANU_id > 11 and not useFiretruckSiren(veh) do 
+								tone_PMANU_id = GetPreviousTone("MANU", tone_PMANU_id)
+								Citizen.Wait(0)
+							end
+						end
+						Citizen.Wait(button_delay)
 					end
 				end
 			end
@@ -277,29 +302,25 @@ Citizen.CreateThread(function()
 				if IsControlPressed(0, 224) then
 					if IsDisabledControlPressed(0, 175) then	--Arrow Right
 						tone_AUX_id = GetNextTone("AUX", tone_AUX_id)
-						if tone_AUX_id == 13 then
-							if not usePowercallAuxSrn(veh) then
-								tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
+						if tone_AUX_id == 11 and not usePowercallAuxSrn(veh) then 
+							tone_AUX_id = GetNextTone("AUX", tone_AUX_id)
+							while tone_AUX_id > 11 and not useFiretruckSiren(veh) do 
+								tone_AUX_id = GetNextTone("AUX", tone_AUX_id)
+								Citizen.Wait(0)
 							end
-						elseif tone_AUX_id == 14 then
-							if not useFiretruckSiren(veh) then
-								tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
-							end						
 						end
-						Citizen.Wait(500)
+						Citizen.Wait(button_delay)
 					end
 					if IsDisabledControlPressed(0, 174) then 	--Arrow Left
 						tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
-						if tone_AUX_id == 13 then
-							if not usePowercallAuxSrn(veh) then
+						while tone_AUX_id > 11 and not useFiretruckSiren(veh) do 
+							tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
+							if tone_AUX_id == 11 and not usePowercallAuxSrn(veh) then 
 								tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
-							end
-						elseif tone_AUX_id == 14 then
-							if not useFiretruckSiren(veh) then
-								tone_AUX_id = GetPreviousTone("AUX", tone_AUX_id)
-							end						
-						end
-						Citizen.Wait(500)						
+							end	
+							Citizen.Wait(0)
+						end							
+						Citizen.Wait(button_delay)						
 					end
 				end
 			end
@@ -329,7 +350,7 @@ end)
 
 ------------------LOAD SETTINGS SECTION-----------------
 AddEventHandler( "playerSpawned", function()
-	if not spawned then 
+	if not spawned then
 		RegisterKeyMaps()
 		--Position
 		HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
@@ -351,6 +372,14 @@ AddEventHandler( "playerSpawned", function()
 		spawned = true
 	end 
 end )
+
+--Ensure textures have streamed
+Citizen.CreateThread(function()
+	while !HasStreamedTextureDictLoaded("commonmenu") do
+		RequestStreamedTextureDict("commonmenu", false);
+		Citizen.Wait(0)
+	end
+end)
 
 ---------------------------------------------------------------------
 function GetNextTone(tone_type, current_tone) 
@@ -444,7 +473,7 @@ function RegisterKeyMaps()
 		local command = "_lux_siren_" .. i 
 		local description = "Siren " .. i .. ": " .. tone_table[siren_id]
 		RegisterCommand(command, function(source, args)
-			if IsVehicleSirenOn(veh) then
+			if IsVehicleSirenOn(veh) and player_is_emerg_driver then
 				if state_lxsiren[veh] ~= siren_id or state_lxsiren[veh] == 0 then
 					TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume)
 					SetLxSirenStateForVeh(veh, siren_id)
@@ -456,7 +485,13 @@ function RegisterKeyMaps()
 				end
 			end
 		end)
-		RegisterKeyMapping(command, description, "keyboard", i)
+		if i < 10 then
+			RegisterKeyMapping(command, description, "keyboard", i)
+		elseif i == 10 then
+			RegisterKeyMapping(command, description, "keyboard", "0")		
+		else
+			RegisterKeyMapping(command, description, "keyboard", '')				
+		end
 	end
 end
 Citizen.CreateThread(function()
@@ -602,6 +637,7 @@ function SetLxSirenStateForVeh(veh, newstate)
 			if newstate == 1 then
 				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+				
 			elseif newstate == 2 then
 				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
@@ -628,32 +664,32 @@ function SetLxSirenStateForVeh(veh, newstate)
 			
 			elseif newstate == 8 then
 				snd_lxsiren[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_WAIL_04", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
 			
 			elseif newstate == 9 then
 				snd_lxsiren[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
 			
 			elseif newstate == 10 then
 				snd_lxsiren[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
-			
-			elseif newstate == 11 then
-				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_03", veh, 0, 0, 0)	
 			
-			elseif newstate == 12 then
-				snd_lxsiren[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_QUICK_04", veh, 0, 0, 0)	
-			
-			elseif newstate == 13 and usePowercallAuxSrn(veh) then
+			elseif newstate == 11 and usePowercallAuxSrn(veh) then
 				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
+			
+			elseif newstate == 12 and useFiretruckSiren(veh) then
+				snd_lxsiren[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", veh, 0, 0, 0)
+			
+			elseif newstate == 13 and useFiretruckSiren(veh) then
+				snd_lxsiren[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_lxsiren[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", veh, 0, 0, 0)			
 			
 			elseif newstate == 14 and useFiretruckSiren(veh) then
 				snd_lxsiren[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
-			end			
+			end	
 			TogMuteDfltSrnForVeh(veh, true)			
 				
 			state_lxsiren[veh] = newstate
@@ -673,6 +709,7 @@ function TogPowercallStateForVeh(veh, newstate)
 			if newstate == 1 then
 				snd_pwrcall[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_pwrcall[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+				
 			elseif newstate == 2 then
 				snd_pwrcall[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
@@ -699,27 +736,27 @@ function TogPowercallStateForVeh(veh, newstate)
 			
 			elseif newstate == 8 then
 				snd_pwrcall[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_WAIL_04", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
 			
 			elseif newstate == 9 then
 				snd_pwrcall[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
 			
 			elseif newstate == 10 then
 				snd_pwrcall[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
-			
-			elseif newstate == 11 then
-				snd_pwrcall[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_03", veh, 0, 0, 0)	
 			
-			elseif newstate == 12 then
-				snd_pwrcall[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_QUICK_04", veh, 0, 0, 0)	
-			
-			elseif newstate == 13 and usePowercallAuxSrn(veh) then
+			elseif newstate == 11 and usePowercallAuxSrn(veh) then
 				snd_pwrcall[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
+			
+			elseif newstate == 12 and useFiretruckSiren(veh) then
+				snd_pwrcall[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", veh, 0, 0, 0)
+			
+			elseif newstate == 13 and useFiretruckSiren(veh) then
+				snd_pwrcall[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_pwrcall[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", veh, 0, 0, 0)			
 			
 			elseif newstate == 14 and useFiretruckSiren(veh) then
 				snd_pwrcall[veh] = GetSoundId()
@@ -741,10 +778,11 @@ function SetAirManuStateForVeh(veh, newstate)
 				ReleaseSoundId(snd_airmanu[veh])
 				snd_airmanu[veh] = nil
 			end
-						
+			
 			if newstate == 1 then
 				snd_airmanu[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+				
 			elseif newstate == 2 then
 				snd_airmanu[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
@@ -771,27 +809,27 @@ function SetAirManuStateForVeh(veh, newstate)
 			
 			elseif newstate == 8 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_WAIL_04", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
 			
 			elseif newstate == 9 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_01", veh, 0, 0, 0)	
+				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
 			
 			elseif newstate == 10 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_02", veh, 0, 0, 0)	
-			
-			elseif newstate == 11 then
-				snd_airmanu[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_03", veh, 0, 0, 0)	
 			
-			elseif newstate == 12 then
-				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_QUICK_04", veh, 0, 0, 0)	
-			
-			elseif newstate == 13 and usePowercallAuxSrn(veh) then
+			elseif newstate == 11 and usePowercallAuxSrn(veh) then
 				snd_airmanu[veh] = GetSoundId()
 				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
+			
+			elseif newstate == 12 and useFiretruckSiren(veh) then
+				snd_airmanu[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", veh, 0, 0, 0)
+			
+			elseif newstate == 13 and useFiretruckSiren(veh) then
+				snd_airmanu[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_airmanu[veh], "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", veh, 0, 0, 0)			
 			
 			elseif newstate == 14 and useFiretruckSiren(veh) then
 				snd_airmanu[veh] = GetSoundId()
@@ -890,10 +928,16 @@ end)
 ---------------------------------------------------------------------
 --Onscreen UI
 --Get variables needed for UI every 1 second (efficiency) 
+--Get variables needed for UI every 1 second (efficiency) 
 Citizen.CreateThread(function()
 	while true do
 		playerped = GetPlayerPed(-1)		
-		veh = GetVehiclePedIsIn(playerped, false)	
+		if IsPedInAnyVehicle(playerped, false) then
+			veh = GetVehiclePedIsUsing(playerped)	
+			if GetPedInVehicleSeat(veh, -1) == playerped and GetVehicleClass(veh) == 18 then
+				player_is_emerg_driver = true
+			end
+		end
 		if veh == nil or veh == 0 then
 			HUD_move_mode = false
 			HUD_op_mode = false
@@ -902,6 +946,7 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1000)
 	end
 end)
+
 --Draw Onscreen UI
 Citizen.CreateThread(function()
 	while true do
@@ -1110,15 +1155,21 @@ Citizen.CreateThread(function()
 								
 								-- TOG LX SIREN
 								elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
-									local cstate = state_lxsiren[veh]
-									if cstate == 0 then
+									if state_lxsiren[veh] == 0 then
 										if IsVehicleSirenOn(veh) then
 											TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
-											SetLxSirenStateForVeh(veh, 2)
+											if main_siren_last_state then
+												SetLxSirenStateForVeh(veh, tone_main_mem_id)
+											else
+												SetLxSirenStateForVeh(veh, 2)
+											end
 											count_bcast_timer = delay_bcast_timer
 										end
 									else
 										TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
+										if main_siren_last_state then
+											tone_main_mem_id = state_lxsiren[veh]
+										end
 										SetLxSirenStateForVeh(veh, 0)
 										count_bcast_timer = delay_bcast_timer
 									end
@@ -1191,6 +1242,9 @@ Citizen.CreateThread(function()
 						local hmanu_state_new = 0
 						if actv_horn == true and actv_manu == false then
 							hmanu_state_new = 1
+							if useFiretruckSiren(veh) then
+								hmanu_state_new = 14
+							end
 						elseif actv_horn == false and actv_manu == true then
 							hmanu_state_new = tone_PMANU_id
 						elseif actv_horn == true and actv_manu == true then
@@ -1268,7 +1322,7 @@ Citizen.CreateThread(function()
 										actv_ind_timer = false
 										count_ind_timer = 0
 										count_bcast_timer = delay_bcast_timer
-										Citizen.Wait(500)
+										Citizen.Wait(button_delay)
 									end
 								end
 							end
