@@ -5,11 +5,6 @@
 # Luxart Vehicle Control v3
 Over the past months, I have been slowing integrating additonal features into Faction's release (v2.0) of Lt. Caine's Luxart Vehicle Control resource, I would now like to release these to the public. 
 ## Additional Functionality:
-__Lockout:__
-Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
-<p align="center">
-<img align="center" width="530" src="https://i.gyazo.com/74ec018e67d7ec9fc299f806a3f25bdf.png">
-</p>
 
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
@@ -19,10 +14,25 @@ A small togglable and adjustable visual representation of the scripts functional
 <img align="center" width="530" src="https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg">
 </p>
 
+__Additional Tones ("Siren Mastery"):__
+Add support for up to 6 additional vanilla tones: `RESIDENT_VEHICLES_SIREN_WAIL_01,2,3` and `RESIDENT_VEHICLES_SIREN_QUICK_01,2,3`. With a plethora of customization on how LVC works for you. Some examples: an expanded siren set for all to use including custom created sweeps/autocycles, department specific siren such as Paleto using one siren pack and LSPD using another, the options are endless. 
+
+__ELS Style Hotkey Assignments:__
+Cycle your tones like single player ELS with player definied hotkey assignments. For example use your numrow or numpad to change sirens on the fly. 
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/fe99a7d6754de9ba71b652b5314a132a.png">
+</p>
+
 __Adjustable Manual / Auxilary Tones:__
 Change which tone to use for each manual tone (primary and secondary) as well as the auxiliary tone. These are also saved to the client requiring no changes at relog. 
 <p align="center">
 <img align="center" width="530" src="https://i.gyazo.com/84df39e149d32772e4f95b8e578421b8.jpg">
+</p>
+
+__Lockout:__
+Ability to lock all siren/light controls using a player set key to prevent activation while typing (or eating). Locking/Unlocking shows on screen notification and audible tone. Includes reminder tone every X key presses, where X can be set by server developers. 
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/74ec018e67d7ec9fc299f806a3f25bdf.png">
 </p>
 
 __Hazards Delay:__
