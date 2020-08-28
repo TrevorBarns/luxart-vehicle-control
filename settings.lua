@@ -42,6 +42,10 @@ custom_aux_tones_master_switch = true
 --	Enables chat command '/luxtonesmode' which allows players to change which tone is played when AUX siren (Up-Arrow) is enabled. 
 main_siren_last_state = true
 --	Enables memory for main siren last state, meaning toggling siren using ALT will turn on last siren.
+main_siren_register_keys_master_switch = true
+--	Enables RegisterKeyMapping for all main_allowed_tones without a default key (unbinded)
+main_siren_set_register_keys_set_defaults = true
+--	Sets keys for main_allowed_tones to numrow 1,2,3,4,5,6,7,8,9,0. If more keys they are left unbinded. Requires main_siren_register_keys_master_switch = true.
 main_allowed_tones = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 } 
 --	Choose which tones are allowed to be used as main tones see table below. 
 manu_allowed_tones = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 } 

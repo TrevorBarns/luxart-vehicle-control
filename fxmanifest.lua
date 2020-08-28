@@ -13,7 +13,8 @@ files({
 })
 
 client_scripts {
-	'config.lua',
+	'settings.lua',
+	'vehicles.lua',
 	'client.lua'
 }
 
