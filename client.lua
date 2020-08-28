@@ -38,10 +38,10 @@ local HUD_op_btn_offset = 0
 local HUD_op_mode = false
 
 local tone_mode = false
-local tone_PMANU_id = 2
-local tone_SMANU_id = 3
-local tone_AUX_id = 2
-local tone_main_mem_id = 2
+local tone_PMANU_id 
+local tone_SMANU_id 
+local tone_AUX_id 
+local tone_main_mem_id 
 local tone_airhorn_intrp = false
 local siren_string_lookup = { "SIRENS_AIRHORN", 
 							  "VEHICLES_HORNS_SIREN_1", 
@@ -106,7 +106,7 @@ TriggerEvent('chat:addSuggestion', '/luxtonemode', 'Change manual siren tones.')
 -- player_is_emerg_driver is true if yes. 
 Citizen.CreateThread(function()
 	while true do
-		player_is_emerg_driver = false			
+		player_is_emerg_driver = false	
 		playerped = GetPlayerPed(-1)		
 		if IsPedInAnyVehicle(playerped, false) then
 			veh = GetVehiclePedIsUsing(playerped)	
@@ -332,6 +332,15 @@ Citizen.CreateThread(function()
 	while true do
 		--TONE MODE UI ONLY
 		while tone_mode and player_is_emerg_driver do
+			if tone_PMANU_id == nil then
+				tone_PMANU_id = GetTone(veh, 1)
+			end			
+			if tone_SMANU_id == nil then
+				tone_SMANU_id = GetTone(veh, 2)
+			end		
+			if tone_AUX_id == nil then
+				tone_AUX_id = GetTone(veh, 2)
+			end
 			ShowText(0.5, 0.750, 0, "~w~Tone mode ~g~enabled~w~. To stop use '~b~/luxtonemode~w~'.")
 			if custom_manual_tones_master_switch then
 				ShowText(0.4, 0.775, 1, "~w~ ← →  \t~y~Primary Manual Tone: ~w~~h~ " .. tone_table[tone_PMANU_id])
@@ -470,18 +479,15 @@ end)
 ---------------------------------------------------------------------
 --Gets next tone based off tone_type: Manual, Main, Aux; handles array looping and checks to see if ambulance or firetruk.
 function GetNextTone(tone_type, current_tone, veh) 
-	local result = nil
-	local temp_pos = -1
+	local vehName = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
-
-	if tone_type == "MANU" then
-		temp_tone_array = manu_allowed_tones
-	elseif tone_type == "AUX" then
-		temp_tone_array = aux_allowed_tones
-	elseif tone_type == "MAIN" then
-		temp_tone_array = main_allowed_tones	
+	local temp_pos = -1
+	if _G[vehName] ~= nil then
+		temp_tone_array = _G[vehName]
+	else 
+		temp_tone_array = default
 	end
-
+	
 	for i, allowed_tone in ipairs(temp_tone_array) do
 		if allowed_tone == current_tone then
 			temp_pos = i
@@ -492,14 +498,6 @@ function GetNextTone(tone_type, current_tone, veh)
 	else
 		result = temp_tone_array[1]
 	end
-	
-	if result == 11 and not usePowercallAuxSrn(veh) then 
-		result = GetNextTone(tone_type, result, veh)
-	end
-	while result > 11 and not useFiretruckSiren(veh) do 
-		result = GetNextTone(tone_type, result, veh)
-		Citizen.Wait(0)
-	end
 
 	return result
 end
@@ -507,16 +505,13 @@ end
 --Gets previous tone based off tone_type: Manual, Main, Aux; handles array looping and checks to see if ambulance or firetruk.
 ---------------------------------------------------------------------
 function GetPreviousTone(tone_type, current_tone, veh) 
-	local result = nil
-	local temp_pos = -1
+	local vehName = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
-	
-	if tone_type == "MANU" then
-		temp_tone_array = manu_allowed_tones
-	elseif tone_type == "AUX" then
-		temp_tone_array = aux_allowed_tones
-	elseif tone_type == "MAIN" then
-		temp_tone_array = main_allowed_tones	
+	local temp_pos = -1
+	if _G[vehName] ~= nil then
+		temp_tone_array = _G[vehName]
+	else 
+		temp_tone_array = default
 	end
 	
 	for i, allowed_tone in ipairs(temp_tone_array) do
@@ -530,15 +525,44 @@ function GetPreviousTone(tone_type, current_tone, veh)
 		result = temp_tone_array[#temp_tone_array]
 	end
 	
-	while result > 11 and not useFiretruckSiren(veh) do 
-		result = GetPreviousTone("MANU", result, veh)
-		Citizen.Wait(0)
-	end
-	if result == 11 and not usePowercallAuxSrn(veh) then 
-		result = GetPreviousTone("MANU", result, veh)
+	return result
+end
+
+--Gets first tone based off tone_type: Manual, Main, Aux; handles array looping and checks to see if ambulance or firetruk.
+---------------------------------------------------------------------
+function GetTone(veh, postion) 
+	local vehName = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local temp_tone_array = nil
+	if _G[vehName] ~= nil then
+		temp_tone_array = _G[vehName]
+	else 
+		temp_tone_array = default
 	end
 	
-	return result
+	if temp_tone_array[postion] ~= nil then
+		return temp_tone_array[postion]
+	else 
+		return temp_tone_array[1]	
+	end
+end
+
+--Gets first tone based off tone_type: Manual, Main, Aux; handles array looping and checks to see if ambulance or firetruk.
+---------------------------------------------------------------------
+function IsApprovedTone(veh, tone) 
+	local vehName = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local temp_tone_array = nil
+ 	if _G[vehName] ~= nil then
+		temp_tone_array = _G[vehName]
+	else 
+		temp_tone_array = default
+	end
+	
+	for i, allowed_tone in ipairs(temp_tone_array) do
+		if allowed_tone == tone then
+			return true
+		end
+	end
+	return false
 end
 
 ---------------------------------------------------------------------
@@ -936,13 +960,8 @@ Citizen.CreateThread(function()
 						and state_airmanu[veh] ~= 14) then
 							state_airmanu[veh] = 0
 					end
-					if useFiretruckSiren(veh) and state_lxsiren[veh] == 1 then
-						TogMuteDfltSrnForVeh(veh, false)
-						dsrn_mute = false
-					else
-						TogMuteDfltSrnForVeh(veh, true)
-						dsrn_mute = true
-					end
+					TogMuteDfltSrnForVeh(veh, true)
+					dsrn_mute = true
 					
 					if not IsVehicleSirenOn(veh) and state_lxsiren[veh] > 0 then
 						SetLxSirenStateForVeh(veh, 0)
@@ -977,9 +996,14 @@ Citizen.CreateThread(function()
 									if IsVehicleSirenOn(veh) then
 										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
 										if main_siren_last_state then
-											SetLxSirenStateForVeh(veh, tone_main_mem_id)
+											if IsApprovedTone(veh, tone_main_mem_id) then
+												SetLxSirenStateForVeh(veh, tone_main_mem_id)
+											else
+												tone_main_mem_id = GetTone(veh, 1)
+												SetLxSirenStateForVeh(veh, tone_main_mem_id)
+											end
 										else
-											SetLxSirenStateForVeh(veh, 2)
+											SetLxSirenStateForVeh(veh, GetTone(veh, 1))
 										end
 										count_bcast_timer = delay_bcast_timer
 									end
@@ -997,7 +1021,18 @@ Citizen.CreateThread(function()
 								if state_pwrcall[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
 										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
-										TogPowercallStateForVeh(veh, tone_AUX_id)
+										if tone_AUX_id ~= nil then
+											if IsApprovedTone(veh, tone_AUX_id) then
+												TogPowercallStateForVeh(veh, tone_AUX_id)
+											else
+												tone_AUX_id = GetTone(veh, 2)
+												TogPowercallStateForVeh(veh, tone_AUX_id)
+											end
+											TogPowercallStateForVeh(veh, tone_AUX_id)
+										else
+											tone_AUX_id = GetTone(veh, 2)
+											TogPowercallStateForVeh(veh, tone_AUX_id)											
+										end
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
@@ -1064,9 +1099,27 @@ Citizen.CreateThread(function()
 							hmanu_state_new = 14
 						end
 					elseif actv_horn == false and actv_manu == true then
-						hmanu_state_new = tone_PMANU_id
+						if tone_PMANU_id ~= nil then
+							if IsApprovedTone(veh, tone_PMANU_id) then
+								hmanu_state_new = tone_PMANU_id
+							else
+								hmanu_state_new = GetTone(veh, 1)
+							end
+						else
+							tone_PMANU_id = GetTone(veh, 1)
+							hmanu_state_new = tone_PMANU_id
+						end
 					elseif actv_horn == true and actv_manu == true then
-						hmanu_state_new = tone_SMANU_id
+						if tone_SMANU_id ~= nil then
+							if IsApprovedTone(veh, tone_SMANU_id) then
+								hmanu_state_new = tone_SMANU_id
+							else
+								hmanu_state_new = GetTone(veh, 2)
+							end
+						else
+							tone_SMANU_id = GetTone(veh, 2)
+							hmanu_state_new = tone_SMANU_id
+						end
 					end
 					
 					if tone_airhorn_intrp then

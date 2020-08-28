@@ -40,7 +40,7 @@ custom_manual_tones_master_switch = true
 --	Enables chat command '/luxtonesmode' which allows players to change which tone is played for the primary and secondary manual tones.
 custom_aux_tones_master_switch = true
 --	Enables chat command '/luxtonesmode' which allows players to change which tone is played when AUX siren (Up-Arrow) is enabled. 
-main_siren_last_state = true
+main_siren_last_state = false
 --	Enables memory for main siren last state, meaning toggling siren using ALT will turn on last siren.
 main_siren_register_keys_master_switch = true
 --	Enables RegisterKeyMapping for all main_allowed_tones without a default key (unbinded)
@@ -68,28 +68,17 @@ OPTIONS:
 	8 - CustomE* 		(RESIDENT_VEHICLES_SIREN_QUICK_01)				[SIREN_QUICK_01]
 	9 - CustomF* 		(RESIDENT_VEHICLES_SIREN_QUICK_02)				[SIREN_QUICK_02]
 	10 - CustomG* 		(RESIDENT_VEHICLES_SIREN_QUICK_03)				[SIREN_QUICK_03]
-	11 - Powercall 		(VEHICLES_HORNS_AMBULANCE_WARNING)				[AMBULANCE_WARNING]
-	12 - Firesiren 		(RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01)		[SIREN_FIRETRUCK_WAIL_01]
-	13 - Firesiren2 	(RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01)	[SIREN_FIRETRUCK_QUICK_01]
-	14 - FireHorn	 	(VEHICLES_HORNS_FIRETRUCK_WARNING)				[FIRE_TRUCK_HORN]
+	11 - CustomFireA* 	(VEHICLES_HORNS_AMBULANCE_WARNING)				[AMBULANCE_WARNING]
+	12 - CustomFireB 	(RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01)		[SIREN_FIRETRUCK_WAIL_01]
+	13 - CustomFireC 	(RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01)	[SIREN_FIRETRUCK_QUICK_01]
+	14 - CustomFireD	(VEHICLES_HORNS_FIRETRUCK_WARNING)				[FIRE_TRUCK_HORN]
 
 	* Notice: 	Enabling these sirens will allow players to use NEW sirens, meaning peoples siren packs need to be updated or they will hear the default sound (yuck). 
 				I recommend creating/provideing instructions on how to replace these default sirens AND/OR provide premade sirenpacks. 
 ]]
 
 -- these models will use their real wail siren, as determined by their assigned audio hash in vehicles.meta
-eModelsWithFireSrn =
-{
-	"FIRETRUK",
-}
 
--- models listed below will use AMBULANCE_WARNING as auxiliary siren
-eModelsWithPcall =
-{	
-	"AMBULANCE",
-	"FIRETRUK",
-	"LGUARD",
-}
 ---------------SOUND EFFECT VOLUMES---------------
 on_volume = 0.5			
 off_volume = 0.7			
