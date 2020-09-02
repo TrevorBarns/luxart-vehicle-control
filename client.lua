@@ -152,6 +152,12 @@ function RegisterKeyMaps()
 	end
 end
 
+--Function is only for resource restarting otherwise keymaps will break
+Citizen.CreateThread(function()
+	RegisterKeyMaps()
+end)
+
+
 ----------------THREADED FUNCTIONS----------------
 -- IS PLAYER SUPPOSED TO HAVE ACCESS TO LVC? 
 -- player_is_emerg_driver is true if yes. 

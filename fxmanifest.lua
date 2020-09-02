@@ -23,10 +23,13 @@ client_scripts {
     'menu/items/*.lua',
     'menu/panels/*.lua',
     'menu/windows/*.lua',
-	'settings.lua',
-	'vehicles.lua',
+	'SETTINGS.lua',
+	'VEHICLES.lua',
 	'client.lua',
 	'menu.lua'
 }
 
-server_script 'server.lua'
+server_script {
+	'server.lua',
+	'update.lua'
+}

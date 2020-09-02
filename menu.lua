@@ -71,7 +71,7 @@ end
 function GetTonesList()
 	local list = { } 
 	for i, v in ipairs(tone_table) do
-		if i ~= 1 then
+		if i ~= 1 and IsApprovedTone(veh, i) then
 			table.insert(list, {i,1})
 		end
 	end
@@ -122,7 +122,7 @@ Citizen.CreateThread(function()
 					confirm_save_message = "Are you sure?" 
 					confirm_save_description = "~r~This will override any exisiting save data for this vehicle profile ("..GetVehicleProfileName()..")."
 					confirm_load_message = nil
-					confirm_save_description = nil
+					confirm_load_description = nil
 				end
 			  end,
 			})			
