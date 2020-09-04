@@ -42,10 +42,8 @@ tone_table = { "Airhorn", "Wail", "Yelp", "Priority", "Futura", "Hetro", "Sweep-
 
 --Example A: Basic Operation: operate same as v2 no additional siren tones implemented
 DEFAULT = { 1, 2, 3, 4, 7, 9, 10 } 
-so1 = { 1, 4, 5, 6 } 
-pd5 = { 1, 2, 3, 5, 8} 
 FIRETRUK = { 12, 13, 14, 11 } 
-AMBULANCE = { 1, 2, 3, 4, 11 } 
+AMBULAN = { 1, 2, 3, 4, 11 } 
 LGUARD = { 1, 2, 3, 4, 11 } 
 --End v2 Basic Mode
 --[[
