@@ -9,7 +9,40 @@ NOTES
 	
 ---------------------------------------------------
 ]]
+--UPDATER
+local repo_version
 
+Citizen.CreateThread( function()
+	updatePath = "/TrevorBarns/luxart-vehicle-control"
+	resourceName = "Luxart Vehicle Control ("..GetCurrentResourceName()..")"
+	PerformHttpRequest("https://raw.githubusercontent.com"..updatePath.."/master/version", checkVersion, "GET")
+end)
+
+RegisterServerEvent("lvc_GetVersion_s") 
+AddEventHandler("lvc_GetVersion_s", function()
+    TriggerClientEvent("lvc_GetVersion_c", -1, source, repo_version)
+end)
+
+RegisterServerEvent('lvc_OpenLink_s')
+AddEventHandler('lvc_OpenLink_s', function(link)
+    os.execute("start " .. link)
+end)
+
+
+function checkVersion(err,responseText, headers)
+	repo_version = responseText
+    curVersion = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+	if curVersion < responseText then
+		updateavail = true
+		print("\n^1----------------------------------------------------------------------------------^7")
+		print(resourceName.." is outdated, latest version is: ^2"..responseText.."^7, installed version: ^1"..curVersion.."^7!\nupdate from https://github.com"..updatePath.."")
+		print("^1----------------------------------------------------------------------------------^7")
+	elseif curVersion > responseText then
+		--print("\n^3----------------------------------------------------------------------------------^7")
+		--print(resourceName.." git version is: ^2"..responseText.."^7, installed version: ^1"..curVersion.."^7!")
+		--print("^3----------------------------------------------------------------------------------^7")
+	end
+end
 
 RegisterServerEvent("lvc_TogDfltSrnMuted_s")
 AddEventHandler("lvc_TogDfltSrnMuted_s", function(toggle)
@@ -35,3 +68,4 @@ RegisterServerEvent("lvc_TogIndicState_s")
 AddEventHandler("lvc_TogIndicState_s", function(newstate)
 	TriggerClientEvent("lvc_TogIndicState_c", -1, source, newstate)
 end)
+

@@ -36,8 +36,12 @@ tone_SMANU_id = nil
 tone_AUX_id = nil
 tone_main_mem_id = nil
 tone_airhorn_intrp = true
+last_veh = nil
 veh = nil
 player_is_emerg_driver = false
+park_kill = false
+curr_version = nil
+repo_version = nil
 
 --LOCAL VARIABLES
 local spawned = false
@@ -84,15 +88,47 @@ TriggerEvent('chat:addSuggestion', '/lvchudmove', 'Toggle Luxart Vehicle Control
 TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 
 --------------REGISTERED COMMANDS---------------
+--/lvcfactoryreset - deletes all KVP
+RegisterCommand('lvcfactoryreset', function(source, args)
+	AddTextEntry("FACES_WARNH2", "Warning")
+	AddTextEntry("QM_NO_0", "Are you sure you want to delete all saved LVC data and Factory Reset?")
+	local result = -1
+	while result == -1 do
+		DrawFrontendAlert("FACES_WARNH2", "QM_NO_0", 0, 0, "", 0, -1, 0, "", "", false, 0)
+		ShowText(0.5, 0.75, 0, "~g~No: Escape \t ~r~Yes: Enter", 0.75)
+		if IsDisabledControlJustReleased(2, 202) then
+			result = 0
+		end		
+		if IsDisabledControlJustReleased(2, 201) then
+			result = 1
+		end
+		Citizen.Wait(0)
+	end
+	if result == 1 then
+		local save_prefix = "lvc_setting_"
+		local handle = StartFindKvp(save_prefix);
+		local key = FindKvp(handle)
+		while key ~= nil do
+			DeleteResourceKvp(key)
+			print("LVC: Deleting Key \"" .. key .. "\"")
+			key = FindKvp(handle)
+			Citizen.Wait(0)
+		end
+		print("LVC: Successfully cleared all save data.") 
+	end
+end)
+
 --/lvchudmove - Set move mode
 RegisterCommand('lvchudmove', function(source, args)
 	if player_is_emerg_driver then
 		ShowHUD()
 		if HUD_move_mode then		--If already in move mode transitioning out of move mode 
 			HUD_move_mode = false
-			RageUI.Visible(RMenu:Get('lvc', 'main'), true)
+			Citizen.Wait(100)
+			RageUI.Visible(RMenu:Get('lvc', 'hudsettings'), true)
 		else					--If not in move mode first entering, lock and start. 
 			HUD_move_mode = true
+			RageUI.Visible(RMenu:Get('lvc', 'hudsettings'), false)
 		end
 	end
 end)
@@ -155,6 +191,8 @@ end
 --Function is only for resource restarting otherwise keymaps will break
 Citizen.CreateThread(function()
 	RegisterKeyMaps()
+	curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+	TriggerServerEvent("lvc_GetVersion_s")
 end)
 
 
@@ -179,6 +217,25 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1000)
 	end
 end)
+
+-- ParkKill Functionality
+Citizen.CreateThread(function()
+	while true do
+		while park_kill and playerped ~= nil and veh ~= nil do
+			if GetIsTaskActive(playerped, 2) then
+				if main_siren_last_state then
+					tone_main_mem_id = state_lxsiren[veh]
+				end
+				SetLxSirenStateForVeh(veh, 0)
+				SetPowercallStateForVeh(veh, 0)
+				Citizen.Wait(1000)		
+			end
+			Citizen.Wait(0)		
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
 
 Citizen.CreateThread(function()
 	local HUD_move_lg_increment = 0.0050
@@ -221,7 +278,6 @@ Citizen.CreateThread(function()
 				--HANDLE EXIT CONDITION: BACKSPACE / ESC / RIGHT CLICK
 				if IsControlPressed(0, 177) then
 					ExecuteCommand("lvchudmove")
-					RageUI.Visible(RMenu:Get('lvc', 'main'), true)
 				end
 			end
 			
@@ -247,7 +303,7 @@ end)
 Citizen.CreateThread(function()
 	local retrieval, veh_lights, veh_headlights 
 	while true do
-		while show_HUD and player_is_emerg_driver do
+		while show_HUD and player_is_emerg_driver and not IsHudHidden() do
 			DisableControlAction(0, 80, true)  
 			DisableControlAction(0, 81, true) 
 			DisableControlAction(0, 86, true) 
@@ -324,26 +380,25 @@ end)
 
 function SaveSettings()
 	local save_prefix = "lvc_setting_"
-	--HUD Settings
-	if show_HUD then
-		SetResourceKvpInt(save_prefix .. "HUD",  1)
-	else
-		SetResourceKvpInt(save_prefix .. "HUD",  0)
+	--Set KVP value to indicate there is a save present, if so what version
+	local save_version = GetResourceKvpString(save_prefix .. "save_version")
+	if curr_version ~= nil then
+		SetResourceKvp(save_prefix .. "save_version", curr_version)
 	end
+	
+	--General Settings
+	SetResourceKvpInt(save_prefix .. "HUD",  BoolToInt(show_HUD))
 	SetResourceKvpFloat(save_prefix .. "HUD_x_offset",  HUD_x_offset)
 	SetResourceKvpFloat(save_prefix .. "HUD_y_offset",  HUD_y_offset)
 	SetResourceKvpInt(save_prefix .. "hud_bgd_opacity",  hud_bgd_opacity)
 	SetResourceKvpInt(save_prefix .. "hud_button_off_opacity",  hud_button_off_opacity)
-	--Tone Settings
+
+	--Profile Specific Settings
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_PMANU_id",  tone_PMANU_id)
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_SMANU_id",  tone_SMANU_id)
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_AUX_id",  tone_AUX_id)
-	if tone_airhorn_intrp then
-		SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp",  1)
-	else
-		SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp",  0)
-	end
-	
+	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp",  BoolToInt(tone_airhorn_intrp))
+	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill",  BoolToInt(park_kill))
 	--Main Siren Settings
 	settings_string = TableToString(main_tone_settings)
 	SetResourceKvp(save_prefix .. GetVehicleProfileName(),  settings_string)
@@ -351,46 +406,44 @@ end
 
 function LoadSettings()
 	local save_prefix = "lvc_setting_"
-	show_HUD_int = GetResourceKvpInt(save_prefix .. "HUD")
-	if show_HUD_int == 0 then
-		show_HUD = false
-	else
-		show_HUD = true
-	end
-	--Position
-	HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
-	HUD_y_offset = GetResourceKvpFloat(save_prefix .. "HUD_y_offset")
-	--Opacity
-	hud_bgd_opacity = GetResourceKvpInt(save_prefix .. "hud_bgd_opacity")
-	hud_button_off_opacity = GetResourceKvpInt(save_prefix .. "hud_button_off_opacity")
-	--Tones
-	tone_PMANU_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_PMANU_id")
-	tone_SMANU_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_SMANU_id")
-	tone_AUX_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_AUX_id")
-	tone_airhorn_intrp_int = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp")
-	if tone_airhorn_intrp_int == 0 then
-		tone_airhorn_intrp_int = false
-	else
-		tone_airhorn_intrp_int = true
-	end
-
-	--Main Siren Settings
-	if veh ~= nil then 
-		settings_string = GetResourceKvpString(save_prefix .. GetVehicleProfileName())
-		if settings_string ~= nil then
-			main_tone_settings = { }
-			settings_string_by_tone = Split(settings_string, "|")
-			for i, v in ipairs(settings_string_by_tone) do
-			  tone_settings = Split(settings_string_by_tone[i], ",")
-			  table.insert(main_tone_settings, { tonumber(tone_settings[1]), tonumber(tone_settings[2])})
-			end
-			settings_init = true
-		else
-			main_tone_settings = GetTonesList()
-			settings_init = true
-		end
+	curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+	save_version = GetResourceKvpString(save_prefix .. "save_version")
+	--Is save present if so what version
+	if curr_version ~= save_version and save_version ~= nil then
+		ShowNotification("~r~~h~Warning:~h~ ~s~LVC Save Version Mismatch.\n~o~Save Ver: " .. save_version .. "~s~.\n~b~Resource Ver: " .. curr_version .. "~s~...")
+		ShowNotification("...You may experience issues, to prevent this message from appearing resave vehicle profiles.")
 	end
 	
+	--General Settings
+	if save_version ~= nil then
+		show_HUD = IntToBool(GetResourceKvpInt(save_prefix .. "HUD"))
+		show_HUD = IntToBool(GetResourceKvpInt(save_prefix .. "HUD"))
+		HUD_x_offset = GetResourceKvpFloat(save_prefix .. "HUD_x_offset")
+		HUD_y_offset = GetResourceKvpFloat(save_prefix .. "HUD_y_offset")
+		hud_bgd_opacity = GetResourceKvpInt(save_prefix .. "hud_bgd_opacity")
+		hud_button_off_opacity = GetResourceKvpInt(save_prefix .. "hud_button_off_opacity")
+		
+		--Profile Specific Settings
+		tone_PMANU_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_PMANU_id")
+		tone_SMANU_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_SMANU_id")
+		tone_AUX_id = GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_AUX_id")
+		tone_airhorn_intrp = IntToBool(GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp"))
+		park_kill = IntToBool(GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill"))
+		
+		--Main Siren Settings
+		if veh ~= nil then 
+			settings_string = GetResourceKvpString(save_prefix .. GetVehicleProfileName())
+			if settings_string ~= nil then
+				main_tone_settings = { }
+				settings_string_by_tone = Split(settings_string, "|")
+				for i, v in ipairs(settings_string_by_tone) do
+				  tone_settings = Split(settings_string_by_tone[i], ",")
+				  table.insert(main_tone_settings, { tonumber(tone_settings[1]), tonumber(tone_settings[2])})
+				end
+				settings_init = true
+			end
+		end
+	end
 	--Resolve any issues from attempting to load any non-saved vehicles. 
 	if tone_PMANU_id == nil then
 		tone_PMANU_id = GetTone(veh, 2)
@@ -436,6 +489,22 @@ function TableToString(tbl)
 	return s
 end
 
+function IntToBool(int_value)
+	if int_value == 1 then
+		return true
+	else
+		return false
+	end
+end
+
+function BoolToInt(bool_value)
+	if bool_value then
+		return 1
+	else
+		return 0
+	end
+end
+
 function GetVehicleProfileName()
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	if _G[veh_name] ~= nil then
@@ -469,10 +538,10 @@ function GetNextTone(current_tone, veh, main_tone)
 	else
 		result = temp_tone_array[2]
 	end
-	
+
 	if main_tone then
 		--Check if the tone is set to disable or button only if so, find next tone
-		while main_tone_settings[result - 1][2] > 2 do
+		while main_tone_settings[temp_pos - 1][2] > 2 do
 			result = GetNextTone(result, veh, main_tone) 
 		end
 	end
@@ -545,11 +614,12 @@ function ShowNotification(text)
 end
 
 ---------------------------------------------------------------------
-function ShowText(x, y, align, text)
+function ShowText(x, y, align, text, scale)
+	scale = scale or 0.4
 	SetTextJustification(align)
 	SetTextFont(0)
 	SetTextProportional(1)
-	SetTextScale(0.0, 0.4)
+	SetTextScale(0.0, scale)
 	SetTextColour(128, 128, 128, 255)
 	SetTextDropshadow(0, 0, 0, 0, 255)
 	SetTextEdge(1, 0, 0, 0, 255)
@@ -652,7 +722,7 @@ function SetLxSirenStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-function TogPowercallStateForVeh(veh, newstate)
+function SetPowercallStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_pwrcall[veh] then
 			if snd_pwrcall[veh] ~= nil then
@@ -684,6 +754,24 @@ function SetAirManuStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
+AddEventHandler('lux_vehcontrol:ELSClick', function(soundFile, soundVolume)
+SendNUIMessage({
+  transactionType     = 'playSound',
+  transactionFile     = soundFile,
+  transactionVolume   = soundVolume
+})
+end)
+---------------------------------------------------------------------
+RegisterNetEvent("lvc_GetVersion_c")
+AddEventHandler("lvc_GetVersion_c", function(sender, version)
+	repo_version = version
+	if repo_version ~= nil and curr_version ~= nil then
+		curr_version_text = "v" .. curr_version
+		repo_version_text = "v" .. repo_version
+	end
+end)
+
+---------------------------------------------------------------------
 RegisterNetEvent("lvc_TogIndicState_c")
 AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
@@ -696,14 +784,6 @@ AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
 			end
 		end
 	end
-end)
-
-AddEventHandler('lux_vehcontrol:ELSClick', function(soundFile, soundVolume)
-SendNUIMessage({
-  transactionType     = 'playSound',
-  transactionFile     = soundFile,
-  transactionVolume   = soundVolume
-})
 end)
 
 ---------------------------------------------------------------------
@@ -745,7 +825,7 @@ AddEventHandler("lvc_TogPwrcallState_c", function(sender, newstate)
 		if ped_s ~= GetPlayerPed(-1) then
 			if IsPedInAnyVehicle(ped_s, false) then
 				local veh = GetVehiclePedIsUsing(ped_s)
-				TogPowercallStateForVeh(veh, newstate)
+				SetPowercallStateForVeh(veh, newstate)
 			end
 		end
 	end
@@ -879,7 +959,7 @@ Citizen.CreateThread(function()
 						count_bcast_timer = delay_bcast_timer
 					end
 					if not IsVehicleSirenOn(veh) and state_pwrcall[veh] > 0 then
-						TogPowercallStateForVeh(veh, 0)
+						SetPowercallStateForVeh(veh, 0)
 						count_bcast_timer = delay_bcast_timer
 					end
 				
@@ -934,21 +1014,21 @@ Citizen.CreateThread(function()
 										TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume) -- Upgrade
 										if tone_AUX_id ~= nil then
 											if IsApprovedTone(veh, tone_AUX_id) then
-												TogPowercallStateForVeh(veh, tone_AUX_id)
+												SetPowercallStateForVeh(veh, tone_AUX_id)
 											else
 												tone_AUX_id = GetTone(veh, 3)
-												TogPowercallStateForVeh(veh, tone_AUX_id)
+												SetPowercallStateForVeh(veh, tone_AUX_id)
 											end
-											TogPowercallStateForVeh(veh, tone_AUX_id)
+											SetPowercallStateForVeh(veh, tone_AUX_id)
 										else
 											tone_AUX_id = GetTone(veh, 3)
-											TogPowercallStateForVeh(veh, tone_AUX_id)											
+											SetPowercallStateForVeh(veh, tone_AUX_id)											
 										end
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
 									TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume) -- Downgrade
-									TogPowercallStateForVeh(veh, 0)
+									SetPowercallStateForVeh(veh, 0)
 									count_bcast_timer = delay_bcast_timer
 								end
 								
@@ -1040,7 +1120,7 @@ Citizen.CreateThread(function()
 					end
 					
 					if tone_airhorn_intrp then
-						if hmanu_state_new == 1 then
+						if hmanu_state_new == GetTone(veh, 1) then
 							if state_lxsiren[veh] > 0 and actv_lxsrnmute_temp == false then
 								srntone_temp = state_lxsiren[veh]
 								SetLxSirenStateForVeh(veh, 0)

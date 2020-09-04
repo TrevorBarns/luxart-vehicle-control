@@ -14,8 +14,8 @@
 
 ---@type table
 local SettingsButton = {
-    Rectangle = { Y = 0, Width = 431, Height = 38 },
-    Text = { X = 8, Y = 3, Scale = 0.33 },
+    Rectangle = { Y = 0, Width = 431, Height = 29 },
+    Text = { X = 8, Y = 0, Scale = 0.33 },
 }
 
 function RageUI.Separator(Label)

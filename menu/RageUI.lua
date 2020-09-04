@@ -271,13 +271,13 @@ RageUI.Settings = {
         },
         Background = { Dictionary = "commonmenu", Texture = "gradient_bgd", Y = 0, Width = 431 },
         Navigation = {
-            Rectangle = { Width = 431, Height = 18 },
+            Rectangle = { Y = 4, Width = 431, Height = 18 },
             Offset = 5,
-            Arrows = { Dictionary = "commonmenu", Texture = "shop_arrows_upanddown", X = 190, Y = -6, Width = 50, Height = 50 },
+            Arrows = { Dictionary = "commonmenu", Texture = "shop_arrows_upanddown", X = 190, Y = 0, Width = 45, Height = 45 },
         },
         Description = {
-            Bar = { Y = 4, Width = 431, Height = 4 },
-            Background = { Dictionary = "commonmenu", Texture = "gradient_bgd", Y = 4, Width = 431, Height = 30 },
+            Bar = { Y = 8, Width = 431, Height = 4 },
+            Background = { Dictionary = "commonmenu", Texture = "gradient_bgd", Y = 8, Width = 431, Height = 30 },
             Text = { X = 8, Y = 10, Scale = 0.35 },
         },
     },
