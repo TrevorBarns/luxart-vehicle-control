@@ -110,11 +110,13 @@ RegisterCommand('lvcfactoryreset', function(source, args)
 		local key = FindKvp(handle)
 		while key ~= nil do
 			DeleteResourceKvp(key)
-			print("LVC: Deleting Key \"" .. key .. "\"")
+			print("LVC Info: Deleting Key \"" .. key .. "\"")
 			key = FindKvp(handle)
 			Citizen.Wait(0)
 		end
-		print("LVC: Successfully cleared all save data.") 
+		settings_init = false
+		print("LVC Info: Successfully cleared all save data.")
+		ShowNotification("~g~LVC Info~s~: Successfully cleared all save data.")
 	end
 end)
 
@@ -150,7 +152,7 @@ end)
 RegisterKeyMapping("lvclock", "LVC: Lock out controls", "keyboard", lockout_default_hotkey)
 
 --Dynamically Run RegisterCommand and KeyMapping functions for all 14 possible sirens
---Then at runtime "slide" all sirens down removing any disabled/restricted sirens.
+--Then at runtime "slide" all sirens down removing any restricted sirens.
 function RegisterKeyMaps()
 	local written_number = { "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "13th", "14th" }
 	for i, _ in ipairs(tone_table) do
@@ -161,17 +163,24 @@ function RegisterKeyMaps()
 			RegisterCommand(command, function(source, args)
 				if IsVehicleSirenOn(veh) and player_is_emerg_driver then
 					local proposed_tone = GetTone(veh, i)
-					local tone_setting = main_tone_settings[proposed_tone-1][2]
-					if i <= GetToneCount(veh) and tone_setting < 4 and tone_setting ~= 2 then
-						if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
-							TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume)
-							SetLxSirenStateForVeh(veh, proposed_tone)
-							count_bcast_timer = delay_bcast_timer
-						else
-							TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume)
-							SetLxSirenStateForVeh(veh, 0)
-							count_bcast_timer = delay_bcast_timer				
+					local tone_index = GetIndex(proposed_tone)
+					if main_tone_settings[tone_index] ~= nil then
+						local tone_setting = main_tone_settings[tone_index][2]
+					
+						if i <= GetToneCount(veh) and tone_setting < 4 and tone_setting ~= 2 then
+							if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
+								TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", upgrade_volume)
+								SetLxSirenStateForVeh(veh, proposed_tone)
+								count_bcast_timer = delay_bcast_timer
+							else
+								TriggerEvent("lux_vehcontrol:ELSClick", "Downgrade", downgrade_volume)
+								SetLxSirenStateForVeh(veh, 0)
+								count_bcast_timer = delay_bcast_timer				
+							end
 						end
+					else
+						ShowNotification("~r~LVC ERROR 2: ~s~Nil value caught.\ndetails: (" .. tone_index .. "," .. proposed_tone .. "," .. GetVehicleProfileName() .. ")")
+						ShowNotification("~b~LVC ERROR 2: ~s~Try switching vehicles and switching back OR loading profile settings (if save present).")
 					end
 				end
 			end)
@@ -211,10 +220,18 @@ Citizen.CreateThread(function()
 				--IS EMERGENCY VEHICLE
 				if GetVehicleClass(veh) == 18 then
 					player_is_emerg_driver = true
+					player_is_emerg_driver = true
+					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
+					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
+					DisableControlAction(0, 81, true) -- INPUT_VEH_NEXT_RADIO
+					DisableControlAction(0, 82, true) -- INPUT_VEH_PREV_RADIO
+					DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
+					DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 
+					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM 														 									   								
 				end
 			end
 		end
-		Citizen.Wait(1000)
+		Citizen.Wait(1)
 	end
 end)
 
@@ -228,9 +245,29 @@ Citizen.CreateThread(function()
 				end
 				SetLxSirenStateForVeh(veh, 0)
 				SetPowercallStateForVeh(veh, 0)
+				count_bcast_timer = delay_bcast_timer
 				Citizen.Wait(1000)		
 			end
 			Citizen.Wait(0)		
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
+-- Vehicle Change Check
+Citizen.CreateThread(function()
+	while true do
+		if veh ~= nil then
+			if last_veh == nil then
+				last_veh = veh
+			else
+				if last_veh ~= veh then
+					settings_init = false
+					LoadSettings()
+					tone_main_mem_id = GetTone(veh, 2)
+					last_veh = veh
+				end
+			end
 		end
 		Citizen.Wait(1000)
 	end
@@ -365,7 +402,7 @@ AddEventHandler( "playerSpawned", function()
 		if main_siren_register_keys_master_switch then
 			RegisterKeyMaps()
 		end
-		LoadSettings()
+		LoadSettings()	--POS Delete
 		spawned = true
 	end 
 end )
@@ -505,6 +542,14 @@ function BoolToInt(bool_value)
 	end
 end
 
+function BoolToString(bool_value)
+	if bool_value then
+		return "true"
+	else
+		return "false"
+	end
+end
+
 function GetVehicleProfileName()
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	if _G[veh_name] ~= nil then
@@ -534,15 +579,21 @@ function GetNextTone(current_tone, veh, main_tone)
 		end
 	end
 	if temp_pos < #temp_tone_array then
-		result = temp_tone_array[temp_pos+1]
+		temp_pos = temp_pos+1
+		result = temp_tone_array[temp_pos]
 	else
+		temp_pos = 2
 		result = temp_tone_array[2]
 	end
 
 	if main_tone then
 		--Check if the tone is set to disable or button only if so, find next tone
-		while main_tone_settings[temp_pos - 1][2] > 2 do
-			result = GetNextTone(result, veh, main_tone) 
+		if main_tone_settings[temp_pos-1] ~= nil then
+			if main_tone_settings[temp_pos-1][2] > 2 then
+				result = GetNextTone(result, veh, main_tone)
+			end
+		else
+			ShowNotification("~r~LVC ERROR 1: ~s~Nil value caught.\ndetails: (" .. temp_pos .. "," .. result .. "," .. GetVehicleProfileName() .. ")")
 		end
 	end
 	
@@ -585,6 +636,10 @@ end
 function IsApprovedTone(veh, tone) 
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
+	--[[if veh_name == "CARNOTFOUND" then 
+		return false
+	end]]
+	
  	if _G[veh_name] ~= nil then
 		temp_tone_array = _G[veh_name]
 	else 
@@ -610,7 +665,7 @@ end
 function ShowNotification(text)
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
-	DrawNotification(false, false)
+	DrawNotification(false, true)
 end
 
 ---------------------------------------------------------------------
@@ -889,14 +944,6 @@ Citizen.CreateThread(function()
 				if GetVehicleClass(veh) == 18 then
 					local actv_manu = false
 					local actv_horn = false
-					
-					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
-					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
-					DisableControlAction(0, 81, true) -- INPUT_VEH_NEXT_RADIO
-					DisableControlAction(0, 82, true) -- INPUT_VEH_PREV_RADIO
-					DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
-					DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 
-					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM 
 				
 					SetVehRadioStation(veh, "OFF")
 					SetVehicleRadioEnabled(veh, false

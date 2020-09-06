@@ -12,7 +12,7 @@ PURPOSE: Handle RageUI menu stuff
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu", 800))
+RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu"))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
 RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Tone Selection Menu"))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "HUD Settings"))
@@ -29,6 +29,7 @@ main_tone_choices = { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' 
 settings_init = false
 
 --Strings for Save/Load confirmation, not ideal but it works. 
+local ok_to_disable  = true
 local confirm_s_msg
 local confirm_l_msg
 local confirm_fr_msg
@@ -42,14 +43,6 @@ local github_index = 1
 
 Keys.Register(open_menu_key, open_menu_key, 'LVC: Open Menu', function()
 	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
-		if last_veh == nil then
-			last_veh = veh
-		else
-			if last_veh ~= veh then
-				LoadSettings()
-				settings_init = false
-			end
-		end
 		if tone_PMANU_id == nil then
 			tone_PMANU_id = GetTone(veh, 2)
 		elseif not IsApprovedTone(veh, tone_PMANU_id) then
@@ -87,11 +80,11 @@ end
 --Returns table of all tones with settings value
 function GetTonesList()
 	local list = { } 
-	for i, v in ipairs(tone_table) do
-		if i ~= 1 and IsApprovedTone(veh, i)then
-			table.insert(list, {i,1})
+	for index, _ in ipairs(tone_table) do
+		if index ~= 1 and IsApprovedTone(veh, index) then
+			table.insert(list, {index,1})
 		end
-	end
+	end	
 	return list
 end
 
@@ -109,10 +102,25 @@ function IsMenuOpen()
 	return RageUI.Visible(RMenu:Get('lvc', 'main')) or RageUI.Visible(RMenu:Get('lvc', 'maintone')) or RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or RageUI.Visible(RMenu:Get('lvc', 'about'))
 end
 
+--Ensure not all sirens are disabled
+function SetCheckVariable() 
+	ok_to_disable = false
+	local count = 0
+	for i, siren in ipairs(main_tone_settings) do
+		if siren[2] < 4 then
+			count = count + 1
+		end
+	end
+	if count > 1 then
+		ok_to_disable = true
+	end
+end
+
+
 --Loads settings and builds first table states, also updates tone_list every second for vehicle changes
 Citizen.CreateThread(function()
     while true do
-		if not settings_init then
+		if not settings_init and player_is_emerg_driver then
 			main_tone_settings = GetTonesList()
 			settings_init = true
 		end
@@ -202,7 +210,9 @@ Citizen.CreateThread(function()
 			  end,
 			}, RMenu:Get('lvc', 'about'))
         end)
-		
+		---------------------------------------------------------------------
+		----------------------------SAVE LOAD MENU---------------------------
+		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'saveload'), function()
 			--Disable up arrow default action (next weapon) when menu is open
 			DisableControlAction(0, 99, true) 
@@ -246,7 +256,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_fr_msg == "Are you sure?" then
 					RageUI.CloseAll()
-					Citizen.Wait(500)
+					Citizen.Wait(100)
 					ExecuteCommand('lvcfactoryreset')
 					RageUI.Settings.Controls.Back.Enabled = true
 					confirm_fr_msg = nil
@@ -259,7 +269,9 @@ Citizen.CreateThread(function()
 			  end,
 			})
         end)	
-		
+		---------------------------------------------------------------------
+		----------------------------MAIN TONE MENU---------------------------
+		---------------------------------------------------------------------	
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			--Disable up arrow default action (next weapon) when menu is open
 			DisableControlAction(0, 99, true) 
@@ -272,12 +284,19 @@ Citizen.CreateThread(function()
 			for i, siren in pairs(main_tone_settings) do
 				RageUI.List(tone_table[siren[1]], main_tone_choices, siren[2], "Change how is activated.\nCycle: play as you cycle through sirens using R or (B).\nButton: play when associated registered key is pressed.", {}, IsApprovedTone(veh, siren[1]), {
 					onListChange = function(Index, Item)
-						siren[2] = Index;
+						if Index < 3 or ok_to_disable then
+							siren[2] = Index;
+						else
+							ShowNotification("~y~LVC Info~s~: Action prohibited, cannot disable all sirens.") 
+						end
+						SetCheckVariable()
 					end,
 				})
 			end
         end)	
-		
+		---------------------------------------------------------------------
+		--------------------------HUD SETTINGS MENU--------------------------
+		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'hudsettings'), function()
 			--Disable up arrow default action (next weapon) when menu is open
 			DisableControlAction(0, 99, true) 
@@ -314,6 +333,9 @@ Citizen.CreateThread(function()
 			})
         end)
 		
+		---------------------------------------------------------------------
+		------------------------------ABOUT MENU-----------------------------
+		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'about'), function()
 			--Disable up arrow default action (next weapon) when menu is open
 			DisableControlAction(0, 99, true) 

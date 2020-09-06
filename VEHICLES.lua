@@ -37,11 +37,14 @@ Where 'paleto1' is the vehicele's <modelName> as defined in vehicles.meta. Space
 Next to that is an array of assigned/allowed sirens IDs: 2=wail, 3=yelp, etc.
 ]]
 --Modify the table below to accurately represent each tone name
-tone_table = { "Airhorn", "Wail", "Yelp", "Priority", "Futura", "Hetro", "Sweep-1", "Sweep-2", "Hi-Low", "Whine Down", "Powercall", "QSiren", "Fire Yelp", "Pulsed Airhorn" } 
+tone_table = { "Airhorn", "Wail", "Yelp", "Priority", "Futura", "Hetro", "Sweep-1", "Sweep-2", "Hi-Low", "Whine Down", "Powercall", "QSiren", "Fire Yelp", "Fire Yelp" } 
 --				  1			2 		3		4			5		6		 7			8			 9			10			11			12			13				14
 
 --Example A: Basic Operation: operate same as v2 no additional siren tones implemented
-DEFAULT = { 1, 2, 3, 4, 7, 9, 10 } 
+DEFAULT = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } 
+so1 = { 1, 2, 3, 4, 6, 7, 10 } 
+so2 = { 1, 6, 7, 10 } 
+so4 = { 1, 6, 7, 10, 14 } 
 FIRETRUK = { 12, 13, 14, 11 } 
 AMBULAN = { 1, 2, 3, 4, 11 } 
 LGUARD = { 1, 2, 3, 4, 11 } 
