@@ -206,8 +206,8 @@ end)
 
 
 ----------------THREADED FUNCTIONS----------------
--- IS PLAYER SUPPOSED TO HAVE ACCESS TO LVC? 
--- player_is_emerg_driver is true if yes. 
+-- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
+-- Disables controls faster than previous thread. 
 Citizen.CreateThread(function()
 	while true do
 		player_is_emerg_driver = false	
@@ -219,7 +219,6 @@ Citizen.CreateThread(function()
 			if GetPedInVehicleSeat(veh, -1) == playerped then
 				--IS EMERGENCY VEHICLE
 				if GetVehicleClass(veh) == 18 then
-					player_is_emerg_driver = true
 					player_is_emerg_driver = true
 					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
 					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
@@ -273,7 +272,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
-
+-- Move Mode UI + Control handling
 Citizen.CreateThread(function()
 	local HUD_move_lg_increment = 0.0050
 	local HUD_move_sm_increment = 0.0001
@@ -336,7 +335,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
--- HUD DRAWING 
+-- Main HUD UI drawing 
 Citizen.CreateThread(function()
 	local retrieval, veh_lights, veh_headlights 
 	while true do
@@ -402,7 +401,6 @@ AddEventHandler( "playerSpawned", function()
 		if main_siren_register_keys_master_switch then
 			RegisterKeyMaps()
 		end
-		LoadSettings()	--POS Delete
 		spawned = true
 	end 
 end )
@@ -636,10 +634,7 @@ end
 function IsApprovedTone(veh, tone) 
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
-	--[[if veh_name == "CARNOTFOUND" then 
-		return false
-	end]]
-	
+
  	if _G[veh_name] ~= nil then
 		temp_tone_array = _G[veh_name]
 	else 
