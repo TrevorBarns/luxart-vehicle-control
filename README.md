@@ -11,7 +11,6 @@ A small togglable and adjustable visual representation of the scripts functional
 <p align="center">
 <img align="center" width="530" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
 <img align="center" width="530" src="https://i.gyazo.com/04206551d05f3554eeb9f0b8f8ff6928.jpg">
-<img align="center" width="530" src="https://i.gyazo.com/52a5f130dee65c9dff31ff7e1ba911be.jpg">
 </p>
 
 __Additional Tones ("Siren Mastery"):__
