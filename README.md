@@ -16,17 +16,20 @@ A small togglable and adjustable visual representation of the scripts functional
 
 __Additional Tones ("Siren Mastery"):__
 Add support for up to 6 additional vanilla tones: `RESIDENT_VEHICLES_SIREN_WAIL_01,2,3` and `RESIDENT_VEHICLES_SIREN_QUICK_01,2,3`. With a plethora of customization on how LVC works for you. Some examples: an expanded siren set for all to use including custom created sweeps/autocycles, department specific siren such as Paleto using one siren pack and LSPD using another, the options are endless. 
+<p align="center">
+<img align="center" width="530" src="https://i.gyazo.com/48e92fb46f97e6f3b310826302992b43.png">
+</p>
 
 __ELS Style Hotkey Assignments:__
 Cycle your tones like single player ELS with player definied hotkey assignments. For example use your numrow or numpad to change sirens on the fly. 
 <p align="center">
-<img align="center" width="530" src="https://i.gyazo.com/fe99a7d6754de9ba71b652b5314a132a.png">
+<img align="center" width="530" src="https://i.gyazo.com/ef0c9c862bf02c839ce1c94a4b490f74.png">
 </p>
 
 __Adjustable Manual / Auxilary Tones:__
 Change which tone to use for each manual tone (primary and secondary) as well as the auxiliary tone. These are also saved to the client requiring no changes at relog. 
 <p align="center">
-<img align="center" width="530" src="https://i.gyazo.com/84df39e149d32772e4f95b8e578421b8.jpg">
+<img align="center" width="530" src="https://i.gyazo.com/ea4b046dcf4363168320aa051a93ecde.png">
 </p>
 
 __Lockout:__
@@ -92,7 +95,7 @@ __If you stream commonmenu.ytd with another resource (for example to stream cust
 
 2. Navigate to `lux_vehcontrol/extras/RawTextures` add all textures to other resource's commonmenu.ytd. 
 3. Remove or Rename stream folder to prevent overriding othe resource's commonmenu.ytd. 
-4. Open config.lua and configure to your liking. 
+4. Open config.lua and configure to your liking. Install any additional tones you would like to enable locally.
 5. Enjoy!
 
 ## Credits:
