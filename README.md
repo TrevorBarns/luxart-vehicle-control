@@ -9,6 +9,8 @@ Introduction Video: https://youtu.be/XO5K7iISOh0
 
 Installation Video: https://youtu.be/YVm3yYxdm48
 
+Community Upgrade Guides: https://drive.google.com/drive/folders/1trjNXnpmlh_5Q5syXESjwSODdFOFXBdE?usp=sharing
+
 ## Additional Functionality:
 
 __LuxHUD:__ 
