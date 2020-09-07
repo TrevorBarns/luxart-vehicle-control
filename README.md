@@ -4,6 +4,11 @@
 
 # Luxart Vehicle Control v3
 Over the past months, I have been slowing integrating additonal features into Faction's release (v2.0) of Lt. Caine's Luxart Vehicle Control resource, I would now like to release these to the public. 
+
+Introduction Video: https://youtu.be/XO5K7iISOh0
+
+Installation Video: https://youtu.be/YVm3yYxdm48
+
 ## Additional Functionality:
 
 __LuxHUD:__ 
