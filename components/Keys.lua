@@ -30,7 +30,6 @@ function Keys.Register(Controls, ControlName, Description, Action)
     RegisterKeyMapping(string.format('rageui-%s', ControlName), Description, "keyboard", Controls)
     RegisterCommand(string.format('rageui-%s', ControlName), function(source, args)
         if (Action ~= nil) then
-            print(string.format('RageUI - Pressed keys %s', Controls))
             Action();
         end
     end, false)

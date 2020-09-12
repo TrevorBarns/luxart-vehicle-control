@@ -33,10 +33,9 @@ function checkVersion(err,responseText, headers)
 	repo_version = responseText
     curVersion = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
 	if curVersion < responseText then
-		updateavail = true
 		print("\n^1----------------------------------------------------------------------------------^7")
 		print(resourceName.." is outdated, latest version is: ^2"..responseText.."^7, installed version: ^1"..curVersion.."^7!\nupdate from https://github.com"..updatePath.."")
-		print("^1----------------------------------------------------------------------------------^7")
+		print("^1----------------------------------------------------------------------------------^7\n")
 	elseif curVersion > responseText then
 		--print("\n^3----------------------------------------------------------------------------------^7")
 		--print(resourceName.." git version is: ^2"..responseText.."^7, installed version: ^1"..curVersion.."^7!")
