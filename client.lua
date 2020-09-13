@@ -514,6 +514,7 @@ function SaveSettings()
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill",  BoolToInt(park_kill))
 		
 	--Audio Settings
+	SetResourceKvp(save_prefix .. "button_sfx_scheme",  button_sfx_scheme)
 	SetResourceKvpFloat(save_prefix .. "audio_on_volume",  on_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_off_volume",  off_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_upgrade_volume",  upgrade_volume + .0)
@@ -558,6 +559,7 @@ function LoadSettings()
 		park_kill = IntToBool(GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill"))
 		
 		--Audio Settings
+		button_sfx_scheme = GetResourceKvpString(save_prefix .. "button_sfx_scheme")	
 		on_volume = GetResourceKvpFloat(save_prefix .. "audio_on_volume")	
 		off_volume = GetResourceKvpFloat(save_prefix .. "audio_off_volume")		
 		upgrade_volume = GetResourceKvpFloat(save_prefix .. "audio_upgrade_volume")		
