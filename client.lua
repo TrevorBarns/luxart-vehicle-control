@@ -559,7 +559,11 @@ function LoadSettings()
 		park_kill = IntToBool(GetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill"))
 		
 		--Audio Settings
-		button_sfx_scheme = GetResourceKvpString(save_prefix .. "button_sfx_scheme")	
+		if ( GetResourceKvpString(save_prefix .. "button_sfx_scheme") ~= nil ) then
+			button_sfx_scheme = GetResourceKvpString(save_prefix .. "button_sfx_scheme")	
+		else
+			button_sfx_scheme = default_sfx_scheme_name
+		end
 		on_volume = GetResourceKvpFloat(save_prefix .. "audio_on_volume")	
 		off_volume = GetResourceKvpFloat(save_prefix .. "audio_off_volume")		
 		upgrade_volume = GetResourceKvpFloat(save_prefix .. "audio_upgrade_volume")		
