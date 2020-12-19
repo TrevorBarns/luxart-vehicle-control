@@ -425,9 +425,9 @@ Citizen.CreateThread(function()
 				TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", lock_volume)
 			  end,			  
 			})					
-			RageUI.Slider('Lock Reminder Volume', (lock_volume*100), 100, 2, "Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.", true, {}, true, {
+			RageUI.Slider('Lock Reminder Volume', (lock_reminder_volume*100), 100, 2, "Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.", true, {}, true, {
 			  onSliderChange = function(Index)
-				lock_volume = (Index/100)
+				lock_reminder_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
 				TriggerEvent("lux_vehcontrol:ELSClick", "Locked_Press", on_volume)
