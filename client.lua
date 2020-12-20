@@ -244,48 +244,48 @@ Citizen.CreateThread(function()
 		while show_HUD and player_is_emerg_driver and not IsHudHidden() do
 			DrawRect(HUD_x_offset + 0.0828, HUD_y_offset + 0.724, 0.16, 0.06, 26, 26, 26, hud_bgd_opacity)
 			if IsVehicleSirenOn(veh) then
-				DrawSprite("commonmenu", "lux_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
+				DrawSprite("commonmenu", "lvc_switch_3_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_on_opacity)									
 			else
-				DrawSprite("commonmenu", "lux_switch_1_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity)														
+				DrawSprite("commonmenu", "lvc_switch_1_hud", HUD_x_offset + 0.025, HUD_y_offset + 0.725, 0.042, 0.06, 0.0, 200, 200, 200, hud_button_off_opacity)														
 			end
 			
 			if state_lxsiren[veh] ~= nil then
 				if state_lxsiren[veh] > 0 or state_pwrcall[veh] > 0 then
-					DrawSprite("commonmenu", "lux_siren_on_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)				
+					DrawSprite("commonmenu", "lvc_siren_on_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)				
 				else
-					DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+					DrawSprite("commonmenu", "lvc_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
 				end
 			else
-				DrawSprite("commonmenu", "lux_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
+				DrawSprite("commonmenu", "lvc_siren_off_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)										
 			end
 			
 			if IsDisabledControlPressed(0, 86) and not key_lock then
-				DrawSprite("commonmenu", "lux_horn_on_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)												
+				DrawSprite("commonmenu", "lvc_horn_on_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)												
 			else
-				DrawSprite("commonmenu", "lux_horn_off_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+				DrawSprite("commonmenu", "lvc_horn_off_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 			end
 			
 			if (IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81)) and not key_lock then
 				if state_lxsiren[veh] > 0 then
-					DrawSprite("commonmenu", "lux_horn_on_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+					DrawSprite("commonmenu", "lvc_horn_on_hud", HUD_x_offset + 0.0895, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 				else
-					DrawSprite("commonmenu", "lux_siren_on_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)	
+					DrawSprite("commonmenu", "lvc_siren_on_hud", HUD_x_offset + 0.061, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)	
 				end
 			end
 			
 			retrieval, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 			if veh_lights == 1 and veh_headlights == 0 then
-				DrawSprite("commonmenu", "lux_tkd_off_hud" ,HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+				DrawSprite("commonmenu", "lvc_tkd_off_hud" ,HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 			elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
-				DrawSprite("commonmenu", "lux_tkd_on_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+				DrawSprite("commonmenu", "lvc_tkd_on_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 			else
-				DrawSprite("commonmenu", "lux_tkd_off_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
+				DrawSprite("commonmenu", "lvc_tkd_off_hud", HUD_x_offset + 0.118, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)																			
 			end
 			
 			if key_lock then
-				DrawSprite("commonmenu", "lux_lock_on_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
+				DrawSprite("commonmenu", "lvc_lock_on_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_on_opacity)
 			else
-				DrawSprite("commonmenu", "lux_lock_off_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)					
+				DrawSprite("commonmenu", "lvc_lock_off_hud", HUD_x_offset + 0.1465, HUD_y_offset + 0.725, 0.0275, 0.05, 0.0, 200, 200, 200, hud_button_off_opacity)					
 			end
 			Citizen.Wait(0)
 		end
@@ -329,7 +329,7 @@ end)
 RegisterCommand('lvclock', function(source, args)
 	if player_is_emerg_driver then	
 		key_lock = not key_lock
-		TriggerEvent("lux_vehcontrol:ELSClick", "Key_Lock", lock_volume) 
+		TriggerEvent("lvc_vehcontrol:ELSClick", "Key_Lock", lock_volume) 
 		--if HUD is visible do not show notification
 		if not show_HUD then
 			if key_lock then
@@ -361,11 +361,11 @@ function RegisterKeyMaps()
 							local tone_setting = main_tone_settings[tone_index][2]
 							if i <= GetToneCount(veh) and tone_setting == 1 or tone_setting == 3 then
 								if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Upgrade", upgrade_volume)
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Upgrade", upgrade_volume)
 									SetLxSirenStateForVeh(veh, proposed_tone)
 									count_bcast_timer = delay_bcast_timer
 								else
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Downgrade", downgrade_volume)
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Downgrade", downgrade_volume)
 									SetLxSirenStateForVeh(veh, 0)
 									count_bcast_timer = delay_bcast_timer				
 								end
@@ -885,7 +885,7 @@ end
 ------------------------------------------------
 ----------------EVENT HANDLERS------------------
 ------------------------------------------------
-AddEventHandler('lux_vehcontrol:ELSClick', function(soundFile, soundVolume)
+AddEventHandler('lvc_vehcontrol:ELSClick', function(soundFile, soundVolume)
 SendNUIMessage({
   transactionType     = 'playSound',
   transactionFile     = soundFile,
@@ -1090,14 +1090,14 @@ Citizen.CreateThread(function()
 							-- TOG DFLT SRN LIGHTS
 							if IsDisabledControlJustReleased(0, 85) or IsDisabledControlJustReleased(0, 246) then
 								if IsVehicleSirenOn(veh) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Off", off_volume) -- Off
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Off", off_volume) -- Off
 									SetVehicleSiren(veh, false)
 									--If the siren was on, save it in memory
 									if state_lxsiren[veh] > 0 and not tone_main_reset_standby then
 										tone_main_mem_id = state_lxsiren[veh]
 									end
 								else
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "On", on_volume) -- On
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "On", on_volume) -- On
 									Citizen.Wait(150)
 									SetVehicleSiren(veh, true)
 									count_bcast_timer = delay_bcast_timer
@@ -1107,7 +1107,7 @@ Citizen.CreateThread(function()
 							elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
 								if state_lxsiren[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
+										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
 										if not tone_main_reset_standby then
 											if IsApprovedTone(veh, tone_main_mem_id) then
 												SetLxSirenStateForVeh(veh, tone_main_mem_id)
@@ -1121,7 +1121,7 @@ Citizen.CreateThread(function()
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
 									if not tone_main_reset_standby then
 										tone_main_mem_id = state_lxsiren[veh]
 									end
@@ -1133,7 +1133,7 @@ Citizen.CreateThread(function()
 							elseif IsDisabledControlJustReleased(0, 172) and not IsMenuOpen() then --disable up arrow only in tone mode since testing would be beneficial 
 								if state_pwrcall[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
+										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
 										if tone_AUX_id ~= nil then
 											if IsApprovedTone(veh, tone_AUX_id) then
 												SetPowercallStateForVeh(veh, tone_AUX_id)
@@ -1149,7 +1149,7 @@ Citizen.CreateThread(function()
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
 									SetPowercallStateForVeh(veh, 0)
 									count_bcast_timer = delay_bcast_timer
 								end
@@ -1161,7 +1161,7 @@ Citizen.CreateThread(function()
 								if ( IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) ) and not ( IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81) )  then
 									if IsVehicleSirenOn(veh) then
 										newstate = GetNextTone(state_lxsiren[veh], veh, true)
-										TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
+										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
 										SetLxSirenStateForVeh(veh, newstate)
 										count_bcast_timer = delay_bcast_timer
 									end
@@ -1189,18 +1189,18 @@ Citizen.CreateThread(function()
 							--AIRHORN AND MANU BUTTON SFX
 							if airhorn_button_SFX then
 								if IsDisabledControlJustPressed(0, 86) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 86) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
 								end
 							end							
 							if manu_button_SFX and state_lxsiren[veh] == 0 then
 								if IsDisabledControlJustPressed(0, 80) or IsDisabledControlJustPressed(0, 81) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
-									TriggerEvent("lux_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
+									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
 								end
 							end
 						elseif not HUD_move_mode then
@@ -1214,7 +1214,7 @@ Citizen.CreateThread(function()
 								IsDisabledControlJustReleased(0, 85) or 
 								IsDisabledControlJustReleased(0, 246)) then
 									if locked_press_count % reminder_rate == 0 then
-										TriggerEvent("lux_vehcontrol:ELSClick", "Locked_Press", lock_reminder_volume) -- lock reminder
+										TriggerEvent("lvc_vehcontrol:ELSClick", "Locked_Press", lock_reminder_volume) -- lock reminder
 										ShowNotification("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.")
 									end
 									locked_press_count = locked_press_count + 1
@@ -1321,10 +1321,10 @@ Citizen.CreateThread(function()
 									local cstate = state_indic[veh]
 									if cstate == ind_state_h then
 										state_indic[veh] = ind_state_o
-										TriggerEvent("lux_vehcontrol:ELSClick", "Hazards_Off", hazards_volume) -- Hazards On
+										TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_Off", hazards_volume) -- Hazards On
 									else
 										state_indic[veh] = ind_state_h
-										TriggerEvent("lux_vehcontrol:ELSClick", "Hazards_On", hazards_volume) -- Hazards On
+										TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_On", hazards_volume) -- Hazards On
 									end
 									TogIndicStateForVeh(veh, state_indic[veh])
 									actv_ind_timer = false
