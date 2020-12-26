@@ -1,24 +1,14 @@
 --[[
 ---------------------------------------------------
-LUXART VEHICLE CONTROL ELS CLICKS (FOR FIVEM)
+LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: MAY 01 2017 (VERS. 1.01)
+Last revision: DECEMBER 26 2020 (VERS. 3.1.5)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additonal Modification by TrevorBarns
 ---------------------------------------------------
-NOTES
-	LVC will automatically apply to all emergency vehicles (vehicle class 18)
----------------------------------------------------
-CONTROLS	
-	Right indicator:	=	(Next Custom Radio Track)
-	Left indicator:		-	(Previous Custom Radio Track)
-	Hazard lights:	Backspace	(Phone Cancel)
-	Toggle emergency lights:	Y	(Text Chat Team)
-	Airhorn:	E	(Horn)
-	Toggle siren:	,	(Previous Radio Station)
-	Manual siren / Change siren tone:	N	(Next Radio Station)
-	Auxiliary siren:	Down Arrow	(Phone Up)
+FILE: client.lua
+PURPOSE: Everything Client Side minus UI
 ---------------------------------------------------
 ]]
 
@@ -37,9 +27,13 @@ tone_AUX_id = nil
 tone_main_mem_id = nil
 tone_main_reset_standby = true
 tone_airhorn_intrp = true
+park_kill = false
 
 airhorn_button_SFX = false
 manu_button_SFX = false
+activity_reminder_index = 1
+last_activity_timer = 0
+
 button_sfx_scheme = default_sfx_scheme_name
 on_volume = default_on_volume	
 off_volume = default_off_volume	
@@ -48,16 +42,15 @@ downgrade_volume = default_downgrade_volume
 hazards_volume = default_hazards_volume
 lock_volume = default_lock_volume
 lock_reminder_volume = default_lock_reminder_volume
+activity_reminder_volume = default_reminder_volume
 
 last_veh = nil
 veh = nil
 player_is_emerg_driver = false
-park_kill = false
-curr_version = nil
+curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
 repo_version = nil
 
 --LOCAL VARIABLES
-local spawned = false
 local playerped = nil
 local siren_string_lookup = { "SIRENS_AIRHORN", "VEHICLES_HORNS_SIREN_1", "VEHICLES_HORNS_SIREN_2", "VEHICLES_HORNS_POLICE_WARNING",
 							  "RESIDENT_VEHICLES_SIREN_WAIL_01", "RESIDENT_VEHICLES_SIREN_WAIL_02", "RESIDENT_VEHICLES_SIREN_WAIL_03",
@@ -67,6 +60,8 @@ local siren_string_lookup = { "SIRENS_AIRHORN", "VEHICLES_HORNS_SIREN_1", "VEHIC
 							  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01",
 							  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01"
 							}
+
+local activity_reminder_lookup = { [2] = 30000, [3] = 60000, [4] = 120000, [5] = 300000, [6] = 600000 } 
 
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
@@ -97,7 +92,6 @@ local snd_pwrcall = {}
 local snd_airmanu = {}
 
 
-TriggerEvent('chat:addSuggestion', '/lvchudmove', 'Toggle Luxart Vehicle Control HUD Move Mode.')
 TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 
 ----------------THREADED FUNCTIONS----------------
@@ -136,15 +130,53 @@ Citizen.CreateThread(function()
 	while true do
 		while park_kill and playerped ~= nil and veh ~= nil do
 			if GetIsTaskActive(playerped, 2) then
-				if not tone_main_reset_standby then
+				if not tone_main_reset_standby and state_lxsiren[veh] ~= 0 then
 					tone_main_mem_id = state_lxsiren[veh]
 				end
 				SetLxSirenStateForVeh(veh, 0)
 				SetPowercallStateForVeh(veh, 0)
+				SetAirManuStateForVeh(veh, 0)								 
 				count_bcast_timer = delay_bcast_timer
 				Citizen.Wait(1000)		
 			end
 			Citizen.Wait(0)		
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
+-- Activity Reminder Functionality
+Citizen.CreateThread(function()
+	while true do
+		while activity_reminder_index > 1 and player_is_emerg_driver do
+			if IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 then
+				if last_activity_timer < 1 then
+					TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Reminder", activity_reminder_volume) -- Upgrade
+					SetActivityTimer()
+				end
+			end
+			Citizen.Wait(100)
+		end
+		Citizen.Wait(1000)
+	end
+end) 
+
+-- Activity Reminder Timer
+Citizen.CreateThread(function()
+	while true do
+		if veh ~= nil then
+			while activity_reminder_index > 1 and IsVehicleSirenOn(veh) do
+				if last_activity_timer > 1 then
+					Citizen.Wait(1000)
+					last_activity_timer = last_activity_timer - 1000
+				else
+					Citizen.Wait(100)
+					SetActivityTimer()
+				   
+				end
+			end
+		else
+			Citizen.Wait(1000)			
 		end
 		Citizen.Wait(1000)
 	end
@@ -296,12 +328,8 @@ end)
 ------------------STORAGE MANAGEMENT-----------------
 --On Spawn Register Keys and Load Settings
 AddEventHandler( "playerSpawned", function()
-	if not spawned then
-		RegisterKeyMaps()
-		spawned = true
-	end 
-	LoadSettings()
 	TriggerServerEvent('lvc_GetVersion_s')
+	LoadSettings()
 end )
 
 --------------REGISTERED COMMANDS---------------
@@ -329,7 +357,7 @@ end)
 RegisterCommand('lvclock', function(source, args)
 	if player_is_emerg_driver then	
 		key_lock = not key_lock
-		TriggerEvent("lvc_vehcontrol:ELSClick", "Key_Lock", lock_volume) 
+		TriggerEvent("lvc:audio", "Key_Lock", lock_volume) 
 		--if HUD is visible do not show notification
 		if not show_HUD then
 			if key_lock then
@@ -361,11 +389,11 @@ function RegisterKeyMaps()
 							local tone_setting = main_tone_settings[tone_index][2]
 							if i <= GetToneCount(veh) and tone_setting == 1 or tone_setting == 3 then
 								if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Upgrade", upgrade_volume)
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" ..  "Upgrade", upgrade_volume)
 									SetLxSirenStateForVeh(veh, proposed_tone)
 									count_bcast_timer = delay_bcast_timer
 								else
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" ..  "Downgrade", downgrade_volume)
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" ..  "Downgrade", downgrade_volume)
 									SetLxSirenStateForVeh(veh, 0)
 									count_bcast_timer = delay_bcast_timer				
 								end
@@ -396,6 +424,7 @@ Citizen.CreateThread(function()
 	LoadSettings()
 	TriggerServerEvent('lvc_GetVersion_s')
 end)
+
 ------------------------------------------------
 -------------------FUNCTIONS--------------------
 ------------------------------------------------
@@ -407,13 +436,18 @@ function ShowHUD()
 end
 
 ------------------------------------------------
+--Resets activity timer
+function SetActivityTimer()
+	last_activity_timer = activity_reminder_lookup[activity_reminder_index] or 0
+end
+
+------------------------------------------------
 --On screen GTA V notification
 function ShowNotification(text)
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
 	DrawNotification(false, true)
 end
-
 
 ------------------------------------------------
 --Drawn On Screen Text at X, Y
@@ -480,24 +514,10 @@ function MakeOrdinal(number)
 end
 
 ------------------------------------------------
---Reset/Re-load Luxart Settings/Tables and mem_tone.
-function ResetSettings() 
-	settings_init = false
-	LoadSettings()
-	tone_main_mem_id = GetTone(veh, 2)
-end
-
-------------------------------------------------
 --Save all settings
 function SaveSettings()
 	local save_prefix = "lvc_setting_"
-	--Set KVP value to indicate there is a save present, if so what version
-	local save_version = GetResourceKvpString(save_prefix .. "save_version")
-	if curr_version ~= nil then
-		SetResourceKvp(save_prefix .. "save_version", curr_version)
-	else
-		SetResourceKvp(save_prefix .. "save_version", "Unknown")
-	end
+	SetResourceKvp(save_prefix .. "save_version", curr_version)
 	
 	--General Settings
 	SetResourceKvpInt(save_prefix .. "HUD",  BoolToInt(show_HUD))
@@ -519,11 +539,13 @@ function SaveSettings()
 	SetResourceKvpFloat(save_prefix .. "audio_off_volume",  off_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_upgrade_volume",  upgrade_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_downgrade_volume",  downgrade_volume + .0)
+	SetResourceKvpFloat(save_prefix .. "audio_activity_reminder_volume",  activity_reminder_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_hazards_volume",  hazards_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_lock_volume",  lock_volume + .0)
 	SetResourceKvpFloat(save_prefix .. "audio_lock_reminder_volume",  lock_reminder_volume + .0)
 	SetResourceKvpInt(save_prefix .. "audio_airhorn_button_SFX",  BoolToInt(airhorn_button_SFX))
 	SetResourceKvpInt(save_prefix .. "audio_manu_button_SFX",  BoolToInt(manu_button_SFX))
+	SetResourceKvpInt(save_prefix  ..  "audio_activity_reminder_index", activity_reminder_index)
 	
 	--Main Siren Settings
 	settings_string = TableToString(main_tone_settings)
@@ -534,12 +556,14 @@ end
 --Load all settings
 function LoadSettings()
 	local save_prefix = "lvc_setting_"
-	curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+	comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
 	save_version = GetResourceKvpString(save_prefix .. "save_version")
+	incompatible = IsNewerVersion(comp_version, save_version)
+	
 	--Is save present if so what version
-	if curr_version ~= save_version and save_version ~= nil then
-		AddTextEntry("lux_mismatch_version","~r~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~o~Save Ver: " .. save_version .. "~s~\n~b~Resource Ver: " .. curr_version .. "~s~\nYou may experience issues, to prevent this message from appearing resave vehicle profiles.")
-		SetNotificationTextEntry("lux_mismatch_version")
+	if incompatible then
+		AddTextEntry("lvc_mismatch_version","~r~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: " .. comp_version .. "\n~o~Save Version: " .. save_version .. "~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.")
+		SetNotificationTextEntry("lvc_mismatch_version")
 		DrawNotification(false, true)
 	end
 	
@@ -569,12 +593,14 @@ function LoadSettings()
 		off_volume = GetResourceKvpFloat(save_prefix .. "audio_off_volume")		
 		upgrade_volume = GetResourceKvpFloat(save_prefix .. "audio_upgrade_volume")		
 		downgrade_volume = GetResourceKvpFloat(save_prefix .. "audio_downgrade_volume")	
+		activity_reminder_volume = GetResourceKvpFloat(save_prefix .. "audio_activity_reminder_volume")	
 		hazards_volume = GetResourceKvpFloat(save_prefix .. "audio_hazards_volume")	
 		lock_volume = GetResourceKvpFloat(save_prefix .. "audio_lock_volume")	
 		lock_reminder_volume = GetResourceKvpFloat(save_prefix .. "audio_lock_reminder_volume")
 		airhorn_button_SFX = IntToBool(GetResourceKvpInt(save_prefix .. "audio_airhorn_button_SFX"))
 		manu_button_SFX = IntToBool(GetResourceKvpInt(save_prefix .. "audio_manu_button_SFX"))
-		
+		activity_reminder_index = GetResourceKvpInt(save_prefix  ..  "audio_activity_reminder_index")	
+
 		--Main Siren Settings
 		if veh ~= nil then 
 			settings_string = GetResourceKvpString(save_prefix .. GetVehicleProfileName())
@@ -592,18 +618,129 @@ function LoadSettings()
 	--Resolve any issues from attempting to load any non-saved vehicles. 
 	if tone_PMANU_id == nil then
 		tone_PMANU_id = GetTone(veh, 2)
-	elseif not IsApprovedTone(veh, tone_PMANU_id) then
-		tone_PMANU_id = GetTone(veh, 2)			
 	end
 	if tone_SMANU_id == nil then
 		tone_SMANU_id = GetTone(veh, 3)
-	elseif not IsApprovedTone(veh, tone_SMANU_id) then
-		tone_SMANU_id = GetTone(veh, 3)			
 	end
 	if tone_AUX_id == nil then
 		tone_AUX_id = GetTone(veh, 3)
-	elseif not IsApprovedTone(veh, tone_AUX_id) then
-		tone_AUX_id = GetTone(veh, 3)			
+	end
+end
+
+------------------------------------------------
+--RESETS ANY SETTINGS IN MENU TO DEFAULT USED WHEN FACTORY RESETTING
+function ResetSettings()
+	settings_init = false
+	show_HUD = hud_first_default							
+	key_lock = false				
+	HUD_x_offset = 0
+	HUD_y_offset = 0
+	HUD_move_mode = false
+	hud_bgd_opacity = 155
+	hud_button_on_opacity = 255
+	hud_button_off_opacity = 175
+
+	tone_PMANU_id = GetTone(veh, 2)
+	tone_SMANU_id = GetTone(veh, 3)
+	tone_AUX_id = GetTone(veh, 3)
+	tone_main_mem_id = GetTone(veh, 2)
+	tone_main_reset_standby = true
+	tone_airhorn_intrp = true
+	park_kill = false
+
+	airhorn_button_SFX = false
+	manu_button_SFX = false
+	activity_reminder_index = 1
+	last_activity_timer = 0
+
+	button_sfx_scheme = default_sfx_scheme_name
+	button_sfx_scheme_id = 1
+	on_volume = default_on_volume	
+	off_volume = default_off_volume	
+	upgrade_volume = default_upgrade_volume	
+	downgrade_volume = default_downgrade_volume
+	hazards_volume = default_hazards_volume
+	lock_volume = default_lock_volume
+	lock_reminder_volume = default_lock_reminder_volume
+	activity_reminder_volume = default_reminder_volume
+end
+
+------------------------------------------------
+--HELPER FUNCTIONS for main siren settings saving:end
+--Compare Version Strings: Is version newer than test_version
+function IsNewerVersion(version, test_version)
+	if version == nil then
+		return false
+	end
+	
+	_, _, s1, s2, s3 = string.find( version, "(%d+)%.(%d+)%.(%d+)" )
+	_, _, c1, c2, c3 = string.find( test_version, "(%d+)%.(%d+)%.(%d+)" )
+	
+	if s1 > c1 then				-- s1.0.0 Vs c1.0.0
+		return true
+	elseif s1 < c1 then
+		return false
+	else
+		if s2 > c2 then			-- s1.0.0 Vs c1.0.0
+			return true
+		elseif s2 < c2 then
+			return false
+		else
+			if s3 > c3 then		-- 0.0.s3 Vs 0.0.c3
+				return true
+			else
+				return false
+			end
+		end
+	end
+end
+
+function Split(inputstr, sep)
+	sep = sep or "%s"
+	local t={}
+	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+		table.insert(t, str)
+	end
+	return t
+end
+
+function TableToString(tbl)
+	local s = {""}
+	for i=1,#tbl do
+	  for j=1,#tbl[i] do
+		s[#s+1] = tbl[i][j]
+                if j ~= #tbl[i] then
+		    s[#s+1] = ","
+                end
+	  end
+	   s[#s+1] = "|"
+	end
+
+	s = table.concat(s)
+	return s
+end
+
+function IntToBool(int_value)
+	if int_value == 1 then
+		return true
+	else
+		return false
+	end
+end
+
+function BoolToInt(bool_value)
+	if bool_value then
+		return 1
+	else
+		return 0
+	end
+end
+
+function BoolToString(bool_value)
+	if bool_value then
+		return "true"
+	else
+		return "false"
 	end
 end
 
@@ -708,57 +845,6 @@ function GetVehicleProfileName()
 		return "DEFAULT"
 	end
 
-end
-
----------------------------------------------------------------------
---HELPER FUNCTIONS for main siren settings saving:
-function Split(inputstr, sep)
-	sep = sep or "%s"
-	local t={}
-	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-		table.insert(t, str)
-	end
-	return t
-end
-
-function TableToString(tbl)
-	local s = {""}
-	for i=1,#tbl do
-	  for j=1,#tbl[i] do
-		s[#s+1] = tbl[i][j]
-                if j ~= #tbl[i] then
-		    s[#s+1] = ","
-                end
-	  end
-	   s[#s+1] = "|"
-	end
-
-	s = table.concat(s)
-	return s
-end
-
-function IntToBool(int_value)
-	if int_value == 1 then
-		return true
-	else
-		return false
-	end
-end
-
-function BoolToInt(bool_value)
-	if bool_value then
-		return 1
-	else
-		return 0
-	end
-end
-
-function BoolToString(bool_value)
-	if bool_value then
-		return "true"
-	else
-		return "false"
-	end
 end
 
 ---------------------------------------------------------------------
@@ -886,7 +972,7 @@ end
 ------------------------------------------------
 ----------------EVENT HANDLERS------------------
 ------------------------------------------------
-AddEventHandler('lvc_vehcontrol:ELSClick', function(soundFile, soundVolume)
+AddEventHandler('lvc:audio', function(soundFile, soundVolume)
 SendNUIMessage({
   transactionType     = 'playSound',
   transactionFile     = soundFile,
@@ -898,10 +984,6 @@ end)
 RegisterNetEvent("lvc_GetVersion_c")
 AddEventHandler("lvc_GetVersion_c", function(sender, version)
 	repo_version = version
-	if repo_version ~= nil and curr_version ~= nil then
-		curr_version_text = "v" .. curr_version
-		repo_version_text = "v" .. repo_version
-	end
 end)
 
 ---------------------------------------------------------------------
@@ -1090,15 +1172,16 @@ Citizen.CreateThread(function()
 						if not key_lock then
 							-- TOG DFLT SRN LIGHTS
 							if IsDisabledControlJustReleased(0, 85) or IsDisabledControlJustReleased(0, 246) then
+								SetActivityTimer()
 								if IsVehicleSirenOn(veh) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Off", off_volume) -- Off
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Off", off_volume) -- Off
 									SetVehicleSiren(veh, false)
 									--If the siren was on, save it in memory
 									if state_lxsiren[veh] > 0 and not tone_main_reset_standby then
 										tone_main_mem_id = state_lxsiren[veh]
 									end
 								else
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "On", on_volume) -- On
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "On", on_volume) -- On
 									Citizen.Wait(150)
 									SetVehicleSiren(veh, true)
 									count_bcast_timer = delay_bcast_timer
@@ -1106,9 +1189,10 @@ Citizen.CreateThread(function()
 							
 							-- TOG LX SIREN
 							elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
+								SetActivityTimer()
 								if state_lxsiren[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
+										TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
 										if not tone_main_reset_standby then
 											if IsApprovedTone(veh, tone_main_mem_id) then
 												SetLxSirenStateForVeh(veh, tone_main_mem_id)
@@ -1122,7 +1206,7 @@ Citizen.CreateThread(function()
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
 									if not tone_main_reset_standby then
 										tone_main_mem_id = state_lxsiren[veh]
 									end
@@ -1132,9 +1216,10 @@ Citizen.CreateThread(function()
 								
 							-- POWERCALL
 							elseif IsDisabledControlJustReleased(0, 172) and not IsMenuOpen() then --disable up arrow only in tone mode since testing would be beneficial 
+								SetActivityTimer()
 								if state_pwrcall[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
-										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
+										TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume) -- Upgrade
 										if tone_AUX_id ~= nil then
 											if IsApprovedTone(veh, tone_AUX_id) then
 												SetPowercallStateForVeh(veh, tone_AUX_id)
@@ -1150,7 +1235,7 @@ Citizen.CreateThread(function()
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume) -- Downgrade
 									SetPowercallStateForVeh(veh, 0)
 									count_bcast_timer = delay_bcast_timer
 								end
@@ -1162,7 +1247,7 @@ Citizen.CreateThread(function()
 								if ( IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) ) and not ( IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81) )  then
 									if IsVehicleSirenOn(veh) then
 										newstate = GetNextTone(state_lxsiren[veh], veh, true)
-										TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
+										TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
 										SetLxSirenStateForVeh(veh, newstate)
 										count_bcast_timer = delay_bcast_timer
 									end
@@ -1172,6 +1257,7 @@ Citizen.CreateThread(function()
 							-- MANU
 							if state_lxsiren[veh] < 1 then
 								if IsDisabledControlPressed(0, 80) or (IsDisabledControlPressed(0, 81) and not IsMenuOpen()) then
+									SetActivityTimer()
 									actv_manu = true
 								else
 									actv_manu = false
@@ -1182,6 +1268,7 @@ Citizen.CreateThread(function()
 							
 							-- HORN
 							if IsDisabledControlPressed(0, 86) then
+								SetActivityTimer()
 								actv_horn = true
 							else
 								actv_horn = false
@@ -1190,18 +1277,18 @@ Citizen.CreateThread(function()
 							--AIRHORN AND MANU BUTTON SFX
 							if airhorn_button_SFX then
 								if IsDisabledControlJustPressed(0, 86) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 86) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
 								end
 							end							
 							if manu_button_SFX and state_lxsiren[veh] == 0 then
 								if IsDisabledControlJustPressed(0, 80) or IsDisabledControlJustPressed(0, 81) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Press", upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
-									TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
+									TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Release", upgrade_volume)									
 								end
 							end
 						elseif not HUD_move_mode then
@@ -1215,7 +1302,7 @@ Citizen.CreateThread(function()
 								IsDisabledControlJustReleased(0, 85) or 
 								IsDisabledControlJustReleased(0, 246)) then
 									if locked_press_count % reminder_rate == 0 then
-										TriggerEvent("lvc_vehcontrol:ELSClick", "Locked_Press", lock_reminder_volume) -- lock reminder
+										TriggerEvent("lvc:audio", "Locked_Press", lock_reminder_volume) -- lock reminder
 										ShowNotification("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.")
 									end
 									locked_press_count = locked_press_count + 1
@@ -1322,10 +1409,10 @@ Citizen.CreateThread(function()
 									local cstate = state_indic[veh]
 									if cstate == ind_state_h then
 										state_indic[veh] = ind_state_o
-										TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_Off", hazards_volume) -- Hazards On
+										TriggerEvent("lvc:audio", "Hazards_Off", hazards_volume) -- Hazards On
 									else
 										state_indic[veh] = ind_state_h
-										TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_On", hazards_volume) -- Hazards On
+										TriggerEvent("lvc:audio", "Hazards_On", hazards_volume) -- Hazards On
 									end
 									TogIndicStateForVeh(veh, state_indic[veh])
 									actv_ind_timer = false

@@ -57,3 +57,4 @@ default_downgrade_volume = 0.7
 default_hazards_volume = 0.09
 default_lock_volume = 0.25
 default_lock_reminder_volume = 0.2
+default_reminder_volume = 0.09
