@@ -2,11 +2,14 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: NOV 07 2016
+Last revision: DECEMBER 26 2020 (VERS. 3.0.5)
 Coded by Lt.Caine
+ELS Clicks by Faction
+Additonal Modification by TrevorBarns
 ---------------------------------------------------
-NOTES
-	
+FILE: server.lua
+PURPOSE: Handle version checking, syncing sirens,
+and opening links.
 ---------------------------------------------------
 ]]
 --UPDATER
