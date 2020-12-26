@@ -2,10 +2,10 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: AUGUST 27, 2020  (VERS.3.04)
+Last revision: DECEMBER 26 2020 (VERS. 3.1.5)
 Coded by Lt.Caine
 ELS Clicks by Faction
-Additions by TrevorBarns
+Additonal Modification by TrevorBarns
 ---------------------------------------------------
 FILE: menu.lua
 PURPOSE: Handle RageUI menu stuff
@@ -13,12 +13,13 @@ PURPOSE: Handle RageUI menu stuff
 ]]
 
 RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu"))
-RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
 RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Tone Selection Menu"))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "HUD Settings"))
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Audio Settings"))
+RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
 RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "About Luxart Vehicle Control"))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(12)
+RMenu:Get('lvc', 'audiosettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
 RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'maintone'):DisplayGlare(false)
@@ -83,12 +84,22 @@ end
 
 --Returns table of all tones with settings value
 function GetTonesList()
+	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local temp_tone_array = nil
 	local list = { } 
-	for index, _ in ipairs(tone_table) do
-		if index ~= 1 and IsApprovedTone(veh, index) then
-			table.insert(list, {index,1})
+
+ 	if _G[veh_name] ~= nil then
+		temp_tone_array = _G[veh_name]
+	else 
+		temp_tone_array = DEFAULT
+	end
+	
+	for _, tone in ipairs(temp_tone_array) do
+		if tone ~= 1 then
+			table.insert(list, {tone,1})
 		end
-	end	
+	end
+	
 	return list
 end
 
@@ -119,12 +130,12 @@ function IsMenuOpen()
 	RageUI.Visible(RMenu:Get('lvc', 'about'))
 end
 
---Ensure not all sirens are disabled
+--Ensure not all sirens are disabled / button only
 function SetCheckVariable() 
 	ok_to_disable = false
 	local count = 0
 	for i, siren in ipairs(main_tone_settings) do
-		if siren[2] < 4 then
+		if siren[2] < 3 then
 			count = count + 1
 		end
 	end
@@ -189,11 +200,6 @@ Citizen.CreateThread(function()
     while true do
 		--Main Menu Visible
 	    RageUI.IsVisible(RMenu:Get('lvc', 'main'), function()
-			RageUI.Button('Storage Management', "Save / Load LVC profiles.", {RightLabel = "→→→"}, true, {
-			  onSelected = function()
-
-			  end,
-			}, RMenu:Get('lvc', 'saveload'))
 			RageUI.Separator("Siren Settings")
 			RageUI.Button('Main Siren Settings', "Change which/how each available primary tone is used.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
@@ -240,7 +246,12 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 			  end,
 			}, RMenu:Get('lvc', 'audiosettings'))	
-			RageUI.Separator("Miscellaneous")			
+			RageUI.Separator("Miscellaneous")	
+			RageUI.Button('Storage Management', "Save / Load LVC profiles.", {RightLabel = "→→→"}, true, {
+			  onSelected = function()
+
+			  end,
+			}, RMenu:Get('lvc', 'saveload'))			
 			RageUI.Button('More Information', "Learn more about Luxart Vehicle Control.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 
@@ -324,7 +335,7 @@ Citizen.CreateThread(function()
 						if Index < 3 or ok_to_disable then
 							siren[2] = Index;
 						else
-							ShowNotification("~y~LVC Info~s~: Action prohibited, cannot disable all sirens.") 
+							ShowNotification("~y~~h~Info:~h~ ~s~Luxart Vehicle Control\nAction prohibited, cannot disable all sirens.") 
 						end
 						SetCheckVariable()
 					end,
@@ -381,16 +392,22 @@ Citizen.CreateThread(function()
             end
             })			
 			RageUI.Checkbox('Airhorn Button Clicks', "When enabled, your airhorn button (default: E) will activate the upgrade SFX.", airhorn_button_SFX, {}, {
-            onSelected = function(Index)
+			  onSelected = function(Index)
 				airhorn_button_SFX = Index
             end
             })
+			RageUI.List('Activity Reminder', {"Off", "1/2", "1", "2", "5", "10"}, activity_reminder_index, ("Recieve reminder tone that your lights are on. Options are in minutes. Timer (sec): %1.0f"):format((last_activity_timer / 1000) or 0), {}, true, {
+			  onListChange = function(Index, Item)
+				activity_reminder_index = Index
+				SetActivityTimer()
+			  end,
+			})			
 			RageUI.Slider('On Volume', (on_volume*100), 100, 2, "Set volume of light slider / button. Plays when lights are turned ~g~on~s~. Press Enter to play the sound.", true, {}, true, {
 			  onSliderChange = function(Index)
 				on_volume = (Index / 100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "On", on_volume)
+				TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "On", on_volume)
 			  end,
 			})			
 			RageUI.Slider('Off Volume', (off_volume*100), 100, 2, "Set volume of light slider / button. Plays when lights are turned ~r~off~s~. Press Enter to play the sound.", true, {}, true, {
@@ -398,7 +415,7 @@ Citizen.CreateThread(function()
 				off_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Off", off_volume)
+				TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Off", off_volume)
 			  end,
 			})			
 			RageUI.Slider('Upgrade Volume', (upgrade_volume*100), 100, 2, "Set volume of siren button. Plays when siren is turned ~g~on~s~. Press Enter to play the sound.", true, {}, true, {
@@ -406,7 +423,7 @@ Citizen.CreateThread(function()
 				upgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
+				TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Upgrade", upgrade_volume)
 			  end,			  
 			})			
 			RageUI.Slider('Downgrade Volume', (downgrade_volume*100), 100, 2, "Set volume of siren button. Plays when siren is turned ~r~off~s~. Press Enter to play the sound.", true, {}, true, {
@@ -414,15 +431,36 @@ Citizen.CreateThread(function()
 				downgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume)
+				TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Downgrade", downgrade_volume)
 			  end,			  
-			})					
+			})	
+			RageUI.Slider('Activity Reminder Volume', (activity_reminder_volume*500), 100, 2, "Set volume of activity reminder tone. Plays when lights are ~g~on~s~, siren is ~r~off~s~, and timer is has finished. Press Enter to play the sound.", true, {}, true, {
+			  onSliderChange = function(Index)
+				activity_reminder_volume = (Index/500)
+			  end,
+			  onSelected = function(Index, Item)
+				TriggerEvent("lvc:audio", button_sfx_scheme .. "/" .. "Reminder", activity_reminder_volume)
+			  end,			  
+			})				
+			RageUI.Slider('Hazards Volume', (hazards_volume*100), 100, 2, "Set volume of hazards button. Plays when hazards are toggled. Press Enter to play the sound.", true, {}, true, {
+			  onSliderChange = function(Index)
+				hazards_volume = (Index/100)
+			  end,
+			  onSelected = function(Index, Item)
+				if hazard_state then
+					TriggerEvent("lvc:audio", "Hazards_On", hazards_volume)
+				else
+					TriggerEvent("lvc:audio", "Hazards_Off", hazards_volume)
+				end
+				hazard_state = not hazard_state
+			  end,			  
+			})
 			RageUI.Slider('Lock Volume', (lock_volume*100), 100, 2, "Set volume of lock notification sound. Plays when siren box lockout is toggled. Press Enter to play the sound.", true, {}, true, {
 			  onSliderChange = function(Index)
 				lock_volume = (Index/100)			
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", "Key_Lock", lock_volume)
+				TriggerEvent("lvc:audio", "Key_Lock", lock_volume)
 			  end,			  
 			})					
 			RageUI.Slider('Lock Reminder Volume', (lock_reminder_volume*100), 100, 2, "Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.", true, {}, true, {
@@ -430,40 +468,28 @@ Citizen.CreateThread(function()
 				lock_reminder_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("lvc_vehcontrol:ELSClick", "Locked_Press", on_volume)
+				TriggerEvent("lvc:audio", "Locked_Press", lock_reminder_volume)
 			  end,			  
 			})			
-			RageUI.Slider('Hazards Volume', (hazards_volume*100), 100, 2, "Set volume of hazards button. Plays when hazards are toggled. Press Enter to play the sound.", true, {}, true, {
-			  onSliderChange = function(Index)
-				hazards_volume = (Index/100)
-			  end,
-			  onSelected = function(Index, Item)
-				if hazard_state then
-					TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_On", hazards_volume)
-				else
-					TriggerEvent("lvc_vehcontrol:ELSClick", "Hazards_Off", hazards_volume)
-				end
-				hazard_state = not hazard_state
-			  end,			  
-			})
         end)
 		
 		---------------------------------------------------------------------
 		------------------------------ABOUT MENU-----------------------------
 		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'about'), function()
-			if curr_version_text ~= nil then
-				if curr_version ~= repo_version then
-					RageUI.Button('Current Version', "This server is running " .. curr_version_text, { RightLabel = "~o~~h~" .. curr_version_text or "unknown" }, true, {
+			if curr_version ~= nil then
+				--print(repo_version, curr_version, IsNewerVersion(repo_version, curr_version))
+				if IsNewerVersion(repo_version, curr_version) then
+					RageUI.Button('Current Version', "This server is running " .. curr_version, { RightLabel = "~o~~h~" .. curr_version or "unknown" }, true, {
 					  onSelected = function()
 					  end,
 					  });	
-					RageUI.Button('Latest Version', "The latest update is v." .. repo_version .. ". Contact a server developer.", {RightLabel = repo_version_text or "unknown"}, true, {
+					RageUI.Button('Latest Version', "The latest update is " .. repo_version .. ". Contact a server developer.", {RightLabel = repo_version or "unknown"}, true, {
 						onSelected = function()
 					end,
 					});
 				else
-					RageUI.Button('Current Version', "This server is running " .. curr_version_text, { RightLabel = curr_version_text or "unknown" }, true, {
+					RageUI.Button('Current Version', "This server is running " .. curr_version .. ", the latest version.", { RightLabel = curr_version or "unknown" }, true, {
 					  onSelected = function()
 					  end,
 					  });			
@@ -488,7 +514,7 @@ Citizen.CreateThread(function()
 				TriggerServerEvent('lvc_OpenLink_s', "https://discord.gg/HGBp3un")
 			end,
 			});	
-			RageUI.Button('About / Credits', "Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~. Special thanks to Lt. Cornelius, bakerxgooty, MrLucky8.\nThe RageUI team and ", {}, true, {
+			RageUI.Button('About / Credits', "Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to Lt. Cornelius, bakerxgooty, MrLucky8, xotikorukx, the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!", {}, true, {
 				onSelected = function()
 			end,
 			});
