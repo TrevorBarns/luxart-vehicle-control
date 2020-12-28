@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: DECEMBER 26 2020  (VERS.3.1.5)
+Last revision: DECEMBER 26 2020 (VERS. 3.1.5)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additions by TrevorBarns
@@ -33,25 +33,28 @@ SIREN TONE TABLE:
 
 EXAMPLE:
 paleto1 = {2, 3, 4, 5} 
-Where 'paleto1' is the vehicele's <modelName> as defined in vehicles.meta. Spaces will not work, underscores may work though. 
+Where 'paleto1' is the vehicele's <gameName> as defined in vehicles.meta. Spaces will not work, underscores may work though. 
 Next to that is an array of assigned/allowed sirens IDs: 2=wail, 3=yelp, etc.
 ]]
 --Modify the table below to accurately represent each tone name
 tone_table = { "Airhorn", "Wail", "Yelp", "Priority", "Futura", "Hetro", "Sweep-1", "Sweep-2", "Hi-Low", "Whine Down", "Powercall", "QSiren", "Fire Yelp", "Fire Yelp" } 
 --				  1			2 		3		4			5		6		 7			8			 9			10			11			12			13				14
 
---Example A: Basic Operation: operate same as v2 no additional siren tones implemented
+--Example A: Basic Operation: operate same as v2 no additional siren tones implemented. (Default)
 DEFAULT = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } 
 FIRETRUK = { 12, 13, 14, 11 } 
 AMBULAN = { 1, 2, 3, 4, 11 } 
 LGUARD = { 1, 2, 3, 4, 11 } 
---End v2 Basic Mode
+
+
+
 --[[
+----------------------------------------------------------------------------------------
 --Example B: MAXIMIZE LEO Tones: operate maximizing avaliable tones for LEOs.
 DEFAULT = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } 		--TouchMaster Delta Example: 1 - Airhorn, 2 - Wail, 3 - Yelp, 4 - Priority, 5 - Futura, 6 - Hetro, 7 - Sweep-1[Wail-Yelp], 8 - Sweep-2[Priority-Futura], 9 - Whine Down, 10 - Hi-Low
 FIRETRUK = { 12, 13, 14, 11 } 						--Shared Fire Truck Audio (12 - Firetruck Airhorn, 13 - Firetruck Wail, 14 - Firetruck Yelp, 11 - Powercall)
 AMBULANCE = { 1, 2, 3, 4, 5, 11 } 					--Ambulance 1 w/ department 1 audio (1 - Airhorn, 2 - Wail, 3 - Yelp, 4 - Priority, 5 - Sweep Mode, 11 - Powercall)
-
+----------------------------------------------------------------------------------------
 --Example C: Two Department Operation w/ Fire Rescue
 DEFAULT = { 1, 2, 3, 4, 5 } 		--Fallback for any model that isn't listed below.
 PD1 = { 1, 2, 3, 4, 5 } 			--Department 1: Example: Whelen 295 Siren
@@ -67,8 +70,8 @@ SO5 = { 6, 7, 8, 9, 10 }
 FIRETRUK = { 12, 13, 14, 11 } 		--Shared Fire Truck Audio (12 - Firetruck Airhorn, 13 - Firetruck Wail, 14 - Firetruck Yelp, 11 - Powercall)
 AMBULANCE1 = { 1, 2, 3, 4, 5, 11 } 	--Ambulance 1 w/ department 1 audio (1 - 295 Airhorn, 2 - 295 Wail, 3 - 295 Yelp, 4 - 295 Priority, 5 - 295 Sweep Mode, 11 - Powercall)
 AMBULANCE2 = { 6, 7, 8, 9, 10, 11 } --Ambulance 2 w/ department 2 audio (1 - FSS Airhorn, 2 - FSS Wail, 3 - FSS Yelp, 4 - FSS Priority, 5 - FSS Sweep Mode, 11 - Powercall)
---End Two Department Operation
 
+----------------------------------------------------------------------------------------
 --Example D: Three Department Operation w/ Shared Airhorn + Fire Rescue
 DEFAULT = { 1, 2, 3, 4 } 		--Fallback for any model that isn't listed below.
 PD1 = { 1, 2, 3, 4 }			--Department 1: Example: Whelen 295 Siren
