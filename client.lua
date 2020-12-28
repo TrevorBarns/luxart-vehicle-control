@@ -669,7 +669,7 @@ end
 --HELPER FUNCTIONS for main siren settings saving:end
 --Compare Version Strings: Is version newer than test_version
 function IsNewerVersion(version, test_version)
-	if version == nil then
+	if version == nil or test_version == nil then
 		return false
 	end
 	
