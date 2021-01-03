@@ -3,7 +3,7 @@ games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.1.5'
+version '3.1.6'
 compatible '3.1.5'
 
 ui_page('html/index.html')

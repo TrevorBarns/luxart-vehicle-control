@@ -1,8 +1,17 @@
--------------------MENU SETTINGS-------------------
+------------------MENU KEYBINDING------------------
 open_menu_key = 'O'
 --	Sets default key for RegisterKeyMapping. Examples: 'l','F5', etc. DEFAULT: NONE, users may set one in their GTA V > Settings > Hotkeys > FiveM settings. 
 --		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
 --		List of Keys: https://pastebin.com/u9ewvWWZ
+
+
+--------------TURN SIGNALS / HAZARDS---------------
+hazard_key = 202	
+left_signal_key = 84
+right_signal_key = 83
+hazard_hold_duration = 750
+--	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
+
 
 ---------------LOCKOUT FUNCTIONALITY---------------
 lockout_default_hotkey = ''
@@ -24,17 +33,6 @@ hud_button_on_opacity = 255
 --	Opacity of buttons in active/on state. (default: 255)
 hud_button_off_opacity = 175
 --	Opacity of buttons in inactive/off state. (default: 175)
-
-
---------------TURN SIGNALS / HAZARDS--------------
-hazard_key = 202
---	Static/Fixed keybinding to toggle hazards: https://docs.fivem.net/docs/game-references/controls/
-hazard_hold_duration = 750
---	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
-left_signal_key = 84
---	Static/Fixed keybinding to toggle left indicator: https://docs.fivem.net/docs/game-references/controls/
-right_signal_key = 83
---	Static/Fixed keybinding to toggle right indicator: https://docs.fivem.net/docs/game-references/controls/
 
 
 -------------CUSTOM MANU/HORN/SIREN---------------

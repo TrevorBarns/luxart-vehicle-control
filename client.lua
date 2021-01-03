@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: DECEMBER 26 2020 (VERS. 3.1.5)
+Last revision: DECEMBER 26 2020 (VERS. 3.1.6)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additonal Modification by TrevorBarns
@@ -28,6 +28,7 @@ tone_main_mem_id = nil
 tone_main_reset_standby = true
 tone_airhorn_intrp = true
 park_kill = false
+custom_tone_names = false
 
 airhorn_button_SFX = false
 manu_button_SFX = false
@@ -50,19 +51,19 @@ player_is_emerg_driver = false
 curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
 repo_version = nil
 
+siren_string_lookup = {	  "SIRENS_AIRHORN", "VEHICLES_HORNS_SIREN_1", "VEHICLES_HORNS_SIREN_2", "VEHICLES_HORNS_POLICE_WARNING",
+						  "RESIDENT_VEHICLES_SIREN_WAIL_01", "RESIDENT_VEHICLES_SIREN_WAIL_02", "RESIDENT_VEHICLES_SIREN_WAIL_03",
+						  "RESIDENT_VEHICLES_SIREN_QUICK_01", "RESIDENT_VEHICLES_SIREN_QUICK_02", "RESIDENT_VEHICLES_SIREN_QUICK_03",
+						  "VEHICLES_HORNS_AMBULANCE_WARNING",
+						  "VEHICLES_HORNS_FIRETRUCK_WARNING",
+						  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01",
+						  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01"
+					  }
+							
 --LOCAL VARIABLES
 local playerped = nil
-local siren_string_lookup = { "SIRENS_AIRHORN", "VEHICLES_HORNS_SIREN_1", "VEHICLES_HORNS_SIREN_2", "VEHICLES_HORNS_POLICE_WARNING",
-							  "RESIDENT_VEHICLES_SIREN_WAIL_01", "RESIDENT_VEHICLES_SIREN_WAIL_02", "RESIDENT_VEHICLES_SIREN_WAIL_03",
-							  "RESIDENT_VEHICLES_SIREN_QUICK_01", "RESIDENT_VEHICLES_SIREN_QUICK_02", "RESIDENT_VEHICLES_SIREN_QUICK_03",
-							  "VEHICLES_HORNS_AMBULANCE_WARNING",
-							  "VEHICLES_HORNS_FIRETRUCK_WARNING",
-							  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01",
-							  "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01"
-							}
-
 local activity_reminder_lookup = { [2] = 30000, [3] = 60000, [4] = 120000, [5] = 300000, [6] = 600000 } 
-
+local backup_tone_table = {}
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
 
@@ -191,6 +192,7 @@ Citizen.CreateThread(function()
 			else
 				if last_veh ~= veh then
 					ResetSettings()
+					LoadSettings()
 					last_veh = veh
 				end
 			end
@@ -325,13 +327,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
-------------------STORAGE MANAGEMENT-----------------
---On Spawn Register Keys and Load Settings
-AddEventHandler( "playerSpawned", function()
-	TriggerServerEvent('lvc_GetVersion_s')
-	LoadSettings()
-end )
-
 --------------REGISTERED COMMANDS---------------
 --Deletes all saved KVPs for that vehicle profile
 RegisterCommand('lvcfactoryreset', function(source, args)
@@ -347,8 +342,8 @@ RegisterCommand('lvcfactoryreset', function(source, args)
 			Citizen.Wait(0)
 		end
 		ResetSettings()
-		print("LVC Info: Successfully cleared all save data.")
-		ShowNotification("~g~LVC Info~s~: Successfully cleared all save data.")
+		print("Success: cleared all save data.")
+	ShowNotification("~g~Success~s~: You have deleted all save data and reset LVC.")
 	end
 end)
 
@@ -420,6 +415,7 @@ end
 
 --On resource restart
 Citizen.CreateThread(function()
+	backup_tone_table = table.copy(tone_table)	
 	RegisterKeyMaps()
 	LoadSettings()
 	TriggerServerEvent('lvc_GetVersion_s')
@@ -488,6 +484,40 @@ function FrontEndAlert(title, subtitle)
 end
 
 ------------------------------------------------
+--Get User Input from Keyboard
+function KeyboardInput(input_title, existing_text, max_length)
+	AddTextEntry('Custom_Keyboard_Title', input_title)
+	DisplayOnscreenKeyboard(1, "Custom_Keyboard_Title", "", existing_text, "", "", "", max_length) 
+
+	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
+		Citizen.Wait(0)
+	end
+		
+	if UpdateOnscreenKeyboard() ~= 2 then
+		local result = GetOnscreenKeyboardResult() 
+		Citizen.Wait(500) 
+		if result ~= "" then
+			return result 
+		else 
+			return nil
+		end
+	else
+		Citizen.Wait(500)
+		return nil 
+	end
+end
+
+------------------------------------------------
+--Handle changing of tone_table custom names
+function ChangeToneString(tone_id, new_string)
+	if not custom_tone_names then
+		custom_tone_names = true
+	end
+	
+	tone_table[tone_id] = new_string
+end
+
+------------------------------------------------
 --Toggles HUD move mode
 function TogMoveMode()
 	ShowHUD()
@@ -517,6 +547,7 @@ end
 --Save all settings
 function SaveSettings()
 	local save_prefix = "lvc_setting_"
+	local settings_string = nil
 	SetResourceKvp(save_prefix .. "save_version", curr_version)
 	
 	--General Settings
@@ -532,7 +563,7 @@ function SaveSettings()
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_AUX_id",  tone_AUX_id)
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_tone_airhorn_intrp",  BoolToInt(tone_airhorn_intrp))
 	SetResourceKvpInt(save_prefix .. GetVehicleProfileName() .. "_park_kill",  BoolToInt(park_kill))
-		
+	
 	--Audio Settings
 	SetResourceKvp(save_prefix .. "button_sfx_scheme",  button_sfx_scheme)
 	SetResourceKvpFloat(save_prefix .. "audio_on_volume",  on_volume + .0)
@@ -547,15 +578,26 @@ function SaveSettings()
 	SetResourceKvpInt(save_prefix .. "audio_manu_button_SFX",  BoolToInt(manu_button_SFX))
 	SetResourceKvpInt(save_prefix  ..  "audio_activity_reminder_index", activity_reminder_index)
 	
+	--Custom Tone Names
+	SetResourceKvpInt(save_prefix  ..  "custom_tone_names", BoolToInt(custom_tone_names))
+	if custom_tone_names then
+		settings_string = table.to_string(tone_table)
+		SetResourceKvp(save_prefix .. "tone_table", settings_string) 
+	end
+	
 	--Main Siren Settings
-	settings_string = TableToString(main_tone_settings)
+	settings_string = table.to_string(main_tone_settings)
 	SetResourceKvp(save_prefix .. GetVehicleProfileName(),  settings_string)
+	
+	ShowNotification("~g~Success~s~: Your settings have been saved.")
 end
 
 ------------------------------------------------
 --Load all settings
 function LoadSettings()
 	local save_prefix = "lvc_setting_"
+	local settings_string = nil	
+	
 	comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
 	save_version = GetResourceKvpString(save_prefix .. "save_version")
 	incompatible = IsNewerVersion(comp_version, save_version)
@@ -600,16 +642,28 @@ function LoadSettings()
 		airhorn_button_SFX = IntToBool(GetResourceKvpInt(save_prefix .. "audio_airhorn_button_SFX"))
 		manu_button_SFX = IntToBool(GetResourceKvpInt(save_prefix .. "audio_manu_button_SFX"))
 		activity_reminder_index = GetResourceKvpInt(save_prefix  ..  "audio_activity_reminder_index")	
-
+		
+		--Custom Tone Names
+		custom_tone_names = IntToBool(GetResourceKvpInt(save_prefix .. "custom_tone_names"))
+		if custom_tone_names then
+			settings_string = GetResourceKvpString(save_prefix .. "tone_table")
+			if settings_string ~= nil then
+				tone_names_table = string.split(settings_string, ",")
+				for i, tone_name in ipairs(tone_names_table) do
+					tone_table[i] = tone_name
+				end
+			end
+		end
+		
 		--Main Siren Settings
 		if veh ~= nil then 
 			settings_string = GetResourceKvpString(save_prefix .. GetVehicleProfileName())
 			if settings_string ~= nil then
 				main_tone_settings = { }
-				settings_string_by_tone = Split(settings_string, "|")
-				for i, v in ipairs(settings_string_by_tone) do
-				  tone_settings = Split(settings_string_by_tone[i], ",")
-				  table.insert(main_tone_settings, { tonumber(tone_settings[1]), tonumber(tone_settings[2])})
+				settings_string_by_tone = string.split(settings_string, "|")
+				for i, tone_string in ipairs(settings_string_by_tone) do
+				  tone_settings_table = string.split(tone_string, ",")
+				  table.insert(main_tone_settings, { tonumber(tone_settings_table[1]), tonumber(tone_settings_table[2])})
 				end
 				settings_init = true
 			end
@@ -625,6 +679,8 @@ function LoadSettings()
 	if tone_AUX_id == nil then
 		tone_AUX_id = GetTone(veh, 3)
 	end
+	
+	ShowNotification("~g~Success~s~: Your settings have been loaded.")
 end
 
 ------------------------------------------------
@@ -647,6 +703,9 @@ function ResetSettings()
 	tone_main_reset_standby = true
 	tone_airhorn_intrp = true
 	park_kill = false
+	custom_tone_names = false
+
+	tone_table = table.copy(backup_tone_table)
 
 	airhorn_button_SFX = false
 	manu_button_SFX = false
@@ -663,6 +722,8 @@ function ResetSettings()
 	lock_volume = default_lock_volume
 	lock_reminder_volume = default_lock_reminder_volume
 	activity_reminder_volume = default_reminder_volume
+	
+	ShowNotification("~g~Success~s~: Settings have been reset.")
 end
 
 ------------------------------------------------
@@ -695,7 +756,7 @@ function IsNewerVersion(version, test_version)
 	end
 end
 
-function Split(inputstr, sep)
+function string.split(inputstr, sep)
 	sep = sep or "%s"
 	local t={}
 	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
@@ -704,20 +765,23 @@ function Split(inputstr, sep)
 	return t
 end
 
-function TableToString(tbl)
-	local s = {""}
-	for i=1,#tbl do
-	  for j=1,#tbl[i] do
-		s[#s+1] = tbl[i][j]
-                if j ~= #tbl[i] then
-		    s[#s+1] = ","
-                end
-	  end
-	   s[#s+1] = "|"
-	end
+function table.to_string(tbl)
+    local tblstr = ""
+    if tbl[1][1] ~= nil then  
+        for i=1, #tbl do
+            y = table.concat(tbl[i], ",")
+            tblstr = tblstr .. y .. "|"
+        end
+    else
+        tblstr = table.concat(tbl, ",")
+    end
+    return tblstr
+end
 
-	s = table.concat(s)
-	return s
+function table.copy(tbl)
+  local u = { }
+  for k, v in pairs(tbl) do u[k] = v end
+  return setmetatable(u, getmetatable(tbl))
 end
 
 function IntToBool(int_value)
@@ -751,10 +815,15 @@ function GetNextTone(current_tone, veh, main_tone)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
 	local temp_pos = -1
-	if _G[veh_name] ~= nil then
-		temp_tone_array = _G[veh_name]
+	
+ 	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
+		temp_tone_array = VEHICLES[veh_name]
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		temp_tone_array = VEHICLES[string.lower(veh_name)]
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		temp_tone_array = VEHICLES[string.upper(veh_name)]	
 	else 
-		temp_tone_array = DEFAULT
+		temp_tone_array = VEHICLES['DEFAULT']
 	end
 	
 	for i, allowed_tone in ipairs(temp_tone_array) do
@@ -789,10 +858,15 @@ end
 function GetTone(veh, postion) 
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
-	if _G[veh_name] ~= nil then
-		temp_tone_array = _G[veh_name]
-	else 
-		temp_tone_array = DEFAULT
+	
+ 	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
+		temp_tone_array = VEHICLES[veh_name]
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		temp_tone_array = VEHICLES[string.lower(veh_name)]
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		temp_tone_array = VEHICLES[string.upper(veh_name)]	
+	else
+		temp_tone_array = VEHICLES['DEFAULT']
 	end
 	
 	if temp_tone_array[postion] ~= nil then
@@ -807,10 +881,15 @@ end
 function GetToneCount(veh) 
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
-	if _G[veh_name] ~= nil then
-		temp_tone_array = _G[veh_name]
+	
+ 	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
+		temp_tone_array = VEHICLES[veh_name]
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		temp_tone_array = VEHICLES[string.lower(veh_name)]
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		temp_tone_array = VEHICLES[string.upper(veh_name)]	
 	else 
-		temp_tone_array = DEFAULT
+		temp_tone_array = VEHICLES['DEFAULT']
 	end
 	return #temp_tone_array
 end
@@ -821,10 +900,14 @@ function IsApprovedTone(veh, tone)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local temp_tone_array = nil
 
- 	if _G[veh_name] ~= nil then
-		temp_tone_array = _G[veh_name]
+ 	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
+		temp_tone_array = VEHICLES[veh_name]
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		temp_tone_array = VEHICLES[string.lower(veh_name)]
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		temp_tone_array = VEHICLES[string.upper(veh_name)]	
 	else 
-		temp_tone_array = DEFAULT
+		temp_tone_array = VEHICLES['DEFAULT']
 	end
 	
 	for i, allowed_tone in ipairs(temp_tone_array) do
@@ -839,8 +922,13 @@ end
 --Check if vehicle profile table exists, if so return the name otherwise default
 function GetVehicleProfileName()
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	if _G[veh_name] ~= nil then
+	
+	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
 		return veh_name
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		return string.lower(veh_name)
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		return string.upper(veh_name)	
 	else 
 		return "DEFAULT"
 	end

@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: DECEMBER 26 2020 (VERS.3.1.5)
+Last revision: DECEMBER 26 2020 (VERS. 3.1.6)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additonal Modification by TrevorBarns
@@ -44,8 +44,7 @@ local profile_l_op = 75
 local github_index = 1
 local hazard_state = false
 local button_sfx_scheme_id = 1
-local save_btn_debug_msg
-local load_btn_debug_msg
+local sl_btn_debug_msg = ""
 
 Keys.Register(open_menu_key, open_menu_key, 'LVC: Open Menu', function()
 	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
@@ -90,15 +89,17 @@ function GetTonesList()
 	local list = { } 
 
 	--Reset debug message that shows vehicle gameName.
-	save_btn_debug_msg = ""
-	load_btn_debug_msg = ""
+	sl_btn_debug_msg = ""
 
- 	if _G[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
-		temp_tone_array = _G[veh_name]
+ 	if VEHICLES[veh_name] ~= nil then						--Does profile exist as outlined in vehicle.meta
+		temp_tone_array = VEHICLES[veh_name]
+	elseif VEHICLES[string.lower(veh_name)] ~= nil then		--What if we lowercase it, is it a case issue?
+		temp_tone_array = VEHICLES[string.lower(veh_name)]
+	elseif VEHICLES[string.upper(veh_name)] ~= nil then		--What if we uppercase it, is it a case issue? 
+		temp_tone_array = VEHICLES[string.upper(veh_name)]	
 	else
-		temp_tone_array = DEFAULT
-		save_btn_debug_msg = "\nUsing ~b~DEFAULT~s~ profile for \"~b~" .. veh_name .. "~s~\"."
-		load_btn_debug_msg = "\nUsing ~b~DEFAULT~s~ profile for \"~b~" .. veh_name .. "~s~\"."
+		temp_tone_array = VEHICLES['DEFAULT']
+		sl_btn_debug_msg = "\nUsing ~b~DEFAULT~s~ profile for \"~b~" .. veh_name .. "~s~\"."
 	end
 	
 	for _, tone in ipairs(temp_tone_array) do
@@ -173,10 +174,12 @@ Citizen.CreateThread(function()
 				if IsDisabledControlJustPressed(RageUI.Settings.Controls.Back.Keys[Index][1], RageUI.Settings.Controls.Back.Keys[Index][2]) then
 					confirm_s_msg = nil
 					confirm_s_desc = nil
-					profile_s_op = 50
+					profile_s_op = 75
 					confirm_l_msg = nil
 					confirm_l_desc = nil
-					profile_l_opprofile_l_op = 50
+					profile_l_op = 75
+					confirm_r_msg = nil
+					confirm_fr_msg = nil
 					Citizen.Wait(10)
 					RageUI.Settings.Controls.Back.Enabled = true
 					break
@@ -218,14 +221,24 @@ Citizen.CreateThread(function()
 				RageUI.List('Primary Manual Tone', tone_list, GetToneIndex(tone_PMANU_id), "Change your primary manual tone. Key: R", {}, true, {
 				  onListChange = function(Index, Item)
 					tone_PMANU_id = Item.Value;
-					
+				  end,
+				  onSelected = function()
+					proposed_name = KeyboardInput("Enter new tone name for " .. siren_string_lookup[tone_PMANU_id] .. ":", tone_table[tone_PMANU_id], 15)
+					if proposed_name ~= nil then
+						ChangeToneString(tone_PMANU_id, proposed_name)
+					end
 				  end,
 				})
 				--SMT List
 				RageUI.List('Secondary Manual Tone', tone_list, GetToneIndex(tone_SMANU_id), "Change your secondary manual tone. Key: E+R", {}, true, {
 				  onListChange = function(Index, Item)
 					tone_SMANU_id = Item.Value;
-					
+				  end,
+				  onSelected = function()
+					proposed_name = KeyboardInput("Enter new tone name for " .. siren_string_lookup[tone_SMANU_id] .. ":", tone_table[tone_SMANU_id], 15)
+					if proposed_name ~= nil then
+						ChangeToneString(tone_SMANU_id, proposed_name)
+					end
 				  end,
 				})
 			end
@@ -234,7 +247,12 @@ Citizen.CreateThread(function()
 				RageUI.List('Auxiliary Siren Tone', tone_list, GetToneIndex(tone_AUX_id), "Change your auxiliary/dual siren tone. Key: ↑", {}, true, {
 				  onListChange = function(Index, Item)
 					tone_AUX_id = Item.Value;
-					
+				  end,
+				  onSelected = function()
+					proposed_name = KeyboardInput("Enter new tone name for " .. siren_string_lookup[tone_AUX_id] .. ":", tone_table[tone_AUX_id], 15)
+					if proposed_name ~= nil then
+						ChangeToneString(tone_AUX_id, proposed_name)
+					end
 				  end,
 				})
 			end
@@ -280,7 +298,7 @@ Citizen.CreateThread(function()
             end
             })
 			for i, siren in pairs(main_tone_settings) do
-				RageUI.List(tone_table[siren[1]], main_tone_choices, siren[2], "Change how is activated.\nCycle: play as you cycle through sirens using R or (B).\nButton: play when associated registered key is pressed.", {}, IsApprovedTone(veh, siren[1]), {
+				RageUI.List(tone_table[siren[1]], main_tone_choices, siren[2], "Change how is activated.\nCycle: play as you cycle through sirens.\nButton: play when associated registered key is pressed.", {}, IsApprovedTone(veh, siren[1]), {
 					onListChange = function(Index, Item)
 						if Index < 3 or ok_to_disable then
 							siren[2] = Index;
@@ -288,6 +306,12 @@ Citizen.CreateThread(function()
 							ShowNotification("~y~~h~Info:~h~ ~s~Luxart Vehicle Control\nAction prohibited, cannot disable all sirens.") 
 						end
 						SetCheckVariable()
+					end,
+					onSelected = function()
+						proposed_name = KeyboardInput("Enter new tone name for " .. siren_string_lookup[siren[1]] .. ":", tone_table[siren[1]], 15)
+						if proposed_name ~= nil then
+						ChangeToneString(siren[1], proposed_name)
+						end
 					end,
 				})
 			end
@@ -426,55 +450,77 @@ Citizen.CreateThread(function()
 		----------------------------SAVE LOAD MENU---------------------------
 		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'saveload'), function()
-			RageUI.Button('Save Settings', confirm_s_desc or "Save LVC settings." .. save_btn_debug_msg, {RightLabel = confirm_s_msg or "(".. GetVehicleProfileName() .. ")", RightLabelOpacity = profile_s_op or 255}, true, {
+			RageUI.Button('Save Settings', confirm_s_desc or "Save LVC settings." .. sl_btn_debug_msg, {RightLabel = confirm_s_msg or "(".. GetVehicleProfileName() .. ")", RightLabelOpacity = profile_s_op}, true, {
 				onSelected = function()
 					if confirm_s_msg == "Are you sure?" then
-						RageUI.Settings.Controls.Back.Enabled = true
 						SaveSettings()
 						confirm_s_msg = nil
 						confirm_s_desc = nil
 						profile_s_op = 75
 					else 
 						RageUI.Settings.Controls.Back.Enabled = false 
-						profile_s_op = nil
+						profile_s_op = 255
 						confirm_s_msg = "Are you sure?" 
 						confirm_s_desc = "~r~This will override any exisiting save data for this vehicle profile ("..GetVehicleProfileName()..")."
 						confirm_l_msg = nil
+						profile_l_op = 75
+						confirm_r_msg = nil
+						confirm_fr_msg = nil
 					end
 				end,
 			})			
-			RageUI.Button('Load Settings', confirm_l_desc or "Load LVC settings." .. load_btn_debug_msg, {RightLabel = confirm_l_msg or "(".. GetVehicleProfileName() .. ")", RightLabelOpacity = profile_l_op or 255}, true, {
+			RageUI.Button('Load Settings', confirm_l_desc or "Load LVC settings." .. sl_btn_debug_msg, {RightLabel = confirm_l_msg or "(".. GetVehicleProfileName() .. ")", RightLabelOpacity = profile_l_op}, true, {
 			  onSelected = function()
 				if confirm_l_msg == "Are you sure?" then
-					RageUI.Settings.Controls.Back.Enabled = true
 					LoadSettings()
 					confirm_l_msg = nil
 					confirm_l_desc = nil
 					profile_l_op = 75
 				else 
 					RageUI.Settings.Controls.Back.Enabled = false 
-					profile_l_op = nil
+					profile_l_op = 255
 					confirm_l_msg = "Are you sure?" 
 					confirm_l_desc = "~r~This will override any unsaved settings."
 					confirm_s_msg = nil
+					profile_s_op = 75
+					confirm_r_msg = nil
+					confirm_fr_msg = nil
 
 				end
 			  end,
 			})			
 			RageUI.Separator("Advanced Settings")
-			RageUI.Button('Factory Reset', confirm_l_desc or "~r~Permanently delete any saves, resetting LVC to its default state.", {RightLabel = confirm_fr_msg, RightLabelOpacity = 255}, true, {
+			RageUI.Button('Reset Settings', "~r~Reset LVC to it's default state, preserves existing saves. Will override any unsaved settings.", {RightLabel = confirm_r_msg}, true, {
+			  onSelected = function()
+				if confirm_r_msg == "Are you sure?" then
+					ResetSettings()
+					confirm_r_msg = nil
+				else 
+					RageUI.Settings.Controls.Back.Enabled = false 
+					confirm_r_msg = "Are you sure?" 
+					confirm_l_msg = nil
+					profile_l_op = 75
+					confirm_s_msg = nil
+					profile_s_op = 75
+					confirm_fr_msg = nil
+				end
+			  end,
+			})			
+			RageUI.Button('Factory Reset', "~r~Permanently delete any saves, resetting LVC to its default state.", {RightLabel = confirm_fr_msg}, true, {
 			  onSelected = function()
 				if confirm_fr_msg == "Are you sure?" then
 					RageUI.CloseAll()
 					Citizen.Wait(100)
 					ExecuteCommand('lvcfactoryreset')
-					RageUI.Settings.Controls.Back.Enabled = true
 					confirm_fr_msg = nil
 				else 
 					RageUI.Settings.Controls.Back.Enabled = false 
 					confirm_fr_msg = "Are you sure?" 
 					confirm_l_msg = nil
+					profile_l_op = 75
 					confirm_s_msg = nil
+					profile_s_op = 75
+					confirm_r_msg = nil
 				end
 			  end,
 			})
