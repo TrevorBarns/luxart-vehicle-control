@@ -1,3 +1,5 @@
+## 🛑 NOTICE: THIS RESOURCE IS STILL IN DEVELOPMENT AND IS NOT STABLE. LVC WILL STOP FUNCTIONING BETWEEN 30-180 MINIUTES. 
+IF YOU HAVE DEVELOPMENT EXPERIENCE PLEASE CONSIDER CONTRIBUTING TO THE PROJECT. READ MORE HERE: https://github.com/TrevorBarns/luxart-vehicle-control/issues/12
 <p align="center">
 <img align="center" width="800" src="https://i.gyazo.com/c45881d46eeef83e03634a6a251ab849.png">
 </p>
