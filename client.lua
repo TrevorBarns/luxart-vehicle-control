@@ -1016,10 +1016,12 @@ function SetLxSirenStateForVeh(veh, newstate)
 				StopSound(snd_lxsiren[veh])
 				ReleaseSoundId(snd_lxsiren[veh])
 				snd_lxsiren[veh] = nil
-			end					  
-			snd_lxsiren[veh] = GetSoundId()
-			PlaySoundFromEntity(snd_lxsiren[veh], siren_string_lookup[newstate], veh, 0, 0, 0)	
-			TogMuteDfltSrnForVeh(veh, true)			
+			end					
+			if newstate ~= 0 then			
+				snd_lxsiren[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_lxsiren[veh], siren_string_lookup[newstate], veh, 0, 0, 0)	
+				TogMuteDfltSrnForVeh(veh, true)		
+			end
 			state_lxsiren[veh] = newstate
 		end
 	end
@@ -1034,8 +1036,10 @@ function SetPowercallStateForVeh(veh, newstate)
 				ReleaseSoundId(snd_pwrcall[veh])
 				snd_pwrcall[veh] = nil
 			end
-			snd_pwrcall[veh] = GetSoundId()
-			PlaySoundFromEntity(snd_pwrcall[veh], siren_string_lookup[newstate], veh, 0, 0, 0)	
+			if newstate ~= 0 then
+				snd_pwrcall[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_pwrcall[veh], siren_string_lookup[newstate], veh, 0, 0, 0)	
+			end
 			state_pwrcall[veh] = newstate
 		end
 	end
@@ -1050,8 +1054,10 @@ function SetAirManuStateForVeh(veh, newstate)
 				ReleaseSoundId(snd_airmanu[veh])
 				snd_airmanu[veh] = nil
 			end
-			snd_airmanu[veh] = GetSoundId()
-			PlaySoundFromEntity(snd_airmanu[veh], siren_string_lookup[newstate], veh, 0, 0, 0)
+			if newstate ~= 0 then
+				snd_airmanu[veh] = GetSoundId()
+				PlaySoundFromEntity(snd_airmanu[veh], siren_string_lookup[newstate], veh, 0, 0, 0)
+			end
 			state_airmanu[veh] = newstate
 		end
 	end
@@ -1528,12 +1534,9 @@ Citizen.CreateThread(function()
 					else
 						count_bcast_timer = count_bcast_timer + 1
 					end
-				
 				end
-				
 			end
 		end
-			
 		Citizen.Wait(0)
 	end
 end)

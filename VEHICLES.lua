@@ -46,12 +46,12 @@ VEHICLES = {
 ['FIRETRUK'] = { 12, 13, 14, 11 }, 
 ['AMBULAN'] = { 1, 2, 3, 4, 11 }, 
 ['LGUARD'] = { 1, 2, 3, 4, 11 },
-['2006 Impala'] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 
 }
 
 
 
 --[[
+EXAMPLES BELOW: DELETE ME 
 ----------------------------------------------------------------------------------------
 --Example B: MAXIMIZE LEO Tones: operate maximizing avaliable tones for LEOs.
 ['DEFAULT'] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } 		--TouchMaster Delta Example: 1 - Airhorn, 2 - Wail, 3 - Yelp, 4 - Priority, 5 - Futura, 6 - Hetro, 7 - Sweep-1[Wail-Yelp], 8 - Sweep-2[Priority-Futura], 9 - Whine Down, 10 - Hi-Low
