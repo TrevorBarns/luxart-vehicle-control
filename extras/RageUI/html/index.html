@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <!-- Need to include jQuery! -->
+        <!-- Credit to xotikorukx for code below. -->
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+        <script>
+			var audioPlayer = null;
+            // Listen for NUI Messages.
+            var SoundID = 0;
+            window.addEventListener('message', function(event) {
+                // Check for playSound transaction
+                if (event.data.transactionType == "playSound") {
+				
+                  if (audioPlayer != null) {
+                    //console.log("Attempting to pause sound # "+SoundID);
+                    audioPlayer.pause();
+                  }
+
+                  SoundID++;
+
+                  audioPlayer = new Audio("./sounds/" + event.data.transactionFile + ".ogg");
+                  audioPlayer.volume = event.data.transactionVolume;
+                  var didPlayPromise = audioPlayer.play();
+                  //console.log("Attempting to load and play sound # "+SoundID);
+
+                  if (didPlayPromise === undefined) {
+                    //console.error("Sound # "+SoundID+" did not initialize properly; Promise was undefined!");
+                    audioPlayer = null; //The audio player crashed. Reset it so it doesn't crash the next sound.
+                  } else {
+                    didPlayPromise.then(_ => { //This does not execute until the audio is playing.
+                      //console.log("Sound # "+SoundID+" is now playing!");
+                    }).catch(error => {
+                      //console.error("Sound # "+SoundID+" crashed on load; "+JSON.stringify(error));
+                      audioPlayer = null; //The audio player crashed. Reset it so it doesn't crash the next sound.
+                    })
+                  }
+                }
+            });
+        </script>
+    </head>
+</html>
