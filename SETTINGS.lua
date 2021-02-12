@@ -1,8 +1,29 @@
 ------------------MENU KEYBINDING------------------
 open_menu_key = 'O'
---	Sets default key for RegisterKeyMapping. Examples: 'l','F5', etc. DEFAULT: NONE, users may set one in their GTA V > Settings > Hotkeys > FiveM settings. 
+--	Sets default key for RegisterKeyMapping. Examples: 'l','F5', etc. DEFAULT: 'O', users may set one in their GTA V > Settings > Hotkeys > FiveM settings. 
 --		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
 --		List of Keys: https://pastebin.com/u9ewvWWZ
+
+
+--------------------TAKE DOWNS---------------------
+tkd_key = 74
+--	Key to toggle TKD light. (default: 74 (H))
+tkd_combokey = 21 
+--  Key that needs to be pressed in combination with tkd_key. Set to 0 to disable. (default: 21 (Left Shift))
+tkd_intensity_default = 100
+--  Overall brightness of TKD light.
+tkd_radius_default = 50
+--  Angle of spread from 0 (narrow/small) to 90 (almost 180 degrees)
+tkd_distance_default = 50
+--	Max distance light can reach. 
+tkd_falloff_default = 1000
+--	How fast the light fades/appears dim at distance, this has massive effect on percieved intesity and distance.
+tkd_sync_radius_default = 400
+--	Distance to "sync" / display vehicles TKD light. Larger the number the slower the script depending on players and # of TKDs on. (default: 400) 
+tkd_set_highbeams_default = true
+--	Determines if highbeams are enabled / disabled with TKD light.
+tkd_debug_flag = true
+--	Used to debug / view spotlight angle.
 
 
 --------------TURN SIGNALS / HAZARDS---------------
