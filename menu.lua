@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL (FOR FIVEM)
 ---------------------------------------------------
-Last revision: DECEMBER 26 2020 (VERS. 3.1.6)
+Last revision: DECEMBER 26 2020 (VERS. 3.2.0)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additonal Modification by TrevorBarns
@@ -14,6 +14,7 @@ PURPOSE: Handle RageUI menu stuff
 
 RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu"))
 RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Tone Selection Menu"))
+RMenu.Add('lvc', 'tkdsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Takedown Settings"))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "HUD Settings"))
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Audio Settings"))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
@@ -25,6 +26,7 @@ RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'maintone'):DisplayGlare(false)
 RMenu:Get('lvc', 'hudsettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'audiosettings'):DisplayGlare(false)
+RMenu:Get('lvc', 'tkdsettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'about'):DisplayGlare(false)
 
 main_tone_settings = nil
@@ -99,7 +101,7 @@ function GetTonesList()
 		temp_tone_array = VEHICLES[string.upper(veh_name)]	
 	else
 		temp_tone_array = VEHICLES['DEFAULT']
-		sl_btn_debug_msg = "\nUsing ~b~DEFAULT~s~ profile for \"~b~" .. veh_name .. "~s~\"."
+		sl_btn_debug_msg = " Using ~b~DEFAULT~s~ profile for \"~b~" .. veh_name .. "~s~\"."
 	end
 	
 	for _, tone in ipairs(temp_tone_array) do
@@ -133,8 +135,10 @@ end
 function IsMenuOpen()
 	return RageUI.Visible(RMenu:Get('lvc', 'main')) or 
 	RageUI.Visible(RMenu:Get('lvc', 'maintone')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
 	RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 
 	RageUI.Visible(RMenu:Get('lvc', 'about'))
 end
 
@@ -263,23 +267,25 @@ Citizen.CreateThread(function()
 			})
 			--Begin HUD Settings
 			RageUI.Separator("Other Settings")
+			RageUI.Button('Takedown Settings', "Open takedown lights menu.", {RightLabel = "→→→"}, true, {
+			  onSelected = function()
+			  end,
+			}, RMenu:Get('lvc', 'tkdsettings'))	
 			RageUI.Button('HUD Settings', "Open HUD settings menu.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,
-			}, RMenu:Get('lvc', 'hudsettings'))				
+			}, RMenu:Get('lvc', 'hudsettings'))					
 			RageUI.Button('Audio Settings', "Open audio settings menu.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,
-			}, RMenu:Get('lvc', 'audiosettings'))	
+			}, RMenu:Get('lvc', 'audiosettings'))			
 			RageUI.Separator("Miscellaneous")	
 			RageUI.Button('Storage Management', "Save / Load LVC profiles.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
-
 			  end,
 			}, RMenu:Get('lvc', 'saveload'))			
 			RageUI.Button('More Information', "Learn more about Luxart Vehicle Control.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
-
 			  end,
 			}, RMenu:Get('lvc', 'about'))
         end)
@@ -319,21 +325,59 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------
 		-------------------------OTHER SETTINGS MENU-------------------------
 		---------------------------------------------------------------------
+		--TKD SETTINGS
+		RageUI.IsVisible(RMenu:Get('lvc', 'tkdsettings'), function()
+			RageUI.Checkbox('Takedowns', "Takedown masterswitch, toggle takedown functionality.", tkd_masterswitch, {}, {
+            onSelected = function(Index)
+				tkd_masterswitch = Index
+            end
+            })				
+			RageUI.Checkbox('Set Highbeams', "Determines weather takedowns will auto toggle high-beams.", tkd_set_highbeams, {Enabled = tkd_masterswitch}, {
+            onSelected = function(Index)
+				tkd_set_highbeams = Index
+            end
+            })	
+			RageUI.List('Position', {"1", "2", "3", "4"}, tkd_scheme, "Select predefined positions of light source.", {}, true, {
+			  onListChange = function(Index, Item)
+				tkd_scheme = Index
+			  end,
+			})
+			RageUI.Slider('Intensity', tkd_intensity, 150, 15, "Set brightness/intensity of takedowns.", false, {}, tkd_masterswitch, {
+			  onSliderChange = function(Index)
+				tkd_intensity = Index
+			  end,	  
+			})					
+			RageUI.Slider('Radius', tkd_radius, 90, 9, "Set width of takedowns.", false, {}, tkd_masterswitch, {
+			  onSliderChange = function(Index)
+				tkd_radius = Index
+			  end,	  
+			})			
+			RageUI.Slider('Distance', tkd_distance, 250, 25, "Set the max distance the takedown can travel.", false, {}, tkd_masterswitch, {
+			  onSliderChange = function(Index)
+				tkd_distance = Index
+			  end,	  
+			})				
+			RageUI.Slider('Falloff', tkd_falloff, 2000, 200, "Set how fast light \"falls off\" or appears dim.", false, {}, tkd_masterswitch, {
+			  onSliderChange = function(Index)
+				tkd_falloff = Index
+			  end,	  
+			})	
+        end)
+		--HUD SETTINGS
 	    RageUI.IsVisible(RMenu:Get('lvc', 'hudsettings'), function()
-			RageUI.Checkbox('HUD Visible', "Toggles whether the LVC HUD is on screen.\nCan't see it? Ensure HUD is enabled.", show_HUD, {}, {
+			RageUI.Checkbox('Visible', "Toggles whether the LVC HUD is on screen.", show_HUD, {}, {
 			  onSelected = function(Index)
 				  show_HUD = Index
 				  
 			  end
 			})
-			RageUI.Button('HUD Move Mode', "Move HUD position on screen.", {}, true, {
+			RageUI.Button('Move Mode', "Move HUD position on screen.", {}, show_HUD, {
 			  onSelected = function()
 					TogMoveMode()
 				end,
 			  });
-			RageUI.Slider('HUD Background Opacity', hud_bgd_opacity, 255, 20, "Change opacity of of the HUD background rectangle.", true, {}, true, {
+			RageUI.Slider('Background Opacity', hud_bgd_opacity, 255, 20, "Change opacity of of the HUD background rectangle.", false, {}, show_HUD, {
 			  onSliderChange = function(Index)
-				ShowHUD()
 				--Stupid way to check if a KVP was found.
 				if Index == 0 then
 					Index = 1
@@ -341,9 +385,8 @@ Citizen.CreateThread(function()
 				hud_bgd_opacity = Index
 			  end,
 			})
-			RageUI.Slider('HUD Button Opacity', hud_button_off_opacity, 255, 20, "Change opacity of inactive HUD buttons.", true, {}, true, {
+			RageUI.Slider('Button Opacity', hud_button_off_opacity, 255, 20, "Change opacity of inactive HUD buttons.", false, {}, show_HUD, {
 			  onSliderChange = function(Index)
-				ShowHUD()
 				--Stupid way to check if a KVP was found.
 				if Index == 0 then
 					Index = 1
