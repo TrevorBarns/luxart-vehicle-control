@@ -952,7 +952,7 @@ function CleanupSounds()
 			end
 		end
 		for k, v in pairs(state_pwrcall) do
-			if v == true then
+			if v > 0 then
 				if not DoesEntityExist(k) or IsEntityDead(k) then
 					if snd_pwrcall[k] ~= nil then
 						StopSound(snd_pwrcall[k])
