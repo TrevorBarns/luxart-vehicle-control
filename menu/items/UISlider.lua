@@ -129,38 +129,37 @@ function RageUI.Slider(Label, ProgressStart, ProgressMax, IncrementQty, Descript
 
                 RageUI.ItemsDescription(CurrentMenu, Description, Selected);
 
-                if Selected and (CurrentMenu.Controls.Left.Active or (CurrentMenu.Controls.Click.Active and LeftArrowHovered)) and not (CurrentMenu.Controls.Right.Active or (CurrentMenu.Controls.Click.Active and RightArrowHovered)) then
-                    ProgressStart = ProgressStart - IncrementQty or 1
-                    if ProgressStart < 1 then
-                        ProgressStart = #Items
-                    end
-                    if (Actions.onSliderChange ~= nil) then
-                        Actions.onSliderChange(ProgressStart);
-                    end
-                    RageUI.PlaySound(Audio[Audio.Use].LeftRight.audioName, Audio[Audio.Use].LeftRight.audioRef)
-                elseif Selected and (CurrentMenu.Controls.Right.Active or (CurrentMenu.Controls.Click.Active and RightArrowHovered)) and not (CurrentMenu.Controls.Left.Active or (CurrentMenu.Controls.Click.Active and LeftArrowHovered)) then
-                    ProgressStart = ProgressStart + IncrementQty or 1
-                    if ProgressStart > #Items then
-                        ProgressStart = 1
-                    end
-                    if (Actions.onSliderChange ~= nil) then
-                        Actions.onSliderChange(ProgressStart);
-                    end
-                    RageUI.PlaySound(Audio[Audio.Use].LeftRight.audioName, Audio[Audio.Use].LeftRight.audioRef)
-                end
+				if Enabled == true or Enabled == nil then
+					if Selected and (CurrentMenu.Controls.Left.Active or (CurrentMenu.Controls.Click.Active and LeftArrowHovered)) and not (CurrentMenu.Controls.Right.Active or (CurrentMenu.Controls.Click.Active and RightArrowHovered)) then
+						ProgressStart = ProgressStart - IncrementQty or 1
+						if ProgressStart < 1 then
+							ProgressStart = #Items
+						end
+						if (Actions.onSliderChange ~= nil) then
+							Actions.onSliderChange(ProgressStart);
+						end
+						RageUI.PlaySound(Audio[Audio.Use].LeftRight.audioName, Audio[Audio.Use].LeftRight.audioRef)
+					elseif Selected and (CurrentMenu.Controls.Right.Active or (CurrentMenu.Controls.Click.Active and RightArrowHovered)) and not (CurrentMenu.Controls.Left.Active or (CurrentMenu.Controls.Click.Active and LeftArrowHovered)) then
+						ProgressStart = ProgressStart + IncrementQty or 1
+						if ProgressStart > #Items then
+							ProgressStart = 1
+						end
+						if (Actions.onSliderChange ~= nil) then
+							Actions.onSliderChange(ProgressStart);
+						end
+						RageUI.PlaySound(Audio[Audio.Use].LeftRight.audioName, Audio[Audio.Use].LeftRight.audioRef)
+					end
 
-                if Selected and (CurrentMenu.Controls.Select.Active or ((Hovered and CurrentMenu.Controls.Click.Active) and (not LeftArrowHovered and not RightArrowHovered))) then
-                    if (Actions.onSelected ~= nil) then
-                        Actions.onSelected(ProgressStart);
-                    end
-                    RageUI.PlaySound(Audio[Audio.Use].Select.audioName, Audio[Audio.Use].Select.audioRef)
-                end
+					if Selected and (CurrentMenu.Controls.Select.Active or ((Hovered and CurrentMenu.Controls.Click.Active) and (not LeftArrowHovered and not RightArrowHovered))) then
+						if (Actions.onSelected ~= nil) then
+							Actions.onSelected(ProgressStart);
+						end
+						RageUI.PlaySound(Audio[Audio.Use].Select.audioName, Audio[Audio.Use].Select.audioRef)
+					end
+				end
             end
 
             RageUI.Options = RageUI.Options + 1
         end
     end
 end
-
-
-
