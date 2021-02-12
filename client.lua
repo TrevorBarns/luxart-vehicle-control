@@ -1126,8 +1126,8 @@ AddEventHandler("lvc_SetLxSirenState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc_TogPwrcallState_c")
-AddEventHandler("lvc_TogPwrcallState_c", function(sender, newstate)
+RegisterNetEvent("lvc_SetPwrcallState_c")
+AddEventHandler("lvc_SetPwrcallState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
