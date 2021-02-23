@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.switch {
+}
+
+.button {
+	transform: scale( 0.9 );
+}
+
+#sirenboxhud {
+	position: absolute;
+    width: absolute;
+	left: 0%;
+	top: 70%;
+	display: none;
+	float: left;
+	grid-template-areas: 'switch siren horn tkd lock';
+	transform: scale( 0.55 );
+	transform-origin: left top;
+	background-color: #141414;
+	padding: 0.15%;
+}

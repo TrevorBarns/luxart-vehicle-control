@@ -1,24 +1,40 @@
+------------------------------
+
 fx_version 'adamant'
 games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.2.0'
+version '3.2.0'	
 compatible '3.2.0'
 
-ui_page('html/index.html')
+------------------------------
+
+experimental 'false'	-- Mute unstable version warning in server console.
+debug_mode 'true' 		-- More verbose printing on client console.
+
+------------------------------
+
+ui_page('/UI/html/index.html')
 	
 dependencies {
     'RageUI'
 }
 
 files({
-    'html/index.html',
-	'html/sounds/*.ogg',
-	'html/sounds/**/*.ogg'
+    'UI/html/index.html',
+    'UI/html/lvc.js',
+    'UI/html/style.css',
+	'UI/sounds/*.ogg',
+	'UI/sounds/**/*.ogg',
+	'UI/textures/*.png'
 })
 
 client_scripts {
+	'SETTINGS.lua',
+	'SIRENS.lua',
+	'/UTIL/cl_utils.lua',
+	'/UTIL/cl_lvc.lua',
     "@RageUI/RMenu.lua",
     "@RageUI/menu/RageUI.lua",
     "@RageUI/menu/Menu.lua",
@@ -45,12 +61,14 @@ client_scripts {
     "@RageUI/menu/panels/UIPercentagePanel.lua",
     "@RageUI/menu/panels/UIStatisticsPanel.lua",
     "@RageUI/menu/windows/UIHeritage.lua",
-	'SETTINGS.lua',
-	'VEHICLES.lua',
-	'client.lua',
-	'menu.lua'
+	'/UI/cl_hud.lua',
+	'/UI/cl_ragemenu.lua',
+	'/UTIL/cl_storage.lua',
+	'/PLUGINS/**.lua',
 }
 
 server_script {
-	'server.lua'
+	'/UTIL/sv_lvc.lua'
 }
+
+------------------------------

@@ -17,12 +17,12 @@ tkd_radius_default = 50
 tkd_distance_default = 50
 --	Max distance light can reach. 
 tkd_falloff_default = 1000
---	How fast the light fades/appears dim at distance, this has massive effect on percieved intesity and distance.
+--	How fast the light fades/appears dim at distance, this has massive effect on perceived intensity and distance.
 tkd_sync_radius_default = 400
 --	Distance to "sync" / display vehicles TKD light. Larger the number the slower the script depending on players and # of TKDs on. (default: 400) 
-tkd_set_highbeams_default = true
---	Determines if highbeams are enabled / disabled with TKD light.
-tkd_debug_flag = true
+tkd_highbeam_integration_default = 2
+--	1 - disabled, 2 - Takedown Set Highbeams, 3 - Highbeams Set Takedowns.
+tkd_debug_flag = false
 --	Used to debug / view spotlight angle.
 
 
@@ -40,13 +40,13 @@ lockout_default_hotkey = ''
 --		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
 --		List of Keys: https://pastebin.com/u9ewvWWZ
 locked_press_count = 5    
---	Inital press count for reminder e.g. if this is 5 and reminder_rate is 10 then, after 5 key presses it will remind you the first time, after that every 10 key presses. 
+--	Initial press count for reminder e.g. if this is 5 and reminder_rate is 10 then, after 5 key presses it will remind you the first time, after that every 10 key presses. 
 reminder_rate = 10
 --	How often, in luxart key presses, to remind you that your siren controller is locked.
 
 
 -----------------HUD FUNCTIONALITY-----------------
-hud_first_default = false
+hud_first_default = true
 --	First state of HUD, otherwise it uses the players KVP setting (previous state). 
 hud_bgd_opacity = 155
 --	Opacity of rectangle background behind buttons (default: 155)
@@ -67,7 +67,7 @@ main_siren_set_register_keys_set_defaults = true
 
 ---------------SOUND EFFECT VOLUMES---------------
 button_sfx_scheme_choices = { 'SSP2000', 'SSP3000', 'Cencom', 'ST300' }
---Customize which button SFX schemes are avalible. An item here must match exactly the folder name located in `lux_vehcontrol\html\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)
+--Customize which button SFX schemes are available. An item here must match exactly the folder name located in `lux_vehcontrol\UI\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)
 default_sfx_scheme_name = 'SSP2000'
 default_on_volume = 0.5			
 default_off_volume = 0.7			
