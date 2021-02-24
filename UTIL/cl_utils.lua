@@ -192,7 +192,7 @@ function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 
 	if last_pos == nil then
 		for i, tone_id in pairs(approved_tones) do
-			if tone_id == tone then
+			if tone_id == current_tone then
 				temp_pos = i
 				break
 			end
