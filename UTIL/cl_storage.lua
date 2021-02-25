@@ -122,8 +122,6 @@ function Storage:SaveSettings()
 	else
 		HUD:ShowNotification("~b~LVC: ~r~SAVE ERROR~s~: UTIL:GetVehicleProfileName() returned nil.")
 	end
-			
-	HUD:ShowNotification("~g~Success~s~: Your settings have been saved.")
 end
 
 ------------------------------------------------
@@ -213,8 +211,6 @@ function Storage:LoadSettings()
 			end
 		end
 	end
-	
-	HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.")
 end
 
 ------------------------------------------------
@@ -254,8 +250,6 @@ function Storage:ResetSettings()
 	lock_volume = default_lock_volume
 	lock_reminder_volume = default_lock_reminder_volume
 	activity_reminder_volume = default_reminder_volume
-	
-	HUD:ShowNotification("~g~Success~s~: Settings have been reset.")
 end
 
 ------------------------------------------------

@@ -445,6 +445,7 @@ Citizen.CreateThread(function()
 				onSelected = function()
 					if confirm_s_msg == "Are you sure?" then
 						Storage:SaveSettings()
+						HUD:ShowNotification("~g~Success~s~: Your settings have been saved.")
 						confirm_s_msg = nil
 						confirm_s_desc = nil
 						profile_s_op = 75
@@ -464,6 +465,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_l_msg == "Are you sure?" then
 					Storage:LoadSettings()
+					HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.")
 					confirm_l_msg = nil
 					confirm_l_desc = nil
 					profile_l_op = 75
@@ -485,6 +487,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_r_msg == "Are you sure?" then
 					Storage:ResetSettings()
+					HUD:ShowNotification("~g~Success~s~: Settings have been reset.")
 					confirm_r_msg = nil
 				else 
 					RageUI.Settings.Controls.Back.Enabled = false 
