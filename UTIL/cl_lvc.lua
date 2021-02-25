@@ -235,15 +235,16 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver and veh ~= nil then
 			if last_veh == nil then
 				UTIL:UpdateApprovedTones(veh)
+				Storage:LoadSettings()
 				UTIL:BuildToneOptions()
 				last_veh = veh
 				SetVehRadioStation(veh, "OFF")
 			else
 				if last_veh ~= veh then
 					UTIL:UpdateApprovedTones(veh)
-					UTIL:BuildToneOptions()
 					Storage:ResetSettings()
 					Storage:LoadSettings()
+					UTIL:BuildToneOptions()
 					last_veh = veh
 					SetVehRadioStation(veh, "OFF")
 				end
@@ -328,7 +329,6 @@ Citizen.CreateThread(function()
 	UTIL:FixOversizeKeys()
 	RegisterKeyMaps()
 	Storage:SetBackupTable()
-	Storage:LoadSettings()
 	local resourceName = string.lower( GetCurrentResourceName() )
 	SendNUIMessage( { _type = "setResourceName", name = resourceName } )
 end)
