@@ -65,6 +65,14 @@ main_siren_set_register_keys_set_defaults = true
 --	Enables RegisterKeyMapping for all main_allowed_tones and sets the default keys to numrow 1-0.
 
 
+--------------------------------------Park Kill and Airhorn Interuppt
+park_kill_default = true
+-- Default setting of the Siren Park Kill. (default: true)
+airhorn_interrupt_default = false
+-- Sets the Default setting of the Airhorn Interuppt for the main siren. (default: false) 
+Standby_tone_reset = true
+-- Enables the Tone cycle reset when the sirens are turned off. (default: true)
+
 ---------------SOUND EFFECT VOLUMES---------------
 button_sfx_scheme_choices = { 'SSP2000', 'SSP3000', 'Cencom', 'ST300' }
 --Customize which button SFX schemes are available. An item here must match exactly the folder name located in `lux_vehcontrol\UI\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)

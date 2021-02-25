@@ -14,9 +14,9 @@ PURPOSE: Core Functionality and User Input
 
 --GLOBAL VARIABLES used in both menu.lua and client.lua
 key_lock = false
-tone_main_reset_standby = true
-tone_airhorn_intrp = true
-park_kill = false
+tone_main_reset_standby = Standby_tone_reset
+tone_airhorn_intrp = airhorn_interrupt_default
+park_kill = park_kill_default
 
 airhorn_button_SFX = false
 manu_button_SFX = false
