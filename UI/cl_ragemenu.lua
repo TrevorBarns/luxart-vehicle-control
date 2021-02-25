@@ -149,7 +149,7 @@ Citizen.CreateThread(function()
 			
 			if custom_manual_tones_master_switch then
 				--PRIMARY MANUAL TONE List
-				--Get Current Tone ID and index ToneTable offset by 1 to correct Airhorn missing
+				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
 				PMANU = UTIL:GetToneID('PMANU')
 				RageUI.List('Primary Manual Tone', TonesTable, PMANU-1, "Change your primary manual tone.", {}, true, {
 				  onListChange = function(Index, Item)
@@ -164,7 +164,7 @@ Citizen.CreateThread(function()
 				})
 				
 				--SECONDARY MANUAL TONE List
-				--Get Current Tone ID and index ToneTable offset by 1 to correct Airhorn missing
+				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
 				SMANU = UTIL:GetToneID('SMANU')
 				RageUI.List('Secondary Manual Tone', TonesTable, SMANU-1, "Change your secondary manual tone.", {}, true, {
 				  onListChange = function(Index, Item)
@@ -180,7 +180,7 @@ Citizen.CreateThread(function()
 			end
 
 			--AUXILARY MANUAL TONE List
-			--Get Current Tone ID and index ToneTable offset by 1 to correct Airhorn missing
+			--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
 			if custom_aux_tones_master_switch then
 				--AST List
 				AUX = UTIL:GetToneID('AUX')
@@ -233,7 +233,7 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------	
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			local approved_tones = UTIL:GetApprovedTonesTable()
-			RageUI.Checkbox('Airhorn Interrupt Mode', "Toggles whether the airhorn interupts main siren.", tone_airhorn_intrp, {}, {
+			RageUI.Checkbox('Airhorn Interrupt Mode', "Toggles whether the air horn interrupts main siren.", tone_airhorn_intrp, {}, {
 			  onChecked = function()
 				tone_airhorn_intrp = true
 			  end,
@@ -241,7 +241,7 @@ Citizen.CreateThread(function()
 			    tone_airhorn_intrp = false
 			  end,	
 			})
-			RageUI.Checkbox('Reset to Standby', "When enabled, the primary siren will reset to 1st siren. When disabled, the last played tone will resume.", tone_main_reset_standby, {}, {
+			RageUI.Checkbox('Reset to Standby', "~g~Enabled~s~, the primary siren will reset to 1st siren on siren toggle. ~r~Disabled~s~, the last played tone will resume on siren toggle.", tone_main_reset_standby, {}, {
 			  onChecked = function()
 				tone_main_reset_standby = true
 			  end,
@@ -251,7 +251,7 @@ Citizen.CreateThread(function()
             })
 			for i, tone in pairs(approved_tones) do
 				if i ~= 1 then
-					RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), "Change how is activated.\nCycle: play as you cycle through sirens.\nButton: play when associated registered key is pressed.", {}, true, {
+					RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), "~g~Cycle:~s~ play as you cycle through sirens.\n~g~Button:~s~ play when registered key is pressed.\n~b~Select to rename siren tones.", {}, true, {
 						onListChange = function(Index, Item)
 							if UTIL:IsOkayToDisable() or Index < 3 then
 								UTIL:SetToneOption(tone, Index)
@@ -274,12 +274,12 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------
 		--TKD SETTINGS
 		RageUI.IsVisible(RMenu:Get('lvc', 'tkdsettings'), function()
-			RageUI.Checkbox('Enabled', "Toggles takedown functionality. All vehicles yours and others.", tkd_masterswitch, {}, {
+			RageUI.Checkbox('Enabled', "Toggles takedown light functionality. All vehicles: your own and others.", tkd_masterswitch, {}, {
             onSelected = function(Index)
 				tkd_masterswitch = Index
             end
             })				
-			RageUI.List('Highbeam Integration', {"Off", "Takedowns Set Highbeams", "Highbeams Set Takedowns"}, tkd_mode, "Determines whether high-beams will auto toggle takedowns or visa versa.", {}, tkd_masterswitch, {
+			RageUI.List('Highbeam Integration', {"Off", "Takedowns Set High-beams", "High-beams Set Takedowns"}, tkd_mode, "Determines whether high-beams will auto toggle takedowns or visa versa.", {}, tkd_masterswitch, {
 			  onListChange = function(Index, Item)
 				tkd_mode = Index
 			  end,
@@ -299,7 +299,7 @@ Citizen.CreateThread(function()
 				tkd_radius = Index
 			  end,	  
 			})			
-			RageUI.Slider('Distance', tkd_distance, 250, 25, "Set the max distance the takedown can travel.", false, {}, tkd_masterswitch, {
+			RageUI.Slider('Distance', tkd_distance, 250, 25, "Set the max distance the takedowns can travel.", false, {}, tkd_masterswitch, {
 			  onSliderChange = function(Index)
 				tkd_distance = Index
 			  end,	  
@@ -339,7 +339,7 @@ Citizen.CreateThread(function()
         end)	    
 		--AUDIO SETTINGS MENU
 		RageUI.IsVisible(RMenu:Get('lvc', 'audiosettings'), function()
-			RageUI.List("Sirenbox SFX Scheme", button_sfx_scheme_choices, button_sfx_scheme_id, "Change what SFX to use for siren box clicks.", {}, true, {
+			RageUI.List("Siren Box SFX Scheme", button_sfx_scheme_choices, button_sfx_scheme_id, "Change what SFX to use for siren box clicks.", {}, true, {
 			  onListChange = function(Index, Item)
 				button_sfx_scheme_id = Index
 				button_sfx_scheme = button_sfx_scheme_choices[button_sfx_scheme_id]
@@ -353,7 +353,7 @@ Citizen.CreateThread(function()
 				  manu_button_SFX = false
 			  end,
             })			
-			RageUI.Checkbox('Airhorn Button Clicks', "When enabled, your airhorn button will activate the upgrade SFX.", airhorn_button_SFX, {}, {
+			RageUI.Checkbox('Air Horn Button Clicks', "When enabled, your air horn button will activate the upgrade SFX.", airhorn_button_SFX, {}, {
 			  onChecked = function()
 				  airhorn_button_SFX = true
 			  end,
@@ -361,7 +361,7 @@ Citizen.CreateThread(function()
 				  airhorn_button_SFX = false
 			  end,
             })
-			RageUI.List('Activity Reminder', {"Off", "1/2", "1", "2", "5", "10"}, activity_reminder_index, ("Recieve reminder tone that your lights are on. Options are in minutes. Timer (sec): %1.0f"):format((last_activity_timer / 1000) or 0), {}, true, {
+			RageUI.List('Activity Reminder', {"Off", "1/2", "1", "2", "5", "10"}, activity_reminder_index, ("Receive reminder tone that your lights are on. Options are in minutes. Timer (sec): %1.0f"):format((last_activity_timer / 1000) or 0), {}, true, {
 			  onListChange = function(Index, Item)
 				activity_reminder_index = Index
 				SetActivityTimer()
@@ -453,7 +453,7 @@ Citizen.CreateThread(function()
 						RageUI.Settings.Controls.Back.Enabled = false 
 						profile_s_op = 255
 						confirm_s_msg = "Are you sure?" 
-						confirm_s_desc = "~r~This will override any exisiting save data for this vehicle profile ("..UTIL:GetVehicleProfileName()..")."
+						confirm_s_desc = "~r~This will override any existing save data for this vehicle profile ("..UTIL:GetVehicleProfileName()..")."
 						confirm_l_msg = nil
 						profile_l_op = 75
 						confirm_r_msg = nil
