@@ -542,25 +542,6 @@ Citizen.CreateThread(function()
 					  });			
 				end
 			end
-			RageUI.List('Launch GitHub Page', {"Main Repository", "Siren Repository", "File Bug Report"}, github_index, "View the project and more info on GitHub.", {}, true, {
-			  onListChange = function(Index, Item)
-				github_index = Index
-			  end,
-			  onSelected = function()
-				if github_index == 1 then
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control")
-				elseif github_index	== 2 then
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control-extras")			
-				else
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control/issues/new")			
-				end
-			  end,
-			})
-			RageUI.Button('Developer\'s Discord', "Join my discord for support, future updates, and other resources.", {}, true, {
-				onSelected = function()
-				TriggerServerEvent('lvc_OpenLink_s', "https://discord.gg/HGBp3un")
-			end,
-			});	
 			RageUI.Button('About / Credits', "Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to Lt. Cornelius, bakerxgooty, MrLucky8, xotikorukx, the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!", {}, true, {
 				onSelected = function()
 			end,
