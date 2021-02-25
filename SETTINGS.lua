@@ -65,13 +65,20 @@ main_siren_set_register_keys_set_defaults = true
 --	Enables RegisterKeyMapping for all main_allowed_tones and sets the default keys to numrow 1-0.
 
 
---------------------------------------Park Kill and Airhorn Interuppt
+---------Park Kill and Air Horn Interrupt---------
+park_kill_masterswitch = true
+--	Enables park kill functionality. Setting this to false will not allow users to change from default behaviour this. 
 park_kill_default = true
--- Default setting of the Siren Park Kill. (default: true)
+--	Default setting for park kill mode. (default: true)
+airhorn_interrupt_masterswitch = true
+--	Enables ability to toggle air horn interrupt. Setting this to false will not allow users to change from default behaviour this. 
 airhorn_interrupt_default = false
--- Sets the Default setting of the Airhorn Interuppt for the main siren. (default: false) 
-Standby_tone_reset = true
--- Enables the Tone cycle reset when the sirens are turned off. (default: true)
+--	Default setting of the air horn interrupt for the main siren. (default: false) 
+reset_to_standby_masterswitch = true
+--	Enables ability to toggle reset to standby. Setting this to false will not allow users to change from default behaviour this. 
+reset_to_standby_default = true
+--	Default setting for Reset-To-Standby functionality. (default: true)
+
 
 ---------------SOUND EFFECT VOLUMES---------------
 button_sfx_scheme_choices = { 'SSP2000', 'SSP3000', 'Cencom', 'ST300' }

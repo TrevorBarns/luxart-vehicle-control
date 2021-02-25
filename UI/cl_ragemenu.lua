@@ -198,12 +198,13 @@ Citizen.CreateThread(function()
 			end
 			
 			--SIREN PARK KILL
-			RageUI.Checkbox('Siren Park Kill', "Toggles whether your sirens turn off automatically when you exit your vehicle. ", park_kill, {}, {
-			  onSelected = function(Index)
-				  park_kill = Index
-			  end
-			})
-
+			if park_kill_masterswitch then
+				RageUI.Checkbox('Siren Park Kill', "Toggles whether your sirens turn off automatically when you exit your vehicle. ", park_kill, {}, {
+				  onSelected = function(Index)
+					  park_kill = Index
+				  end
+				})
+			end
 			--MAIN MENU TO SUBMENU BUTTONS
 			RageUI.Separator("Other Settings")
 			RageUI.Button('Takedown Settings', "Open takedown lights menu.", {RightLabel = "→→→"}, true, {
@@ -233,22 +234,26 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------	
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			local approved_tones = UTIL:GetApprovedTonesTable()
-			RageUI.Checkbox('Airhorn Interrupt Mode', "Toggles whether the air horn interrupts main siren.", tone_airhorn_intrp, {}, {
-			  onChecked = function()
-				tone_airhorn_intrp = true
-			  end,
-			  onUnChecked = function()
-			    tone_airhorn_intrp = false
-			  end,	
-			})
-			RageUI.Checkbox('Reset to Standby', "~g~Enabled~s~, the primary siren will reset to 1st siren on siren toggle. ~r~Disabled~s~, the last played tone will resume on siren toggle.", tone_main_reset_standby, {}, {
-			  onChecked = function()
-				tone_main_reset_standby = true
-			  end,
-			  onUnChecked = function()
-			    tone_main_reset_standby = false
-			  end,
-            })
+			if airhorn_interrupt_masterswitch then
+				RageUI.Checkbox('Airhorn Interrupt Mode', "Toggles whether the air horn interrupts main siren.", tone_airhorn_intrp, {}, {
+				  onChecked = function()
+					tone_airhorn_intrp = true
+				  end,
+				  onUnChecked = function()
+					tone_airhorn_intrp = false
+				  end,	
+				})
+			end
+			if reset_to_standby_masterswitch then
+				RageUI.Checkbox('Reset to Standby', "~g~Enabled~s~, the primary siren will reset to 1st siren on siren toggle. ~r~Disabled~s~, the last played tone will resume on siren toggle.", tone_main_reset_standby, {}, {
+				  onChecked = function()
+					tone_main_reset_standby = true
+				  end,
+				  onUnChecked = function()
+					tone_main_reset_standby = false
+				  end,
+				})
+			end
 			for i, tone in pairs(approved_tones) do
 				if i ~= 1 then
 					RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), "~g~Cycle:~s~ play as you cycle through sirens.\n~g~Button:~s~ play when registered key is pressed.\n~b~Select to rename siren tones.", {}, true, {
@@ -542,25 +547,6 @@ Citizen.CreateThread(function()
 					  });			
 				end
 			end
-			RageUI.List('Launch GitHub Page', {"Main Repository", "Siren Repository", "File Bug Report"}, github_index, "View the project and more info on GitHub.", {}, true, {
-			  onListChange = function(Index, Item)
-				github_index = Index
-			  end,
-			  onSelected = function()
-				if github_index == 1 then
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control")
-				elseif github_index	== 2 then
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control-extras")			
-				else
-					TriggerServerEvent('lvc_OpenLink_s', "https://github.com/TrevorBarns/luxart-vehicle-control/issues/new")			
-				end
-			  end,
-			})
-			RageUI.Button('Developer\'s Discord', "Join my discord for support, future updates, and other resources.", {}, true, {
-				onSelected = function()
-				TriggerServerEvent('lvc_OpenLink_s', "https://discord.gg/HGBp3un")
-			end,
-			});	
 			RageUI.Button('About / Credits', "Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to Lt. Cornelius, bakerxgooty, MrLucky8, xotikorukx, the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!", {}, true, {
 				onSelected = function()
 			end,

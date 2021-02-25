@@ -14,7 +14,7 @@ PURPOSE: Core Functionality and User Input
 
 --GLOBAL VARIABLES used in both menu.lua and client.lua
 key_lock = false
-tone_main_reset_standby = Standby_tone_reset
+tone_main_reset_standby = reset_to_standby_default
 tone_airhorn_intrp = airhorn_interrupt_default
 park_kill = park_kill_default
 
@@ -177,7 +177,7 @@ end)
 ------PARK KILL THREADS------
 --Kill siren on Exit
 Citizen.CreateThread(function()
-	while true do
+	while park_kill or park_kill_masterswitch do
 		while park_kill and playerped ~= nil and veh ~= nil do
 			if GetIsTaskActive(playerped, 2) then
 				if not tone_main_reset_standby and state_lxsiren[veh] ~= 0 then
