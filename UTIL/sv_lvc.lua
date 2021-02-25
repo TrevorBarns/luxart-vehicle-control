@@ -71,8 +71,9 @@ AddEventHandler("lvc_TogTkdState_s", function(newstate)
 	TriggerClientEvent("lvc_TogTkdState_c", -1, source, newstate)
 end)
 
+--[[
 RegisterServerEvent("lvc_ShareAudio_s")
 AddEventHandler("lvc_ShareAudio_s", function(target, audiofile)
-	TriggerClientEvent("lvc_ShareAudio_s", target, audiofile)
+	TriggerClientEvent("lvc_ShareAudio_c", target, audiofile)
 end)
-
+]]

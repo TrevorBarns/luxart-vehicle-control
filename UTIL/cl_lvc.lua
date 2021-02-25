@@ -105,7 +105,6 @@ Citizen.CreateThread(function()
 			veh = GetVehiclePedIsUsing(playerped)	
 			--IS DRIVER
 			if GetPedInVehicleSeat(veh, -1) == playerped then
-				print(GetPedInVehicleSeat(veh, -1))
 				--IS EMERGENCY VEHICLE
 				if GetVehicleClass(veh) == 18 then
 					player_is_emerg_driver = true
@@ -616,11 +615,12 @@ AddEventHandler("lvc_TogTkdState_c", function(sender, toggle)
 	end
 end)
 ---------------------------------------------------------------------
+--[[
 RegisterNetEvent("lvc_ShareAudio_c")
 AddEventHandler("lvc_ShareAudio_c", function(sender, version)
 	repo_version = version
 end)
-
+]]
 ---------------------------------------------------------------------
 local actv_manu  
 local actv_horn 
