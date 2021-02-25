@@ -105,6 +105,7 @@ Citizen.CreateThread(function()
 			veh = GetVehiclePedIsUsing(playerped)	
 			--IS DRIVER
 			if GetPedInVehicleSeat(veh, -1) == playerped then
+				print(GetPedInVehicleSeat(veh, -1))
 				--IS EMERGENCY VEHICLE
 				if GetVehicleClass(veh) == 18 then
 					player_is_emerg_driver = true
@@ -632,7 +633,7 @@ Citizen.CreateThread(function()
 		if IsPedInAnyVehicle(playerped, false) then	
 			----- IS DRIVER -----
 			local veh = GetVehiclePedIsUsing(playerped)				
-			if GetPedInVehicleSeat(veh, -1) == playerped or GetPedInVehicleSeat(veh, 0) == playerped then			
+			if GetPedInVehicleSeat(veh, -1) == playerped then			
 				if state_indic[veh] ~= ind_state_o and state_indic[veh] ~= ind_state_l and state_indic[veh] ~= ind_state_r and state_indic[veh] ~= ind_state_h then
 					state_indic[veh] = ind_state_o
 				end
