@@ -26,7 +26,6 @@ AddEventHandler("lvc_GetRepoVersion_s", function()
     TriggerClientEvent("lvc_SendRepoVersion_c", source, repo_version)
 end)
 
-
 function checkVersion(err, responseText, headers)
 	repo_version = responseText
     curVersion = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
