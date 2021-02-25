@@ -150,10 +150,10 @@ Citizen.CreateThread(function()
 			if custom_manual_tones_master_switch then
 				--PRIMARY MANUAL TONE List
 				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
-				PMANU = UTIL:GetToneID('PMANU')
+				PMANU = UTIL:GetTonePos('PMANU')
 				RageUI.List('Primary Manual Tone', TonesTable, PMANU-1, "Change your primary manual tone.", {}, true, {
 				  onListChange = function(Index, Item)
-					UTIL:SetToneByPos('PMANU', Item.Value)
+					UTIL:SetToneByID('PMANU', Item.Value)
 				  end,
 				  onSelected = function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[PMANU].String .. ":", SIRENS[PMANU].Name, 15)
@@ -165,10 +165,10 @@ Citizen.CreateThread(function()
 				
 				--SECONDARY MANUAL TONE List
 				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
-				SMANU = UTIL:GetToneID('SMANU')
+				SMANU = UTIL:GetTonePos('SMANU')
 				RageUI.List('Secondary Manual Tone', TonesTable, SMANU-1, "Change your secondary manual tone.", {}, true, {
 				  onListChange = function(Index, Item)
-					UTIL:SetToneByPos('SMANU', Item.Value)
+					UTIL:SetToneByID('SMANU', Item.Value)
 				  end,
 				  onSelected = function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[SMANU].String .. ":", SIRENS[SMANU].Name, 15)
@@ -183,10 +183,10 @@ Citizen.CreateThread(function()
 			--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
 			if custom_aux_tones_master_switch then
 				--AST List
-				AUX = UTIL:GetToneID('AUX')
+				AUX = UTIL:GetTonePos('AUX')
 				RageUI.List('Auxiliary Siren Tone', TonesTable, AUX-1, "Change your auxiliary/dual siren tone.", {}, true, {
 				  onListChange = function(Index, Item)
-					UTIL:SetToneByPos('AUX', Item.Value)
+					UTIL:SetToneByID('AUX', Item.Value)
 				  end,
 				  onSelected = function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[AUX].String .. ":", SIRENS[AUX].Name, 15)

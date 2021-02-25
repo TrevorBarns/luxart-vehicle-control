@@ -104,31 +104,31 @@ end
 --[[Getter for tone id by passing string abbreviation (MAIN_MEM, PMANU, etc.)
 	If the item is nil automatically set to predefined positions. 
 	1 - Airhorn, 2 - First Siren, 3 - Second Siren]]
-function UTIL:GetToneID(tone)
+function UTIL:GetToneID(tone_string)
 	if approved_tones == nil then
 		UTIL:UpdateApprovedTones()
 	end
-	if tone == 'MAIN_MEM' then
+	if tone_string == 'MAIN_MEM' then
 		if tone_main_mem_id == nil then
 			UTIL:SetToneByPos('MAIN_MEM', 2)
 		end
 		return tone_main_mem_id
-	elseif tone == 'PMANU' then
+	elseif tone_string == 'PMANU' then
 		if tone_PMANU_id == nil then
 			UTIL:SetToneByPos('PMANU', 2)
 		end
 		return tone_PMANU_id
-	elseif tone == 'SMANU' then
+	elseif tone_string == 'SMANU' then
 		if tone_SMANU_id == nil then
 			UTIL:SetToneByPos('SMANU', 3)
 		end
 		return tone_SMANU_id
-	elseif tone == 'AUX' then
+	elseif tone_string == 'AUX' then
 		if tone_AUX_id == nil then
 			UTIL:SetToneByPos('AUX', 2)
 		end
 		return tone_AUX_id
-	elseif tone == 'ARHRN' then
+	elseif tone_string == 'ARHRN' then
 		if tone_ARHRN_id == nil then
 			UTIL:SetToneByPos('ARHRN', 1)
 		end
@@ -137,22 +137,33 @@ function UTIL:GetToneID(tone)
 end
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and position of desired tone in approved_tones.]]
-function UTIL:SetToneByPos(tone, pos)
+function UTIL:SetToneByPos(tone_string, pos)
 	if approved_tones[pos] ~= nil then
-		if tone == 'MAIN_MEM' then
+		if tone_string == 'MAIN_MEM' then
 			tone_main_mem_id = approved_tones[pos]
-		elseif tone == 'PMANU' then
+		elseif tone_string == 'PMANU' then
 			tone_PMANU_id = approved_tones[pos]
-		elseif tone == 'SMANU' then
+		elseif tone_string == 'SMANU' then
 			tone_SMANU_id = approved_tones[pos]
-		elseif tone == 'AUX' then
+		elseif tone_string == 'AUX' then
 			tone_AUX_id = approved_tones[pos]
-		elseif tone == 'ARHRN' then
+		elseif tone_string == 'ARHRN' then
 			tone_ARHRN_id = approved_tones[pos]
 		end
 	else
 		HUD:ShowNotification("~b~LVC ERROR 4: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), couldn't locate that tone.")
 	end
+end
+
+--[[Getter for position of passed tone string. Used in RageUI for P/S MANU and AUX Siren.]]
+function UTIL:GetTonePos(tone_string)
+	local current_id = UTIL:GetToneID(tone_string)
+	for i, tone_id in pairs(approved_tones) do
+		if tone_id == current_id then
+			return i
+		end
+	end
+	return -1
 end
 
 --[[Getter for Tone ID at index/pos in approved_tones]]
