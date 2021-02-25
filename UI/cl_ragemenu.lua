@@ -131,7 +131,7 @@ Citizen.CreateThread(function()
 	while true do
 		if IsMenuOpen() then
 			if (not player_is_emerg_driver) then
-				RageUI.Visible(RMenu:Get('lvc', 'main'), false)
+				RageUI.CloseAll()
 			end
 		end
 		Citizen.Wait(500)
@@ -567,6 +567,6 @@ Citizen.CreateThread(function()
 			});
 			  
         end)
-        Citizen.Wait(1)
+        Citizen.Wait(0)
 	end
 end)
