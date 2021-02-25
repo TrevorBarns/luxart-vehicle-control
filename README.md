@@ -1,13 +1,13 @@
 <p align="center">
-<img align="center" width="800" src="https://i.gyazo.com/c45881d46eeef83e03634a6a251ab849.png">
+<img align="center" width="600" src="https://i.gyazo.com/c45881d46eeef83e03634a6a251ab849.png">
 </p>
 
 # Luxart Vehicle Control v3
 Over the past months, I have been slowing integrating additonal features into Faction's release (v2.0) of Lt. Caine's Luxart Vehicle Control resource, I would now like to release these to the public. 
 
-Introduction Video: https://youtu.be/XO5K7iISOh0
+Introduction Video: https://youtu.be/XO5K7iISOh0 (out-of-date)
 
-Installation Video: https://youtu.be/YVm3yYxdm48
+Installation Video: https://youtu.be/YVm3yYxdm48 (out-of-date)
 
 Community Upgrade Guides: https://drive.google.com/drive/folders/1trjNXnpmlh_5Q5syXESjwSODdFOFXBdE?usp=sharing
 
@@ -16,7 +16,7 @@ Community Upgrade Guides: https://drive.google.com/drive/folders/1trjNXnpmlh_5Q5
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
 <p align="center">
-<img align="center" width="230" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
+<img align="center" width="530" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
 </p>
 
 __Additional Tones ("Siren Mastery"):__
@@ -46,13 +46,8 @@ Ability to lock all siren/light controls using a player set key to prevent activ
 __Hazards Delay & SoundFX:__
 Customizable "Hold-to-activate/deactivate" hazard lights to prevent accidental activation when navigating trainers/vMenu. Added activation/deactivation sound effect of toggle switch based off IRL vehicle toggle switches.
 
-__SETTINGS.lua:__ 
-One stop shop for all customizable settings to reduce server developer workload.
-
 ## How to install:
-1. Add lux_vehcontrol folder into your server resources.
-2. Add RageUI folder provided in dependencies to server resources.
-2. Add `ensure lux_vehcontrol` or `start lux_vehcontrol` to server.cfg
+1. Visit: [Wiki - Installation](https://github.com/TrevorBarns/luxart-vehicle-control/wiki/Installation)
 
 ## Credits:
 Luxart Vehicle Control was an ingenious creation by __Lt. Caine__! Thank you! 
