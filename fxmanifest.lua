@@ -64,11 +64,14 @@ client_scripts {
 	'/UI/cl_hud.lua',
 	'/UI/cl_ragemenu.lua',
 	'/UTIL/cl_storage.lua',
-	'/PLUGINS/**.lua',
+	'/PLUGINS/cl_plugins.lua',
+	'/PLUGINS/**/SETTINGS.lua',
+	'/PLUGINS/**/**/cl_*.lua',
 }
 
 server_script {
-	'/UTIL/sv_lvc.lua'
+	'/UTIL/sv_lvc.lua',
+	'/PLUGINS/**/**/sv_*.lua'
 }
 
 ------------------------------
