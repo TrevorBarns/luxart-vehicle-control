@@ -6,6 +6,10 @@ open_menu_key = 'O'
 
 
 --------------------TAKE DOWNS---------------------
+tkd_visability = true
+-- When toggled to false, will not be visable in the menu and will follow the default settings
+tkd_default = true
+-- Default setting for Takedowns (default: true [Enabled])
 tkd_key = 74
 --	Key to toggle TKD light. (default: 74 (H))
 tkd_combokey = 21 
@@ -81,6 +85,8 @@ reset_to_standby_default = true
 
 
 ---------------SOUND EFFECT VOLUMES---------------
+sounds_masterswitch = true
+--  Enables visability of ELS clicks selection menu item
 button_sfx_scheme_choices = { 'SSP2000', 'SSP3000', 'Cencom', 'ST300' }
 --Customize which button SFX schemes are available. An item here must match exactly the folder name located in `lux_vehcontrol\UI\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)
 default_sfx_scheme_name = 'SSP2000'
@@ -92,3 +98,9 @@ default_hazards_volume = 0.09
 default_lock_volume = 0.25
 default_lock_reminder_volume = 0.2
 default_reminder_volume = 0.09
+
+-------------MISC Toggles---------------------
+save_masterswitch = true
+--  Enables the visability of the saved profiles menu
+info_masterswitch = true
+-- Enables visability of "More information" menu 
