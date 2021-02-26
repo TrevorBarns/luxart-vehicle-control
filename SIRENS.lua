@@ -2,10 +2,10 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 23 2021  (VERS. 3.2.0)
+Last revision: FEBRUARY 25 2021 VERS. 3.2.1
 Coded by Lt.Caine
 ELS Clicks by Faction
-Additions by TrevorBarns
+Additional Modification by TrevorBarns
 ---------------------------------------------------
 FILE: SIRENS.lua
 PURPOSE: Associate specific sirens with specific
