@@ -228,9 +228,9 @@ function Storage:ResetSettings()
 	UTIL:SetToneByPos('AUX',	2)
 	UTIL:SetToneByPos('MAIN_MEM', 2)
 	
-	tone_main_reset_standby = true
-	tone_airhorn_intrp = true
-	park_kill = false
+	tone_main_reset_standby = reset_to_standby_default
+	tone_airhorn_intrp = airhorn_interrupt_default
+	park_kill = park_kill_default
 	custom_tone_names = false
 	Storage:RestoreBackupTable()
 	UTIL:BuildToneOptions()
