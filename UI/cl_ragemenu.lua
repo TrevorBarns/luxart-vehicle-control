@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 23 2021 (VERS.3.2.0)
+Last revision: FEBRUARY 25 2021 VERS. 3.2.1
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -13,13 +13,13 @@ PURPOSE: Handle RageUI
 ]]
 
 RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu"))
-RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Tone Selection Menu"))
+RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Siren Settings"))
 RMenu.Add('lvc', 'tkdsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Takedown Settings"))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "HUD Settings"))
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Audio Settings"))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
 RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "About Luxart Vehicle Control"))
-RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(12)
+RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
 RMenu:Get('lvc', 'audiosettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
 RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
@@ -284,7 +284,7 @@ Citizen.CreateThread(function()
 				tkd_masterswitch = Index
             end
             })				
-			RageUI.List('Highbeam Integration', {"Off", "Takedowns Set High-beams", "High-beams Set Takedowns"}, tkd_mode, "Determines whether high-beams will auto toggle takedowns or visa versa.", {}, tkd_masterswitch, {
+			RageUI.List('Integration', {"Off", "TKDs Set High-beams", "High-beams Set TKDs"}, tkd_mode, "Determines whether high-beams will auto toggle takedowns or visa versa.", {}, tkd_masterswitch, {
 			  onListChange = function(Index, Item)
 				tkd_mode = Index
 			  end,
