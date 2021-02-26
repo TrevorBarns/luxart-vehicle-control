@@ -5,13 +5,13 @@ games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.2.0'	
+version '3.2.1'	
 compatible '3.2.0'
 
 ------------------------------
 
 experimental 'false'	-- Mute unstable version warning in server console.
-debug_mode 'true' 		-- More verbose printing on client console.
+debug_mode 'false' 		-- More verbose printing on client console.
 
 ------------------------------
 
