@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. 3.2.1
+Last revision: FEBRUARY 23 2021 (VERS. 3.2.0)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
