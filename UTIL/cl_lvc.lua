@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. 3.2.1
+Last revision: FEBRUARY 23 2021 (VERS. 3.2.0)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -979,7 +979,7 @@ Citizen.CreateThread(function()
 						if GetVehicleClass(veh) == 18 then
 							TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
 							TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
-							TriggerServerEvent("lvc_SetPwrcallState_s", state_pwrcall[veh])
+							TriggerServerEvent("lvc_TogPwrcallState_s", state_pwrcall[veh])
 							TriggerServerEvent("lvc_SetAirManuState_s", state_airmanu[veh])
 							TriggerServerEvent("lvc_TogTkdState_s", state_tkd[veh])
 						end
