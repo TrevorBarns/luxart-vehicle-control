@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. 3.2.1
+Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -14,19 +14,19 @@ PURPOSE: Handle RageUI
 
 RMenu.Add('lvc', 'main', RageUI.CreateMenu("Luxart Vehicle Control", "Main Menu"))
 RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Main Siren Settings"))
-RMenu.Add('lvc', 'tkdsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Takedown Settings"))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "HUD Settings"))
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Audio Settings"))
+RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Plugins"))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
 RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "About Luxart Vehicle Control"))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
 RMenu:Get('lvc', 'audiosettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
-RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'maintone'):DisplayGlare(false)
 RMenu:Get('lvc', 'hudsettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'audiosettings'):DisplayGlare(false)
-RMenu:Get('lvc', 'tkdsettings'):DisplayGlare(false)
+RMenu:Get('lvc', 'plugins'):DisplayGlare(false)
+RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'about'):DisplayGlare(false)
 
 
@@ -68,10 +68,10 @@ end)
 function IsMenuOpen()
 	return RageUI.Visible(RMenu:Get('lvc', 'main')) or 
 	RageUI.Visible(RMenu:Get('lvc', 'maintone')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 		
 	RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'plugins')) or 
+	RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
 	RageUI.Visible(RMenu:Get('lvc', 'about'))
 end
 
@@ -207,10 +207,6 @@ Citizen.CreateThread(function()
 			end
 			--MAIN MENU TO SUBMENU BUTTONS
 			RageUI.Separator("Other Settings")
-			RageUI.Button('Takedown Settings', "Open takedown lights menu.", {RightLabel = "→→→"}, true, {
-			  onSelected = function()
-			  end,
-			}, RMenu:Get('lvc', 'tkdsettings'))	
 			RageUI.Button('HUD Settings', "Open HUD settings menu.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,
@@ -220,6 +216,12 @@ Citizen.CreateThread(function()
 			  end,
 			}, RMenu:Get('lvc', 'audiosettings'))			
 			RageUI.Separator("Miscellaneous")	
+			if plugins_installed then
+				RageUI.Button('Plugins', "Open Plugins Menu.", {RightLabel = "→→→"}, true, {
+				  onSelected = function()
+				  end,
+				}, RMenu:Get('lvc', 'plugins'))		
+			end
 			RageUI.Button('Storage Management', "Save / Load LVC profiles.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,
@@ -277,44 +279,6 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------
 		-------------------------OTHER SETTINGS MENU-------------------------
 		---------------------------------------------------------------------
-		--TKD SETTINGS
-		RageUI.IsVisible(RMenu:Get('lvc', 'tkdsettings'), function()
-			RageUI.Checkbox('Enabled', "Toggles takedown light functionality. All vehicles: your own and others.", tkd_masterswitch, {}, {
-            onSelected = function(Index)
-				tkd_masterswitch = Index
-            end
-            })				
-			RageUI.List('Integration', {"Off", "TKDs Set High-beams", "High-beams Set TKDs"}, tkd_mode, "Determines whether high-beams will auto toggle takedowns or visa versa.", {}, tkd_masterswitch, {
-			  onListChange = function(Index, Item)
-				tkd_mode = Index
-			  end,
-			})			
-			RageUI.List('Position', {"1", "2", "3", "4"}, tkd_scheme, "Select predefined positions of light source.", {}, true, {
-			  onListChange = function(Index, Item)
-				tkd_scheme = Index
-			  end,
-			})
-			RageUI.Slider('Intensity', tkd_intensity, 150, 15, "Set brightness/intensity of takedowns.", false, {}, tkd_masterswitch, {
-			  onSliderChange = function(Index)
-				tkd_intensity = Index
-			  end,	  
-			})					
-			RageUI.Slider('Radius', tkd_radius, 90, 9, "Set width of takedowns.", false, {}, tkd_masterswitch, {
-			  onSliderChange = function(Index)
-				tkd_radius = Index
-			  end,	  
-			})			
-			RageUI.Slider('Distance', tkd_distance, 250, 25, "Set the max distance the takedowns can travel.", false, {}, tkd_masterswitch, {
-			  onSliderChange = function(Index)
-				tkd_distance = Index
-			  end,	  
-			})				
-			RageUI.Slider('Falloff', tkd_falloff, 2000, 200, "Set how fast light \"falls off\" or appears dim.", false, {}, tkd_masterswitch, {
-			  onSliderChange = function(Index)
-				tkd_falloff = Index
-			  end,	  
-			})	
-        end)
 		--HUD SETTINGS
 	    RageUI.IsVisible(RMenu:Get('lvc', 'hudsettings'), function()
 			local hud_state = HUD:GetHudState()

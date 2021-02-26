@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. 3.2.1
+Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -64,11 +64,6 @@ end)
 RegisterServerEvent("lvc_TogIndicState_s")
 AddEventHandler("lvc_TogIndicState_s", function(newstate)
 	TriggerClientEvent("lvc_TogIndicState_c", -1, source, newstate)
-end)
-
-RegisterServerEvent("lvc_TogTkdState_s")
-AddEventHandler("lvc_TogTkdState_s", function(newstate)
-	TriggerClientEvent("lvc_TogTkdState_c", -1, source, newstate)
 end)
 
 --[[

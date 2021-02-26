@@ -2,7 +2,7 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. 3.2.1
+Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -23,25 +23,6 @@ manu_button_SFX = false
 activity_reminder_index = 1
 last_activity_timer = 0
 
-local light_start_pos = nil
-local light_end_pos = nil
-local light_direction = nil
-tkd_masterswitch = true
-tkd_intensity = tkd_intensity_default
-tkd_radius = tkd_radius_default
-tkd_distance = tkd_distance_default
-tkd_falloff = tkd_falloff_default
-tkd_scheme = 1
-tkd_mode = tkd_highbeam_integration_default
-tkd_sync_radius = tkd_sync_radius_default^2
-local tkd_scheme_lookup = {
-	{ start_y = 1.0, start_z = 1.0, end_y = 10.0, end_z = -1.0},
-	{ start_y = 1.0, start_z = 2.0, end_y = 10.0, end_z = 0.0},
-	{ start_y = 1.5, start_z = 1.0, end_y = 10.0, end_z = 1.0},
-	{ start_y = 2.25, start_z = 1.0, end_y = 10.0, end_z = 1.0},
-}
-
-
 button_sfx_scheme = default_sfx_scheme_name
 on_volume = default_on_volume	
 off_volume = default_off_volume	
@@ -52,13 +33,13 @@ lock_volume = default_lock_volume
 lock_reminder_volume = default_lock_reminder_volume
 activity_reminder_volume = default_reminder_volume
 
+playerped = nil
 last_veh = nil
 veh = nil
 player_is_emerg_driver = false
 repo_version = nil
 							
 --LOCAL VARIABLES
-local playerped = nil
 local activity_reminder_lookup = { [2] = 30000, [3] = 60000, [4] = 120000, [5] = 300000, [6] = 600000 } 
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
@@ -70,16 +51,14 @@ local actv_ind_timer = false
 local count_ind_timer = 0
 local delay_ind_timer = 180
 
-local actv_lxsrnmute_temp = false
+actv_lxsrnmute_temp = false
 local srntone_temp = 0
 local dsrn_mute = true
 
-local state_indic = {}
-local state_lxsiren = {}
+state_indic = {}
+state_lxsiren = {}
 local state_pwrcall = {}
-local state_airmanu = {}
-local state_tkd = {}
-local veh_dist = {}
+state_airmanu = {}
 
 local ind_state_o = 0
 local ind_state_l = 1
@@ -126,53 +105,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
-------TAKE DOWN THREADS------
--- TKDs: DrawTakeDowns Thread of vehicles within range
-Citizen.CreateThread(function()
-	while true do
-		if tkd_masterswitch then	
-			for veh,state in pairs(state_tkd) do
-				if veh_dist[veh] ~= nil and veh_dist[veh] < tkd_sync_radius then
-					if state then
-						DrawTakeDown(veh)
-					end
-				end
-			end
-		end
-		Citizen.Wait(0)
-	end
-end)
-
--- Set vehicles distances in table for DrawTakeDowns Thread
-Citizen.CreateThread(function()
-	while true do
-		if tkd_masterswitch then	
-			for veh,_ in pairs(state_tkd) do
-				if DoesEntityExist(veh) and not IsEntityDead(veh) then
-					veh_dist[veh] = Vdist2(GetEntityCoords(playerped), GetEntityCoords(veh))
-				end
-			end
-		end
-		Citizen.Wait(500)
-	end
-end)
-
---Get Headlight State for TKD Trigger
-Citizen.CreateThread(function()
-	while true do
-		if tkd_masterswitch and player_is_emerg_driver and tkd_mode == 3 then	
-			_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
-			if (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
-				TogTkdStateForVeh(veh, true)
-			else
-				TogTkdStateForVeh(veh, false)
-			end
-			Citizen.Wait(50)
-		else
-			Citizen.Wait(1000)
-		end
-	end
-end)
 
 ------PARK KILL THREADS------
 --Kill siren on Exit
@@ -231,28 +163,31 @@ end)
 
 ------VEHICLE CHANGE DETECTION AND TRIGGER------
 Citizen.CreateThread(function()
+	Citizen.Wait(1000)
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
 			if last_veh == nil then
-				UTIL:UpdateApprovedTones(veh)
-				Storage:LoadSettings()
-				UTIL:BuildToneOptions()
-				last_veh = veh
-				SetVehRadioStation(veh, "OFF")
+				TriggerEvent('lvc:onVehicleChange')
 			else
 				if last_veh ~= veh then
-					UTIL:UpdateApprovedTones(veh)
-					Storage:ResetSettings()
-					Storage:LoadSettings()
-					UTIL:BuildToneOptions()
-					last_veh = veh
-					SetVehRadioStation(veh, "OFF")
+					TriggerEvent('lvc:onVehicleChange')
 				end
 			end
 		end
 		Citizen.Wait(1000)
 	end
 end)
+
+RegisterNetEvent('lvc:onVehicleChange')
+AddEventHandler('lvc:onVehicleChange', function()
+	last_veh = veh
+	UTIL:UpdateApprovedTones(veh)
+	Storage:ResetSettings()
+	Storage:LoadSettings()
+	UTIL:BuildToneOptions()
+	SetVehRadioStation(veh, "OFF")
+end)
+
 
 --------------REGISTERED COMMANDS---------------
 --Toggle LUX lock command
@@ -353,21 +288,6 @@ function MakeOrdinal(number)
 end
 
 ---------------------------------------------------------------------
--- Coordinate calculations and drawing of spotlight on passed vehicle.
-function DrawTakeDown(veh)
-	if DoesEntityExist(veh) and not IsEntityDead(veh) and veh_dist[veh] ~= nil then
-		light_start_pos = GetOffsetFromEntityInWorldCoords(veh, 0.0, tkd_scheme_lookup[tkd_scheme].start_y, tkd_scheme_lookup[tkd_scheme].start_z) 
-		light_end_pos = GetOffsetFromEntityInWorldCoords(veh, 0.0, tkd_scheme_lookup[tkd_scheme].end_y, tkd_scheme_lookup[tkd_scheme].end_z)
-		light_direction = vector3(light_end_pos-light_start_pos)	
-		DrawSpotLight(light_start_pos, light_direction, 200, 200, 255, tkd_distance+0.0, tkd_intensity+0.0, 0.0, tkd_radius+0.0, tkd_falloff+veh_dist[veh]/2+0.0)
-
-		if tkd_debug_flag then
-			DrawLine(light_start_pos, light_end_pos, 255, 0, 0, 255)
-		end
-	end
-end
-
----------------------------------------------------------------------
 function PlayAudio(soundFile, soundVolume, schemeless)
 	local schemeless = schemeless or false
 	if not schemeless then
@@ -420,13 +340,6 @@ function CleanupSounds()
 				end
 			end
 		end		
-		for k, v in pairs(state_tkd) do
-			if v == true then
-				if not DoesEntityExist(k) or IsEntityDead(k) then
-					state_tkd[k] = nil
-				end
-			end
-		end
 	else
 		count_sndclean_timer = count_sndclean_timer + 1
 	end
@@ -514,15 +427,6 @@ function SetAirManuStateForVeh(veh, newstate)
 	end
 end
 
----------------------------------------------------------------------
-function TogTkdStateForVeh(veh, toggle)
-	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if toggle ~= state_tkd[veh] then
-			state_tkd[veh] = toggle
-		end
-	end
-end
-
 ------------------------------------------------
 ----------------EVENT HANDLERS------------------
 ------------------------------------------------
@@ -600,20 +504,6 @@ AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
 	end
 end)
 
----------------------------------------------------------------------
-RegisterNetEvent("lvc_TogTkdState_c")
-AddEventHandler("lvc_TogTkdState_c", function(sender, toggle)
-	local player_s = GetPlayerFromServerId(sender)
-	local ped_s = GetPlayerPed(player_s)
-	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
-		if ped_s ~= GetPlayerPed(-1) then
-			if IsPedInAnyVehicle(ped_s, false) then
-				local veh = GetVehiclePedIsUsing(ped_s)
-				TogTkdStateForVeh(veh, toggle)
-			end
-		end
-	end
-end)
 ---------------------------------------------------------------------
 --[[
 RegisterNetEvent("lvc_ShareAudio_c")
@@ -773,26 +663,6 @@ Citizen.CreateThread(function()
 										HUD:SetItemState("siren", false) 
 									end 
 									SetPowercallStateForVeh(veh, 0)
-									count_bcast_timer = delay_bcast_timer
-								end
-							--TKDs
-							elseif IsControlPressed(0, tkd_combokey) or tkd_combokey == 0 then
-								DisableControlAction(0, tkd_key, true)
-								if IsDisabledControlJustReleased(0, tkd_key) then
-									if state_tkd[veh] == true then
-										if tkd_mode == 2 then
-											SetVehicleFullbeam(veh, false)
-										end
-										TogTkdStateForVeh(veh, false)										
-										PlayAudio("Downgrade", downgrade_volume) 
-									else
-										if tkd_mode == 2 then
-											SetVehicleFullbeam(veh, true)
-										end
-										TogTkdStateForVeh(veh, true)
-										PlayAudio("Upgrade", upgrade_volume) 										
-									end
-									HUD:SetItemState("tkd", state_tkd[veh]) 
 									count_bcast_timer = delay_bcast_timer
 								end
 							end
@@ -979,9 +849,8 @@ Citizen.CreateThread(function()
 						if GetVehicleClass(veh) == 18 then
 							TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
 							TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
-							TriggerServerEvent("lvc_SetPwrcallState_s", state_pwrcall[veh])
+							TriggerServerEvent("lvc_TogPwrcallState_s", state_pwrcall[veh])
 							TriggerServerEvent("lvc_SetAirManuState_s", state_airmanu[veh])
-							TriggerServerEvent("lvc_TogTkdState_s", state_tkd[veh])
 						end
 						--- IS ANY OTHER VEHICLE ---
 						TriggerServerEvent("lvc_TogIndicState_s", state_indic[veh])
