@@ -29,7 +29,7 @@ Citizen.CreateThread(function()
 			}, RMenu:Get('lvc', 'tkdsettings'))	
 		end
 		-----------------------------------------------------------------------------------------------------------------
-		if extra_integration_masterswitch then
+		if ei_masterswitch then
 			RageUI.Button('Extra Integration Settings', "Open extra integration menu. (extra_integration)", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,

@@ -28,7 +28,7 @@ brakes_ei_enabled 	 = brakes_ei_enabled
 ------BRAKE, REVERSE, TKD - EXTRA INTEGRATION------
 Citizen.CreateThread( function()
     while true do
-        while extra_integration_masterswitch do
+        while ei_masterswitch do
             if player_is_emerg_driver and veh ~= nil then	
 				--BRAKE LIGHTS
 				if extras.Brake ~= nil then
@@ -36,7 +36,8 @@ Citizen.CreateThread( function()
 						if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
 						   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
 						   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
-						   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) then					-- Vehicle is stopped 
+						   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
+						   ( not ( accel_pedal < 0 )) then															-- Is vehicle not reversing
 							if not IsVehicleExtraTurnedOn(veh, extras.Brake) then
 								SetVehicleExtra(veh, extras.Brake, false)
 							end
@@ -89,7 +90,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
-			if extra_integration_masterswitch and auto_brake_lights then
+			if ei_masterswitch and auto_brake_lights then
 				if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) then
 					SetVehicleBrakeLights(veh, true)
 				end
@@ -102,7 +103,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
-			if extra_integration_masterswitch and auto_brake_lights and auto_park then
+			if ei_masterswitch and auto_brake_lights and auto_park then
 				while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
 					if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
 						Citizen.Wait(1000)
