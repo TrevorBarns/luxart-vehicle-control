@@ -89,17 +89,15 @@ Citizen.CreateThread(function()
 				--IS EMERGENCY VEHICLE
 				if GetVehicleClass(veh) == 18 then
 					player_is_emerg_driver = true
+					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
 					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
 					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
-					DisableControlAction(0, 81, true) -- INPUT_VEH_NEXT_RADIO
-					DisableControlAction(0, 82, true) -- INPUT_VEH_PREV_RADIO
-					DisableControlAction(0, 84, true) -- INPUT_VEH_PREV_RADIO_TRACK  
-					DisableControlAction(0, 83, true) -- INPUT_VEH_NEXT_RADIO_TRACK 
 					DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
 					if IsControlReleased(0, 243) then
 						DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 
 					end
 					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
+				end
 				end
 			end
 		end
@@ -579,7 +577,7 @@ Citizen.CreateThread(function()
 				if not IsPauseMenuActive() then
 					if not key_lock then
 						------ TOG DFLT SRN LIGHTS ------
-						if IsDisabledControlJustReleased(0, 85) or IsDisabledControlJustReleased(0, 246) and IsControlReleased(0, 243) then
+						if IsDisabledControlJustReleased(0, 85) then
 							if IsVehicleSirenOn(veh) then
 								PlayAudio("Off", off_volume)
 								--	SET NUI IMAGES
@@ -597,7 +595,7 @@ Citizen.CreateThread(function()
 							SetActivityTimer()							
 							count_bcast_timer = delay_bcast_timer
 						------ TOG LX SIREN ------
-						elseif IsDisabledControlJustReleased(0, 19) or IsDisabledControlJustReleased(0, 82) then
+						elseif IsDisabledControlJustReleased(0, 19) then
 							if state_lxsiren[veh] == 0 then
 								if IsVehicleSirenOn(veh) then
 									local new_tone = nil
@@ -659,19 +657,19 @@ Citizen.CreateThread(function()
 						end
 						-- BROWSE LX SRN TONES
 						if state_lxsiren[veh] > 0 then
-							if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
+							if IsDisabledControlJustReleased(0, 80) then
 								PlayAudio("Upgrade", upgrade_volume)
 								HUD:SetItemState("horn", false) 
 								SetLxSirenStateForVeh(veh, UTIL:GetNextSirenTone(state_lxsiren[veh], veh, true))
 								count_bcast_timer = delay_bcast_timer
-							elseif IsDisabledControlPressed(0, 80) or IsDisabledControlPressed(0, 81) then
+							elseif IsDisabledControlPressed(0, 80) then
 								HUD:SetItemState("horn", true) 
 							end
 						end
 									
 						-- MANU
 						if state_lxsiren[veh] < 1 then
-							if IsDisabledControlPressed(0, 80) or (IsDisabledControlPressed(0, 81) and not IsMenuOpen()) then
+							if IsDisabledControlPressed(0, 80) then
 								SetActivityTimer()
 								actv_manu = true
 								HUD:SetItemState("siren", true) 
@@ -711,23 +709,18 @@ Citizen.CreateThread(function()
 							end
 						end							
 						if manu_button_SFX and state_lxsiren[veh] == 0 then
-							if IsDisabledControlJustPressed(0, 80) or IsDisabledControlJustPressed(0, 81) then
+							if IsDisabledControlJustPressed(0, 80) then
 								PlayAudio("Press", upgrade_volume)									
 							end								
-							if IsDisabledControlJustReleased(0, 80) or IsDisabledControlJustReleased(0, 81) then
+							if IsDisabledControlJustReleased(0, 80) then
 								PlayAudio("Release", upgrade_volume)									
 							end
 						end
 					else
 						if (IsDisabledControlJustReleased(0, 86) or 
-							IsDisabledControlJustReleased(0, 81) or 
-							IsDisabledControlJustReleased(0, 80) or 
-							IsDisabledControlJustReleased(0, 81) or
 							IsDisabledControlJustReleased(0, 172) or 
 							IsDisabledControlJustReleased(0, 19) or 
-							IsDisabledControlJustReleased(0, 82) or
-							IsDisabledControlJustReleased(0, 85) or 
-							IsDisabledControlJustReleased(0, 246)) then
+							IsDisabledControlJustReleased(0, 85)) then
 								if locked_press_count % reminder_rate == 0 then
 									PlayAudio("Locked_Press", lock_reminder_volume, true) -- lock reminder
 									HUD:ShowNotification("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.", true)

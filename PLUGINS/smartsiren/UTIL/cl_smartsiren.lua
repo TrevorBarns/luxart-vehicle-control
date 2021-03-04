@@ -14,8 +14,6 @@ state / inputs.
 ]]
 
 local SS = {}
-smart_siren_masterswitch = smart_siren_masterswitch
-local smart_siren_timer = smart_siren_timer
 local horn_triggered_sirens = { 3, 4, 5 }
 local saved_tone = nil
 local active = false
@@ -28,7 +26,7 @@ local ss_run_timer = ss_run_timer_default
 local count_reset_timer_default = trigger_reset_timer * 1000
 local count_reset_timer = count_reset_timer_default
 
-local count_trigger_val = 2
+local count_trigger_val = trigger_count
 local pos = 1
 local new_tone
 
@@ -75,7 +73,7 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver and smart_siren_masterswitch then
 			if state_lxsiren[veh] ~= nil and state_airmanu[veh] ~= nil then
 				-- SIREN IS ON OR IS OFF BY BEING ACTIVELY INTERRUPTED
-				if ( state_lxsiren[veh] > 0 or actv_lxsrnmute_temp ) and state_airmanu[veh] > 0 then
+				if ( state_lxsiren[veh] > 0 or actv_lxsrnmute_temp ) then
 					if IsDisabledControlReleased(0, 86) then
 						if ss_run_timer > 1 then
 							Citizen.Wait(500)
@@ -87,8 +85,6 @@ Citizen.CreateThread(function()
 					else
 						ss_run_timer = ss_run_timer_default
 					end
-				else
-					Citizen.Wait(1000)
 				end
 			end
 		else
@@ -100,7 +96,7 @@ end)
 
 function RunTimerFinished()
 	if saved_tone ~= nil then
-		if ( state_lxsiren[veh] > 0 or actv_lxsrnmute_temp ) and state_airmanu[veh] > 0 then
+		if ( state_lxsiren[veh] > 0 or actv_lxsrnmute_temp ) then
 			SetLxSirenStateForVeh(veh, saved_tone)
 		end
 		saved_tone = nil
