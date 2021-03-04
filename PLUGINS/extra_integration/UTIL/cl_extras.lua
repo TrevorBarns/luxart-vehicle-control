@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -14,28 +13,47 @@ extras based on vehicle states / inputs.
 ]]
 EI = { }
 
-local brake_pedal
-local accel_pedal
+local accel_pedal = 0
 local extras = { }
+local auto_park_time_lookup = { [2] = 30000, [3] = 60000, [4] = 300000 }
+
+stopped_timer = 0
+auto_park 			 = auto_park
+auto_park_time_index = 2
+auto_brake_lights 	 = auto_brake_lights
+brakes_ei_enabled 	 = brakes_ei_enabled
+
+
 
 ------BRAKE, REVERSE, TKD - EXTRA INTEGRATION------
 Citizen.CreateThread( function()
     while true do
-        while extra_integration_masterswitch do
-            if player_is_emerg_driver and veh ~= nil then				
-				if brakes_ei_enabled and extras.Brake ~= nil then
-					brake_pedal = GetVehicleWheelBrakePressure(veh, 0)
-					if brake_pedal > 0.1 or ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) ) then
-						if not IsVehicleExtraTurnedOn(veh, extras.Brake) then
-							SetVehicleExtra(veh, extras.Brake, false)
+        while ei_masterswitch do
+            if player_is_emerg_driver and veh ~= nil then	
+				--BRAKE LIGHTS
+				if extras.Brake ~= nil then
+					if brakes_ei_enabled and extras.Brake ~= nil then
+						if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
+						   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
+						   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
+						   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
+						   ( not ( accel_pedal < 0 )) then															-- Is vehicle not reversing
+							if not IsVehicleExtraTurnedOn(veh, extras.Brake) then
+								SetVehicleExtra(veh, extras.Brake, false)
+							end
+						else
+							if IsVehicleExtraTurnedOn(veh, extras.Brake) then
+								SetVehicleExtra(veh, extras.Brake, true)
+							end						
 						end
 					else
 						if IsVehicleExtraTurnedOn(veh, extras.Brake) then
 							SetVehicleExtra(veh, extras.Brake, true)
 						end						
 					end
-				end				
+				end
 				
+				--REVERSE LIGHTS
 				if reverse_ei_enabled and extras.Reverse ~= nil then
 					accel_pedal = GetVehicleThrottleOffset(veh)
 					if accel_pedal < 0 then
@@ -49,6 +67,7 @@ Citizen.CreateThread( function()
 					end
 				end					
 				
+				--TAKEDOWNS
 				if takedown_ei_enabled and tkd_masterswitch and extras.Takedowns ~= nil then
 					if state_tkd[veh] ~= nil and state_tkd[veh] then
 						if not IsVehicleExtraTurnedOn(veh, extras.Takedowns) then
@@ -61,7 +80,7 @@ Citizen.CreateThread( function()
 					end
 				end		
             end
-			Citizen.Wait(50)
+			Citizen.Wait(0)
         end
 		Citizen.Wait(1000)
     end
@@ -71,11 +90,33 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
-			if extra_integration_masterswitch and auto_brake_lights then
-				if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) then
+			if ei_masterswitch and auto_brake_lights then
+				if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) then
 					SetVehicleBrakeLights(veh, true)
 				end
 			end
+		end
+		Citizen.Wait(0)
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		if player_is_emerg_driver and veh ~= nil then
+			if ei_masterswitch and auto_brake_lights and auto_park then
+				while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
+					if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
+						Citizen.Wait(1000)
+						stopped_timer = stopped_timer + 1000						
+					end
+					Citizen.Wait(0)
+				end
+				stopped_timer = 0
+			else
+				Citizen.Wait(500)
+			end
+		else
+			Citizen.Wait(500)
 		end
 		Citizen.Wait(0)
 	end
@@ -159,7 +200,7 @@ function EI:UpdateExtrasTable(veh)
 	
 	for type, extra_id in pairs(extras) do
 		if not DoesExtraExist(veh, extra_id) then
-			HUD:ShowNotification("~b~LVC: ~r~Error: Extra "..extra_id.." does not exist for veh_name")
+			HUD:ShowNotification("~b~LVC: ~r~Error: Extra "..extra_id.." does not exist for veh_name", true)
 		end
 	end
 end

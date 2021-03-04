@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -40,7 +39,6 @@ local confirm_l_desc
 local confirm_fr_desc
 local profile_s_op = 75
 local profile_l_op = 75
-local github_index = 1
 local hazard_state = false
 local button_sfx_scheme_id = 1
 local sl_btn_debug_msg = ""
@@ -256,23 +254,25 @@ Citizen.CreateThread(function()
 				  end,
 				})
 			end
-			for i, tone in pairs(approved_tones) do
-				if i ~= 1 then
-					RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), "~g~Cycle:~s~ play as you cycle through sirens.\n~g~Button:~s~ play when registered key is pressed.\n~b~Select to rename siren tones.", {}, true, {
-						onListChange = function(Index, Item)
-							if UTIL:IsOkayToDisable() or Index < 3 then
-								UTIL:SetToneOption(tone, Index)
-							else
-								HUD:ShowNotification("~y~~h~Info:~h~ ~s~Luxart Vehicle Control\nAction prohibited, cannot disable all sirens.") 
-							end
-						end,
-						onSelected = function()
-							proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[tone].String .. ":", SIRENS[tone].Name, 15)
-							if proposed_name ~= nil then
-								UTIL:ChangeToneString(tone, proposed_name)
-							end
-						end,
-					})
+			if main_siren_settings_masterswitch then
+				for i, tone in pairs(approved_tones) do
+					if i ~= 1 then
+						RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), "~g~Cycle:~s~ play as you cycle through sirens.\n~g~Button:~s~ play when registered key is pressed.\n~b~Select to rename siren tones.", {}, true, {
+							onListChange = function(Index, Item)
+								if UTIL:IsOkayToDisable() or Index < 3 then
+									UTIL:SetToneOption(tone, Index)
+								else
+									HUD:ShowNotification("~y~~h~Info:~h~ ~s~Luxart Vehicle Control\nAction prohibited, cannot disable all sirens.", true) 
+								end
+							end,
+							onSelected = function()
+								proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[tone].String .. ":", SIRENS[tone].Name, 15)
+								if proposed_name ~= nil then
+									UTIL:ChangeToneString(tone, proposed_name)
+								end
+							end,
+						})
+					end
 				end
 			end
         end)	
@@ -290,7 +290,7 @@ Citizen.CreateThread(function()
 				  HUD:SetHudState(false)
 			  end,
 			})
-			RageUI.Button('Move Mode', "Move HUD position on screen. To exit right-click or hit Esc.", {}, hud_state, {
+			RageUI.Button('Move Mode', "Move HUD position on screen. To exit ~r~right-click~s~ or hit '~r~Esc~s~'.", {}, hud_state, {
 			  onSelected = function()
 					HUD:SetMoveMode(true, true)
 				end,
@@ -414,7 +414,7 @@ Citizen.CreateThread(function()
 				onSelected = function()
 					if confirm_s_msg == "Are you sure?" then
 						Storage:SaveSettings()
-						HUD:ShowNotification("~g~Success~s~: Your settings have been saved.")
+						HUD:ShowNotification("~g~Success~s~: Your settings have been saved.", true)
 						confirm_s_msg = nil
 						confirm_s_desc = nil
 						profile_s_op = 75
@@ -434,7 +434,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_l_msg == "Are you sure?" then
 					Storage:LoadSettings()
-					HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.")
+					HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
 					confirm_l_msg = nil
 					confirm_l_desc = nil
 					profile_l_op = 75
@@ -456,7 +456,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_r_msg == "Are you sure?" then
 					Storage:ResetSettings()
-					HUD:ShowNotification("~g~Success~s~: Settings have been reset.")
+					HUD:ShowNotification("~g~Success~s~: Settings have been reset.", true)
 					confirm_r_msg = nil
 				else 
 					RageUI.Settings.Controls.Back.Enabled = false 

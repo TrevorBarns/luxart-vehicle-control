@@ -1,5 +1,5 @@
 --------------------EXTRA INTEGRATION SETTINGS---------------------
-extra_integration_masterswitch = true
+ei_masterswitch = true
 --	Determines if extra_integration plugin can be activated.
 brakes_ei_enabled = true
 --	Enables brake pressure integration for EI.
@@ -11,8 +11,15 @@ takedown_ei_enabled = true
 --	Enables takedown integration for EI.
 auto_brake_lights = true
 --	Enables auto-set client side brake lights on stop (speed = 0).
+auto_park = true
+--	Turns off brake lights after being stopped for auto_park_time. 
 
 EXTRA_ASSIGNMENTS = {
--- ['<modelName>'] = { (opt.) Brake = extra_#, (opt.) Reverse = extra_#, (opt.) LIndicator = extra_#, (opt.) RIndicator = extra_#, (opt.) Takedowns = extra_# },
+--[[
+Example: 
+['<modelName>'] = { (opt.) Brake = extra_#, (opt.) Reverse = extra_#, (opt.) LIndicator = extra_#, (opt.) RIndicator = extra_#, (opt.) Takedowns = extra_# },
 ['DEFAULT'] = { Brake = 1, Reverse = 12, LIndicator = 10, RIndicator = 11, Takedowns = 2 },
+]]
+
+['DEFAULT'] = { },
 }

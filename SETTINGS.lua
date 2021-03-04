@@ -4,13 +4,6 @@ open_menu_key = 'O'
 --		More info: https://cookbook.fivem.net/2020/01/06/using-the-new-console-key-bindings/
 --		List of Keys: https://pastebin.com/u9ewvWWZ
 
---------------TURN SIGNALS / HAZARDS---------------
-hazard_key = 202	
-left_signal_key = 84
-right_signal_key = 83
-hazard_hold_duration = 750
---	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
-
 
 ---------------LOCKOUT FUNCTIONALITY---------------
 lockout_default_hotkey = ''
@@ -22,31 +15,13 @@ locked_press_count = 5
 reminder_rate = 10
 --	How often, in luxart key presses, to remind you that your siren controller is locked.
 
-
 -----------------HUD FUNCTIONALITY-----------------
 hud_first_default = true
 --	First state of HUD, otherwise it uses the players KVP setting (previous state). 
-hud_bgd_opacity = 155
---	Opacity of rectangle background behind buttons (default: 155)
-hud_button_on_opacity = 255
---	Opacity of buttons in active/on state. (default: 255)
-hud_button_off_opacity = 175
---	Opacity of buttons in inactive/off state. (default: 175)
 
-
---------------CUSTOM MANU/HORN/SIREN---------------
-custom_manual_tones_master_switch = true
---	Enables manual tone settings menu items to change which tone is played for the primary and secondary manual tones.
-custom_aux_tones_master_switch = true
---	Enables auxiliary tone settings menu item so players can change which tone is played when AUX siren (Up-Arrow) is enabled. 
-main_siren_set_register_keys_set_defaults = true
---	Enables RegisterKeyMapping for all main_allowed_tones and sets the default keys to numrow 1-0.
-
-
-------------------PLUG-IN SUPPORT------------------
-plugins_installed = true
-
-----------PARK KILL / AIR HORN INTERRUPT-----------
+---------------MAIN SIREN SETTINGS-----------------
+main_siren_settings_masterswitch = true
+--	Enables users to rename siren tones, change siren options. (Cycle / Button) 
 park_kill_masterswitch = true
 --	Enables park kill functionality. Setting this to false will not allow users to change from default behaviour this. 
 park_kill_default = false
@@ -59,6 +34,22 @@ reset_to_standby_masterswitch = true
 --	Enables ability to toggle reset to standby. Setting this to false will not allow users to change from default behaviour this. 
 reset_to_standby_default = true
 --	Default setting for Reset-To-Standby functionality. (default: true)
+
+--------------CUSTOM MANU/HORN/SIREN---------------
+custom_manual_tones_master_switch = true
+--	Enables manual tone settings menu items to change which tone is played for the primary and secondary manual tones.
+custom_aux_tones_master_switch = true
+--	Enables auxiliary tone settings menu item so players can change which tone is played when AUX siren (Up-Arrow) is enabled. 
+main_siren_set_register_keys_set_defaults = true
+--	Enables RegisterKeyMapping for all main_allowed_tones and sets the default keys to numrow 1-0.
+
+
+--------------TURN SIGNALS / HAZARDS---------------
+hazard_key = 202	
+left_signal_key = 84
+right_signal_key = 83
+hazard_hold_duration = 750
+--	Time in milliseconds backspace must be pressed to turn on / off hazard lights. 
 
 
 ----------------SOUND EFFECT VOLUMES---------------
@@ -73,3 +64,7 @@ default_hazards_volume = 0.09
 default_lock_volume = 0.25
 default_lock_reminder_volume = 0.2
 default_reminder_volume = 0.09
+
+
+------------------PLUG-IN SUPPORT------------------
+plugins_installed = true

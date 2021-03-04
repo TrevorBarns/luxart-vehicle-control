@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -103,6 +102,7 @@ end
 
 --[[Getter for HUD position, used when saving data.]]
 function HUD:GetHudPosition()
+	UTIL:Print(HUD_pos.left, HUD_pos.top, false)
 	return HUD_pos
 end
 
@@ -115,6 +115,7 @@ end
 
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( "hud:setHudPositon", function(data, cb)
+	UTIL:Print(data.left, data.top, false)
 	HUD_pos = data
 end )
 
@@ -131,10 +132,13 @@ end )
 
 ------------------------------------------------
 --On screen GTA V notification
-function HUD:ShowNotification(text)
-	SetNotificationTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawNotification(false, true)
+function HUD:ShowNotification(text, override)
+	override = override or false
+	if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+		SetNotificationTextEntry("STRING")
+		AddTextComponentString(text)
+		DrawNotification(false, true)
+	end
 end
 
 ------------------------------------------------

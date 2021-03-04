@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -30,7 +29,7 @@ Citizen.CreateThread(function()
 			}, RMenu:Get('lvc', 'tkdsettings'))	
 		end
 		-----------------------------------------------------------------------------------------------------------------
-		if extra_integration_masterswitch then
+		if ei_masterswitch then
 			RageUI.Button('Extra Integration Settings', "Open extra integration menu. (extra_integration)", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,

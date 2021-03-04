@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -24,14 +23,13 @@ local light_end_pos = nil
 local light_direction = nil
 local veh_dist = {}
 
-tkd_masterswitch = true
-tkd_intensity = tkd_intensity_default
-tkd_radius = tkd_radius_default
-tkd_distance = tkd_distance_default
-tkd_falloff = tkd_falloff_default
-tkd_scheme = 1
-tkd_mode = tkd_highbeam_integration_default
-tkd_sync_radius = tkd_sync_radius_default^2
+tkd_intensity		= tkd_intensity_default
+tkd_radius 			= tkd_radius_default
+tkd_distance 		= tkd_distance_default
+tkd_falloff 		= tkd_falloff_default
+tkd_mode 			= tkd_highbeam_integration_default
+tkd_sync_radius 	= tkd_sync_radius^2
+tkd_scheme 			= 1
 
 local tkd_scheme_lookup = {
 	{ start_y = 1.0, start_z = 1.0, end_y = 10.0, end_z = -1.0},
@@ -43,56 +41,58 @@ local tkd_scheme_lookup = {
 ------TAKE DOWN THREADS------
 Citizen.CreateThread(function()
 	while true do
-		--Cleanup dead tkds
-		if count_tkdclean_timer > delay_tkdclean_timer then
-			count_tkdclean_timer = 0
-			for k, v in pairs(state_tkd) do
-				if v == true then
-					if not DoesEntityExist(k) or IsEntityDead(k) then
-						state_tkd[k] = nil
+		if tkd_masterswitch then	
+			--CLEANUP DEAD TKDS
+			if count_tkdclean_timer > delay_tkdclean_timer then
+				count_tkdclean_timer = 0
+				for k, v in pairs(state_tkd) do
+					if v == true then
+						if not DoesEntityExist(k) or IsEntityDead(k) then
+							state_tkd[k] = nil
+						end
 					end
 				end
+			else
+				count_tkdclean_timer = count_tkdclean_timer + 1
 			end
-		else
-			count_tkdclean_timer = count_tkdclean_timer + 1
-		end
-		
-		if player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
-			----- CONTROLS -----
-			if not IsPauseMenuActive() then
-				if not key_lock then
-					if IsControlPressed(0, tkd_combokey) or tkd_combokey == 0 then
-						DisableControlAction(0, tkd_key, true)
-						if IsDisabledControlJustReleased(0, tkd_key) then
-							if state_tkd[veh] == true then
-								if tkd_mode == 2 then
-									SetVehicleFullbeam(veh, false)
+			
+			if player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
+				----- CONTROLS -----
+				if not IsPauseMenuActive() then
+					if not key_lock then
+						if IsControlPressed(0, tkd_combokey) or tkd_combokey == 0 then
+							DisableControlAction(0, tkd_key, true)
+							if IsDisabledControlJustReleased(0, tkd_key) then
+								if state_tkd[veh] == true then
+									if tkd_mode == 2 then
+										SetVehicleFullbeam(veh, false)
+									end
+									TKDS:TogTkdStateForVeh(veh, false)										
+									PlayAudio("Downgrade", downgrade_volume) 
+								else
+									if tkd_mode == 2 then
+										SetVehicleFullbeam(veh, true)
+									end
+									TKDS:TogTkdStateForVeh(veh, true)
+									PlayAudio("Upgrade", upgrade_volume) 										
 								end
-								TKDS:TogTkdStateForVeh(veh, false)										
-								PlayAudio("Downgrade", downgrade_volume) 
-							else
-								if tkd_mode == 2 then
-									SetVehicleFullbeam(veh, true)
-								end
-								TKDS:TogTkdStateForVeh(veh, true)
-								PlayAudio("Upgrade", upgrade_volume) 										
+								HUD:SetItemState("tkd", state_tkd[veh]) 
+								count_bcast_timer = delay_bcast_timer
 							end
-							HUD:SetItemState("tkd", state_tkd[veh]) 
-							count_bcast_timer = delay_bcast_timer
 						end
 					end
 				end
 			end
-		end
-		----- AUTO BROADCAST VEH STATES -----
-		if count_bcast_timer > delay_bcast_timer then
-			count_bcast_timer = 0
-			TriggerServerEvent("lvc_TogTkdState_s", state_tkd[veh])
+			----- AUTO BROADCAST VEH STATES -----
+			if count_bcast_timer > delay_bcast_timer then
+				count_bcast_timer = 0
+				TriggerServerEvent("lvc_TogTkdState_s", state_tkd[veh])
+			else
+				count_bcast_timer = count_bcast_timer + 1
+			end		
 		else
-			count_bcast_timer = count_bcast_timer + 1
+			Citizen.Wait(500)	
 		end
-			
-		
 		Citizen.Wait(0)
 	end
 end)
@@ -161,7 +161,7 @@ function TKDS:DrawTakeDown(veh)
 		light_direction = vector3(light_end_pos-light_start_pos)	
 		DrawSpotLight(light_start_pos, light_direction, 200, 200, 255, tkd_distance+0.0, tkd_intensity+0.0, 0.0, tkd_radius+0.0, tkd_falloff+veh_dist[veh]/2+0.0)
 
-		if tkd_debug_flag then
+		if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' then
 			DrawLine(light_start_pos, light_end_pos, 255, 0, 0, 255)
 		end
 	end
