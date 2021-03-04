@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -31,7 +30,7 @@ end
 Citizen.CreateThread(function()
     while true do		
 		RageUI.IsVisible(RMenu:Get('lvc', 'smartsiren'), function()
-			RageUI.Checkbox('Enabled', "Toggles Smart Sire functionality.", smart_siren_masterswitch, {}, {
+			RageUI.Checkbox('Enabled', "Toggles Smart Siren functionality.", smart_siren_masterswitch, {}, {
             onChecked = function()
 				smart_siren_masterswitch = true
             end,          
