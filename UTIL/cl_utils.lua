@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -47,6 +46,23 @@ function UTIL:UpdateApprovedTones(veh)
 	else 
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
+		HUD:ShowNotification("~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \"~o~"..veh_name.."~s~\".", false)
+	end
+	
+	if not UTIL:IsApprovedTone('MAIN_MEM') then
+		UTIL:SetToneByPos('MAIN_MEM', 2)
+	end
+	if not UTIL:IsApprovedTone('PMANU') then
+		UTIL:SetToneByPos('PMANU', 2)
+	end
+	if not UTIL:IsApprovedTone('SMANU') then
+		UTIL:SetToneByPos('SMANU', 3)
+	end	
+	if not UTIL:IsApprovedTone('AUX') then
+		UTIL:SetToneByPos('AUX', 2)
+	end	
+	if not UTIL:IsApprovedTone('ARHRN') then
+		UTIL:SetToneByPos('ARHRN', 1)
 	end
 end
 
@@ -101,37 +117,17 @@ function UTIL:GetApprovedTonesTableNameAndID()
 end
 
 ---------------------------------------------------------------------
---[[Getter for tone id by passing string abbreviation (MAIN_MEM, PMANU, etc.)
-	If the item is nil automatically set to predefined positions. 
-	1 - Airhorn, 2 - First Siren, 3 - Second Siren]]
+--[[Getter for tone id by passing string abbreviation (MAIN_MEM, PMANU, etc.)]]
 function UTIL:GetToneID(tone_string)
-	if approved_tones == nil then
-		UTIL:UpdateApprovedTones()
-	end
 	if tone_string == 'MAIN_MEM' then
-		if tone_main_mem_id == nil then
-			UTIL:SetToneByPos('MAIN_MEM', 2)
-		end
 		return tone_main_mem_id
 	elseif tone_string == 'PMANU' then
-		if tone_PMANU_id == nil then
-			UTIL:SetToneByPos('PMANU', 2)
-		end
 		return tone_PMANU_id
 	elseif tone_string == 'SMANU' then
-		if tone_SMANU_id == nil then
-			UTIL:SetToneByPos('SMANU', 3)
-		end
 		return tone_SMANU_id
 	elseif tone_string == 'AUX' then
-		if tone_AUX_id == nil then
-			UTIL:SetToneByPos('AUX', 2)
-		end
 		return tone_AUX_id
 	elseif tone_string == 'ARHRN' then
-		if tone_ARHRN_id == nil then
-			UTIL:SetToneByPos('ARHRN', 1)
-		end
 		return tone_ARHRN_id
 	end
 end
@@ -151,7 +147,7 @@ function UTIL:SetToneByPos(tone_string, pos)
 			tone_ARHRN_id = approved_tones[pos]
 		end
 	else
-		HUD:ShowNotification("~b~LVC ERROR 4: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), couldn't locate that tone.")
+		HUD:ShowNotification("~b~LVC ERROR: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), couldn't locate that tone.", true)
 	end
 end
 
@@ -190,7 +186,7 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ERROR 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.")
+		HUD:ShowNotification("~b~LVC ERROR 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
 	end
 end
 
