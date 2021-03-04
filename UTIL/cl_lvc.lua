@@ -42,6 +42,7 @@ activity_reminder_volume 	= default_reminder_volume
 							
 --LOCAL VARIABLES
 local activity_reminder_lookup = { [2] = 30000, [3] = 60000, [4] = 120000, [5] = 300000, [6] = 600000 } 
+local radio_wheel_active = false
 
 local count_bcast_timer = 0
 local delay_bcast_timer = 200
@@ -93,11 +94,17 @@ Citizen.CreateThread(function()
 					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
 					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
 					DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
-					if IsControlReleased(0, 243) then
-						DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 
+					if IsControlPressed(0, 243) then
+						while IsControlPressed(0, 243) do
+							radio_wheel_active = true
+							SetControlNormal(0, 85, 1.0)
+							Citizen.Wait(0)
+						end
+						Citizen.Wait(500)
+						radio_wheel_active = false
+					else
+						DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
 					end
-					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
-				end
 				end
 			end
 		end
@@ -575,7 +582,7 @@ Citizen.CreateThread(function()
 			
 				----- CONTROLS -----
 				if not IsPauseMenuActive() then
-					if not key_lock then
+					if not key_lock and not radio_wheel_active then
 						------ TOG DFLT SRN LIGHTS ------
 						if IsDisabledControlJustReleased(0, 85) then
 							if IsVehicleSirenOn(veh) then
