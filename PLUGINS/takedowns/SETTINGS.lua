@@ -1,4 +1,6 @@
 --------------------TAKE DOWNS---------------------
+tkd_masterswitch = true
+--	Enables plugin, allowing users to toggle takedowns.
 tkd_key = 74
 --	Key to toggle TKD light. (default: 74 (H))
 tkd_combokey = 21 
@@ -15,5 +17,3 @@ tkd_sync_radius_default = 400
 --	Distance to "sync" / display vehicles TKD light. Larger the number the slower the script depending on players and # of TKDs on. (default: 400) 
 tkd_highbeam_integration_default = 2
 --	1 - disabled, 2 - Takedown Set Highbeams, 3 - Highbeams Set Takedowns.
-tkd_debug_flag = true
---	Used to debug / view spotlight angle.
