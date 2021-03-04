@@ -2,7 +2,6 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 26 2021 (VERS. 3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
 Additional Modification by TrevorBarns
@@ -42,14 +41,19 @@ Citizen.CreateThread(function()
 				brakes_ei_enabled = true
             end
             })
---[[
-			RageUI.List('Auto Park Mode', {"Off", "1/2", "1", "5"}, brake_light_delay_index, ("How after being stopped to disable auto brake lights and put vehicle in \"park\". Options are in minutes. Timer (sec): %1.0f"):format((brake_light_timer / 1000) or 0), {}, auto_brake_lights, {
+
+			RageUI.List('Auto Park Mode', {"Off", "1/2", "1", "5"}, auto_park_time_index, ("How long after being stopped to disable auto brake lights and put vehicle in \"park\". Options are in minutes. Timer (sec): %1.0f"):format((stopped_timer / 1000) or 0), {}, true, {
 			  onListChange = function(Index, Item)
-				brake_light_delay_index = Index
-				EI:SetBrakeLightDelay()
+				if Index > 1 then
+					auto_park_time_index = Index
+					auto_park = true
+				else
+					auto_park = false
+					auto_park_time_index = Index
+				end
 			  end,
 			})		
-]]			
+		
         end)
 		
         Citizen.Wait(0)
