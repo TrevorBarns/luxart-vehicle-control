@@ -2,10 +2,9 @@
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
-Last revision: FEBRUARY 25 2021 VERS. (3.2.1)
 Coded by Lt.Caine
 ELS Clicks by Faction
-Additional Modification by TrevorBarns
+Additions by TrevorBarns
 ---------------------------------------------------
 FILE: SIRENS.lua
 PURPOSE: Associate specific sirens with specific
@@ -49,7 +48,7 @@ SIRENS = {
 --ASSIGN SIRENS TO VEHICLES
 SIREN_ASSIGNMENTS = {
 --['<gameName>'] = {tones},
-['DEFAULT'] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 
+['DEFAULT'] = { 1, 2, 3, 4 }, 
 ['FIRETRUK'] = { 12, 13, 14, 11 }, 
 ['AMBULAN'] = { 1, 2, 3, 4, 11 }, 
 ['LGUARD'] = { 1, 2, 3, 4, 11 },
