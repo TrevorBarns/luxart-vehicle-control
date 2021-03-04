@@ -13,7 +13,7 @@ tkd_distance_default = 50
 --	Max distance light can reach. 
 tkd_falloff_default = 1000
 --	How fast the light fades/appears dim at distance, this has massive effect on perceived intensity and distance.
-tkd_sync_radius_default = 400
+tkd_sync_radius = 400
 --	Distance to "sync" / display vehicles TKD light. Larger the number the slower the script depending on players and # of TKDs on. (default: 400) 
 tkd_highbeam_integration_default = 2
 --	1 - disabled, 2 - Takedown Set Highbeams, 3 - Highbeams Set Takedowns.

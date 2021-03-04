@@ -28,7 +28,7 @@ tkd_radius 			= tkd_radius_default
 tkd_distance 		= tkd_distance_default
 tkd_falloff 		= tkd_falloff_default
 tkd_mode 			= tkd_highbeam_integration_default
-tkd_sync_radius 	= tkd_sync_radius_default^2
+tkd_sync_radius 	= tkd_sync_radius^2
 tkd_scheme 			= 1
 
 local tkd_scheme_lookup = {
