@@ -100,7 +100,7 @@ Citizen.CreateThread(function()
 							SetControlNormal(0, 85, 1.0)
 							Citizen.Wait(0)
 						end
-						Citizen.Wait(500)
+						Citizen.Wait(100)
 						radio_wheel_active = false
 					else
 						DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
@@ -723,7 +723,7 @@ Citizen.CreateThread(function()
 								PlayAudio("Release", upgrade_volume)									
 							end
 						end
-					else
+					elseif not radio_wheel_active then
 						if (IsDisabledControlJustReleased(0, 86) or 
 							IsDisabledControlJustReleased(0, 172) or 
 							IsDisabledControlJustReleased(0, 19) or 
