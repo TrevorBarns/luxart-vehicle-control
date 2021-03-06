@@ -64,14 +64,16 @@ end)
 
 --Returns true if any menu is open
 function IsMenuOpen()
-	return RageUI.Visible(RMenu:Get('lvc', 'main')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'maintone')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 		
-	RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'plugins')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
-	RageUI.Visible(RMenu:Get('lvc', 'about'))
+	return 	RageUI.Visible(RMenu:Get('lvc', 'main')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'maintone')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 		
+			RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'about')) or
+			RageUI.Visible(RMenu:Get('lvc', 'plugins')) or 
+			IsPluginMenuOpen()
 end
+
 
 --Loads settings and builds first table states, also updates tone_list every second for vehicle changes
 Citizen.CreateThread(function()
