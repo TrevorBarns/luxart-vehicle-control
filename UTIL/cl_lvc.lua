@@ -63,8 +63,8 @@ state_lxsiren = {}
 state_pwrcall = {}
 state_airmanu = {}
 
-local actv_manu  
-local actv_horn 
+actv_manu = nil 
+actv_horn = nil 
 
 local ind_state_o = 0
 local ind_state_l = 1
