@@ -829,7 +829,7 @@ Citizen.CreateThread(function()
 					if GetVehicleClass(veh) == 18 then
 						TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
 						TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
-						TriggerServerEvent("lvc_TogPwrcallState_s", state_pwrcall[veh])
+						TriggerServerEvent("lvc_SetPwrcallState_s", state_pwrcall[veh])
 						TriggerServerEvent("lvc_SetAirManuState_s", state_airmanu[veh])
 					end
 					--- IS ANY OTHER VEHICLE ---
