@@ -76,34 +76,35 @@ function Storage:SaveSettings()
 						  }
 	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
 
+	--Tone Names
+	if custom_tone_names then
+		local tone_names = { }
+		for i, siren_pkg in pairs(SIRENS) do
+			table.insert(tone_names, siren_pkg.Name)
+		end
+		SetResourceKvp(save_prefix .. "tone_names", json.encode(tone_names))
+		UTIL:Print("LVC:STORAGE: saving "..save_prefix.."tone_names...")		
+	end
+	
 	--Profile Specific Settings
 	if UTIL:GetVehicleProfileName() ~= nil then
 		local profile_name = string.gsub(UTIL:GetVehicleProfileName(), " ", "_")
 		if profile_name ~= nil then
-			local profile_save_data = {  PMANU = UTIL:GetToneID('PMANU'), 
-										 SMANU = UTIL:GetToneID('SMANU'),
-										 AUX   = UTIL:GetToneID('AUX'),
+			local tone_options_encoded = json.encode(UTIL:GetToneOptionsTable())
+			local profile_save_data = {  PMANU 				= UTIL:GetToneID('PMANU'), 
+										 SMANU 				= UTIL:GetToneID('SMANU'),
+										 AUX   				= UTIL:GetToneID('AUX'),
 										 airhorn_intrp 		= tone_airhorn_intrp,
 										 main_reset_standby = tone_main_reset_standby,
 										 park_kill 			= park_kill,
-										 custom_tone_names 	= custom_tone_names,
-										 tone_options = json.encode(UTIL:GetToneOptionsTable()),
+										 tone_options 		= tone_options_encoded,
 									   }
-
+							
 			SetResourceKvp(save_prefix .. "profile_"..profile_name,  json.encode(profile_save_data))
 			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name)
 			
-			if custom_tone_names then
-				local tone_names = { }
-				for i, siren_pkg in pairs(SIRENS) do
-					table.insert(tone_names, siren_pkg)
-				end
-				SetResourceKvp(save_prefix .. "siren_names", json.encode(tone_names))
-				UTIL:Print("LVC:STORAGE: saving "..save_prefix.."profile_"..profile_name.."_siren_names...")		
-			end
-			
 			--Audio Settings
-			local audio_save_data = {	button_sfx_scheme = button_sfx_scheme,
+			local audio_save_data = {	button_sfx_scheme 			= button_sfx_scheme,
 										on_volume 					= on_volume,
 										off_volume 					= off_volume,
 										upgrade_volume 				= upgrade_volume,
@@ -151,6 +152,20 @@ function Storage:LoadSettings()
 			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
 		end
 		
+		--Tone Names
+		if main_siren_settings_masterswitch then
+			local tone_names = GetResourceKvpString(save_prefix.."tone_names")
+			if tone_names ~= nil then
+				tone_names = json.decode(tone_names)
+				for i, name in pairs(tone_names) do
+					if SIRENS[i] ~= nil then
+						SIRENS[i].Name = name
+					end
+				end
+			end
+			UTIL:Print("LVC:STORAGE: loaded custom tone names.")
+		end
+		
 		--Profile Specific Settings
 		if UTIL:GetVehicleProfileName() ~= nil then
 			local profile_name = string.gsub(UTIL:GetVehicleProfileName(), " ", "_")	
@@ -165,34 +180,18 @@ function Storage:LoadSettings()
 						tone_airhorn_intrp 		= profile_save_data.airhorn_intrp
 						tone_main_reset_standby = profile_save_data.main_reset_standby
 						park_kill 				= profile_save_data.park_kill
-						custom_tone_names 		= profile_save_data.custom_tone_names
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
 									if SIRENS[tone_id] ~= nil then
-										SIRENS[tone_id].Option = option
+										UTIL:SetToneOption(tone_id, option)
 									end
 								end
 							end
 					end
 					UTIL:Print("LVC:STORAGE: loaded "..profile_name..".")
 				end
-			
-				if main_siren_settings_masterswitch then
-					if custom_tone_names then
-						local tone_names = GetResourceKvpString(save_prefix.."profile_"..profile_name.."_tone_names")
-						if tone_names ~= nil then
-							tone_names = json.decode(tone_names)
-							for i, name in pairs(tone_names) do
-								if SIRENS[i] ~= nil then
-									SIRENS[i].Name = name
-								end
-							end
-						end
-						UTIL:Print("LVC:STORAGE: loaded "..profile_name.." custom tone names.")
-					end
-				end
-			
+				
 				--Audio Settings 
 				local audio_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."_audio_data")
 				if audio_save_data ~= nil then
