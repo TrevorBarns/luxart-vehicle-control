@@ -186,7 +186,7 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ERROR 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
 	end
 end
 
