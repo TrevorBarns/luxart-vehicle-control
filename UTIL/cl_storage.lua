@@ -18,7 +18,7 @@ local repo_version = nil
 local backup_tone_table = {}
 local custom_tone_names = false
 local SIRENS_backup_string = nil
-
+local profiles = { }
 ------------------------------------------------
 --Deletes all saved KVPs for that vehicle profile
 RegisterCommand('lvcfactoryreset', function(source, args)
@@ -42,6 +42,7 @@ end)
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
 	TriggerServerEvent('lvc_GetRepoVersion_s')
+	Storage:FindSavedProfiles()
 end)
 
 --[[Getter for current version used in RageUI.]]
@@ -72,7 +73,7 @@ function Storage:SaveSettings()
 	--HUD Settings
 	local hud_save_data = { Show_HUD = HUD:GetHudState(),
 							HUD_Scale = HUD:GetHudScale(), 
-							HUD_pos = HUD:GetHudPosition() 
+							HUD_pos = HUD:GetHudPosition(),
 						  }
 	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
 
@@ -100,7 +101,7 @@ function Storage:SaveSettings()
 										 tone_options 		= tone_options_encoded,
 									   }
 							
-			SetResourceKvp(save_prefix .. "profile_"..profile_name,  json.encode(profile_save_data))
+			SetResourceKvp(save_prefix .. "profile_"..profile_name.."!",  json.encode(profile_save_data))
 			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name)
 			
 			--Audio Settings
@@ -129,7 +130,7 @@ end
 
 ------------------------------------------------
 --[[Loads all KVP values.]]
-function Storage:LoadSettings()	
+function Storage:LoadSettings(profile_name)	
 	local comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
 	local save_version = GetResourceKvpString(save_prefix .. "save_version")
 	local incompatible = IsNewerVersion(comp_version, save_version)
@@ -168,9 +169,9 @@ function Storage:LoadSettings()
 		
 		--Profile Specific Settings
 		if UTIL:GetVehicleProfileName() ~= nil then
-			local profile_name = string.gsub(UTIL:GetVehicleProfileName(), " ", "_")	
+			local profile_name = profile_name or string.gsub(UTIL:GetVehicleProfileName(), " ", "_")	
 			if profile_name ~= nil then
-				local profile_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name)
+				local profile_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."!")
 				if profile_save_data ~= nil then
 					profile_save_data = json.decode(profile_save_data)
 					UTIL:SetToneByID('PMANU', profile_save_data.PMANU)
@@ -256,6 +257,23 @@ function Storage:ResetSettings()
 	activity_reminder_volume 	= default_reminder_volume
 end
 
+------------------------------------------------
+--[[Setter for JSON string backup of SIRENS table in case of reset since we modify SIREN table directly.]]
+function Storage:FindSavedProfiles()
+	local handle = StartFindKvp(save_prefix.."profile_");
+	local key = FindKvp(handle)
+	while key ~= nil do
+		if string.match(key, '(.*)!$') then
+			table.insert(profiles, string.match(key, save_prefix..'profile_(.*)!$'))
+		end
+		key = FindKvp(handle)
+		Citizen.Wait(0)
+	end
+end
+
+function Storage:GetSavedProfiles()
+	return profiles
+end
 ------------------------------------------------
 --[[Setter for JSON string backup of SIRENS table in case of reset since we modify SIREN table directly.]]
 function Storage:SetBackupTable()

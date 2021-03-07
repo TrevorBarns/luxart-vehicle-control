@@ -17,6 +17,7 @@ RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"L
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Audio Settings"))
 RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Plugins"))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Storage Management"))
+RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "Copy Profile Settings"))
 RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),"Luxart Vehicle Control", "About Luxart Vehicle Control"))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
 RMenu:Get('lvc', 'audiosettings'):SetTotalItemsPerPage(12)
@@ -26,6 +27,7 @@ RMenu:Get('lvc', 'hudsettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'audiosettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'plugins'):DisplayGlare(false)
 RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
+RMenu:Get('lvc', 'copyprofile'):DisplayGlare(false)
 RMenu:Get('lvc', 'about'):DisplayGlare(false)
 
 
@@ -37,6 +39,9 @@ local confirm_fr_msg
 local confirm_s_desc
 local confirm_l_desc
 local confirm_fr_desc
+local profile_c_op = { }
+local confirm_c_msg = { }
+local confirm_c_desc = { }
 local profile_s_op = 75
 local profile_l_op = 75
 local hazard_state = false
@@ -44,6 +49,7 @@ local button_sfx_scheme_id = 1
 local sl_btn_debug_msg = ""
 local settings_init = false
 
+local profiles = { }
 local TonesTable = { }
 local PMANU
 local SMANU
@@ -58,6 +64,7 @@ Keys.Register(open_menu_key, open_menu_key, 'LVC: Open Menu', function()
 			sl_btn_debug_msg = ""
 		end
 		TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+		profiles = Storage:GetSavedProfiles()
 		RageUI.Visible(RMenu:Get('lvc', 'main'), not RageUI.Visible(RMenu:Get('lvc', 'main')))
 	end
 end)
@@ -69,6 +76,7 @@ function IsMenuOpen()
 			RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or 		
 			RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'saveload')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'copyprofile')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'about')) or
 			RageUI.Visible(RMenu:Get('lvc', 'plugins')) or 
 			IsPluginMenuOpen()
@@ -100,6 +108,11 @@ Citizen.CreateThread(function()
 					profile_l_op = 75
 					confirm_r_msg = nil
 					confirm_fr_msg = nil
+					for i, _ in ipairs(profiles) do
+						profile_c_op[i] = 75
+						confirm_c_msg[i] = nil
+						confirm_c_desc[i] = nil
+					end
 					Citizen.Wait(10)
 					RageUI.Settings.Controls.Back.Enabled = true
 					break
@@ -113,6 +126,7 @@ end)
 
 --Handle Disabling Controls while menu open
 Citizen.CreateThread(function()
+Citizen.Wait(1000)
 	while true do 
 		while IsMenuOpen() do
 			DisableControlAction(0, 27, true) 
@@ -159,6 +173,7 @@ Citizen.CreateThread(function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[PMANU].String .. ":", SIRENS[PMANU].Name, 15)
 					if proposed_name ~= nil then
 						UTIL:ChangeToneString(PMANU, proposed_name)
+						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 					end
 				  end,
 				})
@@ -174,6 +189,7 @@ Citizen.CreateThread(function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[SMANU].String .. ":", SIRENS[SMANU].Name, 15)
 					if proposed_name ~= nil then
 						UTIL:ChangeToneString(SMANU, proposed_name)
+						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 					end
 				  end,
 				})
@@ -192,6 +208,7 @@ Citizen.CreateThread(function()
 					proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[AUX].String .. ":", SIRENS[AUX].Name, 15)
 					if proposed_name ~= nil then
 						UTIL:ChangeToneString(AUX, proposed_name)
+						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 					end
 				  end,
 				})
@@ -271,6 +288,7 @@ Citizen.CreateThread(function()
 								proposed_name = HUD:KeyboardInput("Enter new tone name for " .. SIRENS[tone].String .. ":", SIRENS[tone].Name, 15)
 								if proposed_name ~= nil then
 									UTIL:ChangeToneString(tone, proposed_name)
+									TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 								end
 							end,
 						})
@@ -436,6 +454,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_l_msg == "Are you sure?" then
 					Storage:LoadSettings()
+					TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 					HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
 					confirm_l_msg = nil
 					confirm_l_desc = nil
@@ -449,11 +468,12 @@ Citizen.CreateThread(function()
 					profile_s_op = 75
 					confirm_r_msg = nil
 					confirm_fr_msg = nil
-
 				end
 			  end,
-			})			
+			})				
 			RageUI.Separator("Advanced Settings")
+			RageUI.Button('Copy Settings', "Copy profile settings from another vehicle.", {RightLabel = "→→→"}, #profiles > 0, {
+			}, RMenu:Get('lvc', 'copyprofile'))
 			RageUI.Button('Reset Settings', "~r~Reset LVC to it's default state, preserves existing saves. Will override any unsaved settings.", {RightLabel = confirm_r_msg}, true, {
 			  onSelected = function()
 				if confirm_r_msg == "Are you sure?" then
@@ -489,7 +509,38 @@ Citizen.CreateThread(function()
 				end
 			  end,
 			})
-        end)	
+        end)
+		
+		--Copy Profiles Menu
+	    RageUI.IsVisible(RMenu:Get('lvc', 'copyprofile'), function()
+			for i, profile_name in ipairs(profiles) do
+				profile_c_op[i] = profile_c_op[i] or 75
+				RageUI.Button(profile_name, confirm_c_desc[i] or "Load settings from profile \"~o~"..profile_name.."~s~\".", {RightLabel = confirm_c_msg[i] or "Load", RightLabelOpacity = profile_c_op[i]}, true, {
+				  onSelected = function()
+					if confirm_c_msg[i] == "Are you sure?" then
+						Storage:LoadSettings(profile_name)
+						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+						HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
+						confirm_c_msg[i] = nil
+						confirm_c_desc[i] = nil
+						profile_c_op[i] = 75
+					else 
+						RageUI.Settings.Controls.Back.Enabled = false 
+						for j, _ in ipairs(profiles) do
+							if i ~= j then
+								profile_c_op[j] = 75
+								confirm_c_msg[j] = nil
+								confirm_c_desc[j] = nil
+							end
+						end
+						profile_c_op[i] = 255
+						confirm_c_msg[i] = "Are you sure?" 
+						confirm_c_desc[i] = "~r~This will override any unsaved settings."
+					end
+				  end,
+				})	
+			end
+		end)
 		---------------------------------------------------------------------
 		------------------------------ABOUT MENU-----------------------------
 		---------------------------------------------------------------------
