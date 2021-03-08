@@ -137,7 +137,7 @@ function Storage:LoadSettings(profile_name)
 	
 	--Is save present if so what version
 	if incompatible then
-		AddTextEntry("lvc_mismatch_version","~r~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: " .. comp_version .. "\n~o~Save Version: " .. save_version .. "~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.")
+		AddTextEntry("lvc_mismatch_version","~y~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: " .. comp_version .. "\n~o~Save Version: " .. save_version .. "~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.")
 		SetNotificationTextEntry("lvc_mismatch_version")
 		DrawNotification(false, true)
 	end

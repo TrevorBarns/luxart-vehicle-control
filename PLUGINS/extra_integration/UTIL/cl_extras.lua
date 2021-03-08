@@ -331,7 +331,7 @@ function EI:UpdateExtrasTable(veh)
 
 		else
 			if not DoesExtraExist(veh, item) then
-				HUD:ShowNotification("~b~LVC: ~r~Error:~s~ Extra "..item.." does not exist for "..veh_name, true)
+				HUD:ShowNotification("~b~LVC: ~y~Warning:~s~ Extra "..item.." does not exist for "..veh_name". Verify EI Settings.", true)
 			end
 		end
 	end

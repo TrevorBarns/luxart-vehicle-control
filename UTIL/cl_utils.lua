@@ -147,7 +147,7 @@ function UTIL:SetToneByPos(tone_string, pos)
 			tone_ARHRN_id = approved_tones[pos]
 		end
 	else
-		HUD:ShowNotification("~b~LVC ERROR: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), couldn't locate that tone.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 3: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), not approved.", true)
 	end
 end
 
@@ -186,7 +186,7 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
 	end
 end
 
