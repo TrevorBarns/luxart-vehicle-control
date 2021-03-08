@@ -12,6 +12,13 @@ states.
 ---------------------------------------------------
 ]]
 
+local curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
+
+local plugin_count = 0
+local plugins_cv = { }		-- table of active plugins current versions plugins_cv = { ['<pluginname>'] = <version> }
+local plugins_rv = { }		-- table of active plugins repository versions
+
 ---------------VEHICLE STATE EVENTS----------------
 RegisterServerEvent("lvc_GetRepoVersion_s") 
 AddEventHandler("lvc_GetRepoVersion_s", function()
@@ -44,15 +51,6 @@ AddEventHandler("lvc_TogIndicState_s", function(newstate)
 end)
 
 -------------VERSION CHECKING & STARTUP------------
-local curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
-local repo_version	-- LVC repo version
-local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
-
-local plugin_count = 0
-local plugins_cv = { }		-- table of active plugins current versions plugins_cv = { ['<pluginname>'] = <version> }
-local plugins_rv = { }		-- table of active plugins repository versions
-
-
 --	PLUGIN VERSION CHECKING EVENT	
 RegisterServerEvent("lvc:plugins_storePluginVersion") 
 AddEventHandler("lvc:plugins_storePluginVersion", function(name, version)
