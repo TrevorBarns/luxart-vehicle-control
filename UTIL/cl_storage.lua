@@ -133,7 +133,7 @@ end
 function Storage:LoadSettings(profile_name)	
 	local comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
 	local save_version = GetResourceKvpString(save_prefix .. "save_version")
-	local incompatible = IsNewerVersion(comp_version, save_version)
+	local incompatible = IsNewerVersion(comp_version, save_version) == 'older'
 	
 	--Is save present if so what version
 	if incompatible then
@@ -314,19 +314,21 @@ function IsNewerVersion(version, test_version)
 	_, _, c1, c2, c3 = string.find( test_version, "(%d+)%.(%d+)%.(%d+)" )
 	
 	if s1 > c1 then				-- s1.0.0 Vs c1.0.0
-		return true
+		return 'older'
 	elseif s1 < c1 then
-		return false
+		return 'newer'
 	else
 		if s2 > c2 then			-- 0.s2.0 Vs 0.c2.0
-			return true
+			return 'older'
 		elseif s2 < c2 then
-			return false
+			return 'newer'
 		else
 			if s3 > c3 then		-- 0.0.s3 Vs 0.0.c3
-				return true
+				return 'older'
+			elseif s3 < c3 then
+				return 'newer'
 			else
-				return false
+				return 'equal'
 			end
 		end
 	end
