@@ -323,6 +323,6 @@ end
 ---------------------------------------------------------------------
 --[[Callback for Server -> Client version update.]]
 RegisterNetEvent("lvc_SendRepoVersion_c")
-AddEventHandler("lvc_SendRepoVersion_c", function(sender, version)
+AddEventHandler("lvc_SendRepoVersion_c", function(version)
 	repo_version = version
 end)
