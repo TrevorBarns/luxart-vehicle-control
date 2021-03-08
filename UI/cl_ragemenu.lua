@@ -516,7 +516,7 @@ Citizen.CreateThread(function()
 			for i, profile_name in ipairs(profiles) do
 				if profile_name ~= UTIL:GetVehicleProfileName() then
 					profile_c_op[i] = profile_c_op[i] or 75
-					RageUI.Button(profile_name, confirm_c_desc[i] or "Attempt to load settings from profile \"~o~"..profile_name.."~s~\".", {RightLabel = confirm_c_msg[i] or "Load", RightLabelOpacity = profile_c_op[i]}, true, {
+					RageUI.Button(profile_name, confirm_c_desc[i] or "Attempt to load settings from profile \"~b~"..profile_name.."~s~\".", {RightLabel = confirm_c_msg[i] or "Load", RightLabelOpacity = profile_c_op[i]}, true, {
 					  onSelected = function()
 						if confirm_c_msg[i] == "Are you sure?" then
 							Storage:LoadSettings(profile_name)
