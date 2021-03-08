@@ -102,9 +102,6 @@ end
 
 --[[Getter for HUD position, used when saving data.]]
 function HUD:GetHudPosition()
-	if HUD_pos ~= nil and HUD_pos.left ~= nil then
-		UTIL:Print(HUD_pos.left..HUD_pos.top, false)
-	end
 	return HUD_pos
 end
 
@@ -117,7 +114,6 @@ end
 
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( "hud:setHudPositon", function(data, cb)
-	UTIL:Print(data.left..data.top, false)
 	HUD_pos = data
 end )
 
