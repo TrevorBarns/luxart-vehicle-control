@@ -38,10 +38,10 @@ local confirm_l_msg
 local confirm_fr_msg
 local confirm_s_desc
 local confirm_l_desc
-local confirm_fr_desc
-local profile_c_op = { }
+local confirm_fr_desc			
 local confirm_c_msg = { }
 local confirm_c_desc = { }
+local profile_c_op = { }
 local profile_s_op = 75
 local profile_l_op = 75
 local hazard_state = false
@@ -470,7 +470,7 @@ Citizen.CreateThread(function()
 					confirm_fr_msg = nil
 				end
 			  end,
-			})				
+			})
 			RageUI.Separator("Advanced Settings")
 			RageUI.Button('Copy Settings', "Copy profile settings from another vehicle.", {RightLabel = "→→→"}, #profiles > 0, {
 			}, RMenu:Get('lvc', 'copyprofile'))
@@ -550,20 +550,25 @@ Citizen.CreateThread(function()
 			local curr_version = Storage:GetCurrentVersion()
 			local repo_version = Storage:GetRepoVersion()
 			if curr_version ~= nil then
-				if Storage:GetIsNewerVersion() then
-					RageUI.Button('Current Version', "This server is running " .. curr_version, { RightLabel = "~o~~h~" .. curr_version or "unknown" }, true, {
+				if Storage:GetIsNewerVersion() == 'older' then
+					RageUI.Button('Current Version', "This server is running " .. curr_version ..", an old version.", { RightLabel = "~o~~h~" .. curr_version or "unknown" }, true, {
 					  onSelected = function()
 					  end,
 					  });	
-					RageUI.Button('Latest Version', "The latest update is " .. repo_version .. ". Contact a server developer.", {RightLabel = repo_version or "unknown"}, true, {
+					RageUI.Button('Latest Version', "The latest update is " .. repo_version .. ".", {RightLabel = repo_version or "unknown"}, true, {
 						onSelected = function()
 					end,
 					});
-				else
+				elseif Storage:GetIsNewerVersion() == 'equal' then
 					RageUI.Button('Current Version', "This server is running " .. curr_version .. ", the latest version.", { RightLabel = curr_version or "unknown" }, true, {
 					  onSelected = function()
 					  end,
 					  });			
+				elseif Storage:GetIsNewerVersion() == 'newer' then
+					RageUI.Button('Current Version', "This server is running " .. curr_version .. ", an ~y~experimental~s~ version.", { RightLabel = curr_version or "unknown" }, true, {
+					  onSelected = function()
+					  end,
+					  });					
 				end
 			end
 			RageUI.Button('About / Credits', "Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to Lt. Cornelius, bakerxgooty, MrLucky8, xotikorukx, the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!", {}, true, {
