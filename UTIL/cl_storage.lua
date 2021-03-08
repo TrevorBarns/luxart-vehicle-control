@@ -62,7 +62,7 @@ end
 
 --[[Getter for out-of-date notification for RageUI.]]
 function Storage:GetIsNewerVersion()
-	return IsNewerVersion(repo_version, curr_version)
+	return IsNewerVersion(repo_version, Storage:GetCurrentVersion())
 end
 
 --[[Saves all KVP values.]]
