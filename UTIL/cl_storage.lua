@@ -258,13 +258,25 @@ function Storage:ResetSettings()
 end
 
 ------------------------------------------------
---[[Setter for JSON string backup of SIRENS table in case of reset since we modify SIREN table directly.]]
+--[[Find all profile names of all saved KVP.]]
 function Storage:FindSavedProfiles()
 	local handle = StartFindKvp(save_prefix.."profile_");
 	local key = FindKvp(handle)
 	while key ~= nil do
 		if string.match(key, '(.*)!$') then
-			table.insert(profiles, string.match(key, save_prefix..'profile_(.*)!$'))
+			local saved_profile_name = string.match(key, save_prefix..'profile_(.*)!$')
+			
+			--Duplicate checking
+			local found = false
+			for _, profile_name in ipairs(profiles) do
+				if profile_name == saved_profile_name then
+					found = true
+				end
+			end
+			
+			if not found then
+				table.insert(profiles, saved_profile_name)
+			end
 		end
 		key = FindKvp(handle)
 		Citizen.Wait(0)
