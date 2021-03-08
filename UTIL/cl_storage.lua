@@ -19,6 +19,7 @@ local backup_tone_table = {}
 local custom_tone_names = false
 local SIRENS_backup_string = nil
 local profiles = { }
+				
 ------------------------------------------------
 --Deletes all saved KVPs for that vehicle profile
 RegisterCommand('lvcfactoryreset', function(source, args)
@@ -37,6 +38,25 @@ RegisterCommand('lvcfactoryreset', function(source, args)
 		HUD:ShowNotification("~g~Success~s~: You have deleted all save data and reset LVC.", true)
 	end
 end)
+
+--Prints all KVP keys and values to console
+if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+	RegisterCommand('lvcdumpkvp', function(source, args)
+		local handle = StartFindKvp(save_prefix.."save_version");
+		local key = FindKvp(handle)
+		while key ~= nil do
+			if GetResourceKvpString(key) ~= nil then
+				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpString(key).."', STRING", true)
+			elseif GetResourceKvpInt(key) ~= nil then
+				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpInt(key).."', INT", true)
+			elseif GetResourceKvpFloat(key) ~= nil then
+				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpFloat(key).."', FLOAT", true)
+			end
+			key = FindKvp(handle)
+			Citizen.Wait(0)
+		end
+	end)
+end
 ------------------------------------------------
 -- Resource Start Initialization
 Citizen.CreateThread(function()
@@ -69,7 +89,7 @@ end
 function Storage:SaveSettings()
 	local settings_string = nil
 	SetResourceKvp(save_prefix .. "save_version", Storage:GetCurrentVersion())
-	
+
 	--HUD Settings
 	local hud_save_data = { Show_HUD = HUD:GetHudState(),
 							HUD_Scale = HUD:GetHudScale(), 
@@ -98,12 +118,12 @@ function Storage:SaveSettings()
 										 airhorn_intrp 		= tone_airhorn_intrp,
 										 main_reset_standby = tone_main_reset_standby,
 										 park_kill 			= park_kill,
-										 tone_options 		= tone_options_encoded,
+										 tone_options 		= tone_options_encoded,															  
 									   }
 							
 			SetResourceKvp(save_prefix .. "profile_"..profile_name.."!",  json.encode(profile_save_data))
 			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name)
-			
+
 			--Audio Settings
 			local audio_save_data = {	button_sfx_scheme 			= button_sfx_scheme,
 										on_volume 					= on_volume,
@@ -121,7 +141,7 @@ function Storage:SaveSettings()
 			SetResourceKvp(save_prefix.."profile_"..profile_name.."_audio_data",  json.encode(audio_save_data))
 			UTIL:Print("LVC:STORAGE: saving profile_"..profile_name.."_audio_data")
 		else
-			HUD:ShowNotification("~b~LVC: ~r~ SAVE ERROR~s~: profile_name after gsub is nil.", true)
+			HUD:ShowNotification("~b~LVC: ~r~SAVE ERROR~s~: profile_name after gsub is nil.", true)
 		end
 	else
 		HUD:ShowNotification("~b~LVC: ~r~SAVE ERROR~s~: UTIL:GetVehicleProfileName() returned nil.", true)
@@ -134,7 +154,7 @@ function Storage:LoadSettings(profile_name)
 	local comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
 	local save_version = GetResourceKvpString(save_prefix .. "save_version")
 	local incompatible = IsNewerVersion(comp_version, save_version) == 'older'
-	
+
 	--Is save present if so what version
 	if incompatible then
 		AddTextEntry("lvc_mismatch_version","~y~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: " .. comp_version .. "\n~o~Save Version: " .. save_version .. "~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.")
@@ -181,6 +201,7 @@ function Storage:LoadSettings(profile_name)
 						tone_airhorn_intrp 		= profile_save_data.airhorn_intrp
 						tone_main_reset_standby = profile_save_data.main_reset_standby
 						park_kill 				= profile_save_data.park_kill
+															   
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
