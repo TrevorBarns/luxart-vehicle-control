@@ -67,4 +67,4 @@ default_reminder_volume = 0.09
 
 
 ------------------PLUG-IN SUPPORT------------------
-plugins_installed = true
+plugins_installed = false

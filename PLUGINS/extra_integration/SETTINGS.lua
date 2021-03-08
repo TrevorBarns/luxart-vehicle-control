@@ -1,5 +1,5 @@
 --------------------EXTRA INTEGRATION SETTINGS---------------------
-ei_masterswitch = true
+ei_masterswitch = false
 --	Determines if extra_integration plugin can be activated.
 brakes_ei_enabled = true
 --	Enables brake pressure integration for EI.
