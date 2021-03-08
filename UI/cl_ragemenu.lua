@@ -239,7 +239,7 @@ Citizen.CreateThread(function()
 				  end,
 				}, RMenu:Get('lvc', 'plugins'))		
 			end
-			RageUI.Button('Storage Management', "Save / Load LVC profiles.", {RightLabel = "→→→"}, true, {
+			RageUI.Button('Storage Management', "Save / Load vehicle profiles.", {RightLabel = "→→→"}, true, {
 			  onSelected = function()
 			  end,
 			}, RMenu:Get('lvc', 'saveload'))			
@@ -514,33 +514,35 @@ Citizen.CreateThread(function()
 		--Copy Profiles Menu
 	    RageUI.IsVisible(RMenu:Get('lvc', 'copyprofile'), function()
 			for i, profile_name in ipairs(profiles) do
-				profile_c_op[i] = profile_c_op[i] or 75
-				RageUI.Button(profile_name, confirm_c_desc[i] or "Load settings from profile \"~o~"..profile_name.."~s~\".", {RightLabel = confirm_c_msg[i] or "Load", RightLabelOpacity = profile_c_op[i]}, true, {
-				  onSelected = function()
-					if confirm_c_msg[i] == "Are you sure?" then
-						Storage:LoadSettings(profile_name)
-						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
-						HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
-						confirm_c_msg[i] = nil
-						confirm_c_desc[i] = nil
-						profile_c_op[i] = 75
-					else 
-						RageUI.Settings.Controls.Back.Enabled = false 
-						for j, _ in ipairs(profiles) do
-							if i ~= j then
-								profile_c_op[j] = 75
-								confirm_c_msg[j] = nil
-								confirm_c_desc[j] = nil
+				if profile_name ~= UTIL:GetVehicleProfileName() then
+					profile_c_op[i] = profile_c_op[i] or 75
+					RageUI.Button(profile_name, confirm_c_desc[i] or "Attempt to load settings from profile \"~o~"..profile_name.."~s~\".", {RightLabel = confirm_c_msg[i] or "Load", RightLabelOpacity = profile_c_op[i]}, true, {
+					  onSelected = function()
+						if confirm_c_msg[i] == "Are you sure?" then
+							Storage:LoadSettings(profile_name)
+							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+							HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
+							confirm_c_msg[i] = nil
+							confirm_c_desc[i] = nil
+							profile_c_op[i] = 75
+						else 
+							RageUI.Settings.Controls.Back.Enabled = false 
+							for j, _ in ipairs(profiles) do
+								if i ~= j then
+									profile_c_op[j] = 75
+									confirm_c_msg[j] = nil
+									confirm_c_desc[j] = nil
+								end
 							end
+							profile_c_op[i] = 255
+							confirm_c_msg[i] = "Are you sure?" 
+							confirm_c_desc[i] = "~r~This will override any unsaved settings."
 						end
-						profile_c_op[i] = 255
-						confirm_c_msg[i] = "Are you sure?" 
-						confirm_c_desc[i] = "~r~This will override any unsaved settings."
-					end
-				  end,
-				})	
+					  end,
+					})
+				end
 			end
-		end)
+		end)	
 		---------------------------------------------------------------------
 		------------------------------ABOUT MENU-----------------------------
 		---------------------------------------------------------------------
