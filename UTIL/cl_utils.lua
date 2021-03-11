@@ -47,6 +47,7 @@ function UTIL:UpdateApprovedTones(veh)
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
 		HUD:ShowNotification("~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \"~o~"..veh_name.."~s~\".", false)
+		HUD:Print("Info: Using DEFAULT profile for \""..veh_name.."\".", true)
 	end
 	
 	if not UTIL:IsApprovedTone('MAIN_MEM') then
@@ -134,20 +135,26 @@ end
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and position of desired tone in approved_tones.]]
 function UTIL:SetToneByPos(tone_string, pos)
-	if approved_tones[pos] ~= nil then
-		if tone_string == 'MAIN_MEM' then
-			tone_main_mem_id = approved_tones[pos]
-		elseif tone_string == 'PMANU' then
-			tone_PMANU_id = approved_tones[pos]
-		elseif tone_string == 'SMANU' then
-			tone_SMANU_id = approved_tones[pos]
-		elseif tone_string == 'AUX' then
-			tone_AUX_id = approved_tones[pos]
-		elseif tone_string == 'ARHRN' then
-			tone_ARHRN_id = approved_tones[pos]
+	if approved_tone ~= nil then
+		if approved_tones[pos] ~= nil then
+			if tone_string == 'MAIN_MEM' then
+				tone_main_mem_id = approved_tones[pos]
+			elseif tone_string == 'PMANU' then
+				tone_PMANU_id = approved_tones[pos]
+			elseif tone_string == 'SMANU' then
+				tone_SMANU_id = approved_tones[pos]
+			elseif tone_string == 'AUX' then
+				tone_AUX_id = approved_tones[pos]
+			elseif tone_string == 'ARHRN' then
+				tone_ARHRN_id = approved_tones[pos]
+			end
+		else
+			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
+			HUD:Print("Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..","..pos..")", true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 3: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.", false)
+		HUD:Print("Warning 404: Attempted to set tone "..tone_string.." but, was unable to locate approved_tones. (UTIL:SetToneByPos("..tone_string..","..pos.."))", true)
 	end
 end
 
@@ -172,21 +179,22 @@ end
 
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and specific ID.]]
-function UTIL:SetToneByID(tone, tone_id)
+function UTIL:SetToneByID(tone_string, tone_id)
 	if UTIL:IsApprovedTone(tone_id) then
-		if tone == 'MAIN_MEM' then
+		if tone_string == 'MAIN_MEM' then
 			tone_main_mem_id = tone_id
-		elseif tone == 'PMANU' then
+		elseif tone_string == 'PMANU' then
 			tone_PMANU_id = tone_id
-		elseif tone == 'SMANU' then
+		elseif tone_string == 'SMANU' then
 			tone_SMANU_id = tone_id
-		elseif tone == 'AUX' then
+		elseif tone_string == 'AUX' then
 			tone_AUX_id = tone_id
-		elseif tone == 'ARHRN' then
+		elseif tone_string == 'ARHRN' then
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 503:~s~ Permission denied, tone not approved. See console.", false)
+		HUD:Print("Warning 503: Attempted to set tone "..tone_string.." to "..tone_id.." a not approved tone in SIREN_ASSIGNEMENTS. (UTIL:SetToneByID("..tone_string..","..tone_id.."))", true)
 	end
 end
 
@@ -281,5 +289,3 @@ function UTIL:Print(string, override)
 		print(string)
 	end
 end
-
-
