@@ -32,6 +32,7 @@ function UTIL:FixOversizeKeys()
 			local shortened_gameName = string.sub(i,1,11)
 			SIREN_ASSIGNMENTS[shortened_gameName] = SIREN_ASSIGNMENTS[i]
 			SIREN_ASSIGNMENTS[i] = nil
+			HUD:Print("Info: Shortening oversize key \""..i.."\" to \""..shortened_gameName.."\".", true)
 		end
 	end
 end
