@@ -31,6 +31,10 @@ files({
 })
 
 
+shared_script {
+	'SETTINGS.lua',
+}
+
 client_scripts {
 	---------------RAGE-UI---------------
     "@RageUI/RMenu.lua",
@@ -60,8 +64,6 @@ client_scripts {
     "@RageUI/menu/panels/UIStatisticsPanel.lua",
     "@RageUI/menu/windows/UIHeritage.lua",
 	-------------------------------------
-	'/UTIL/cl_globals.lua',
-	'SETTINGS.lua',
 	'SIRENS.lua',
 	'/UTIL/cl_*.lua',
 	'/UI/cl_*.lua',
@@ -74,5 +76,4 @@ server_script {
 	'/UTIL/sv_lvc.lua',
 	'/PLUGINS/**/sv_*.lua'
 }
-
 ------------------------------
