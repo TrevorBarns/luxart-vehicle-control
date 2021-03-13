@@ -10,13 +10,13 @@ var resourceName = "";
 var folder_prefix = "../textures/";
 var audioPlayer = null;
 var soundID = 0;
-var scale = 0.55;
+var scale = 0.6;
 var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
 const elements = 
 {
-	sirenbox: 	document.getElementById("sirenboxhud"),
-	lswitch: 	document.getElementById("switch"),
+	sirenbox: 	document.getElementById("sirenbox"),
+	lswitch: 	document.getElementById("slide"),
 	siren: 		document.getElementById("siren"),
 	horn: 		document.getElementById("horn"),
 	tkd: 		document.getElementById("tkd"),
@@ -44,44 +44,44 @@ window.addEventListener('message', function(event) {
 		switch ( item ){
 			case "hud":
 				if ( state == true ) {
-					elements.sirenbox.style.display = "grid";
+					elements.sirenbox.style.display = "inline";
 				}else{
 					elements.sirenbox.style.display = "none";
 				}
 				break;
 			case "switch":
 				if ( state == true ) {
-					elements.lswitch.src= folder_prefix +"lux_switch_3_hud.png";
+					elements.lswitch.src= folder_prefix +"lux_slide_on.png";
 				}else{
-					elements.lswitch.src= folder_prefix +"lux_switch_1_hud.png";					
+					elements.lswitch.src= folder_prefix +"lux_slide_off.png";					
 				}
 				break;
 			case "siren":
 				if ( state == true ) {
-					elements.siren.src= folder_prefix +"lux_siren_on_hud.png";
+					elements.siren.src= folder_prefix +"lux_siren_on.png";
 				}else{
-					elements.siren.src= folder_prefix +"lux_siren_off_hud.png";					
+					elements.siren.src= folder_prefix +"lux_siren_off.png";					
 				}			
 				break;
 			case "horn":
 				if ( state == true ) {
-					elements.horn.src= folder_prefix +"lux_horn_on_hud.png";					
+					elements.horn.src= folder_prefix +"lux_horn_on.png";					
 				}else{
-					elements.horn.src= folder_prefix +"lux_horn_off_hud.png";
+					elements.horn.src= folder_prefix +"lux_horn_off.png";
 				}				
 				break;
 			case "tkd":
 				if ( state == true ) {
-					elements.tkd.src= folder_prefix +"lux_tkd_on_hud.png";					
+					elements.tkd.src= folder_prefix +"lux_tkd_on.png";					
 				}else{
-					elements.tkd.src= folder_prefix +"lux_tkd_off_hud.png";
+					elements.tkd.src= folder_prefix +"lux_tkd_off.png";
 				}			
 				break;			
 			case "lock":
 				if ( state == true ) {
-					elements.lock.src= folder_prefix +"lux_lock_on_hud.png";					
+					elements.lock.src= folder_prefix +"lux_lock_on.png";					
 				}else{
-					elements.lock.src= folder_prefix +"lux_lock_off_hud.png";
+					elements.lock.src= folder_prefix +"lux_lock_off.png";
 				}				
 				break;
 			default:
