@@ -32,7 +32,6 @@ function UTIL:FixOversizeKeys()
 			local shortened_gameName = string.sub(i,1,11)
 			SIREN_ASSIGNMENTS[shortened_gameName] = SIREN_ASSIGNMENTS[i]
 			SIREN_ASSIGNMENTS[i] = nil
-			HUD:Print("Info: Shortening oversize key \""..i.."\" to \""..shortened_gameName.."\".", true)
 		end
 	end
 end
@@ -48,7 +47,6 @@ function UTIL:UpdateApprovedTones(veh)
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
 		HUD:ShowNotification("~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \"~o~"..veh_name.."~s~\".", false)
-		HUD:Print("Info: Using DEFAULT profile for \""..veh_name.."\".", true)
 	end
 	
 	if not UTIL:IsApprovedTone('MAIN_MEM') then
@@ -136,7 +134,7 @@ end
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and position of desired tone in approved_tones.]]
 function UTIL:SetToneByPos(tone_string, pos)
-	if approved_tone ~= nil then
+	if approved_tones ~= nil then
 		if approved_tones[pos] ~= nil then
 			if tone_string == 'MAIN_MEM' then
 				tone_main_mem_id = approved_tones[pos]
@@ -151,11 +149,11 @@ function UTIL:SetToneByPos(tone_string, pos)
 			end
 		else
 			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
-			HUD:Print("Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..","..pos..")", true)
+			UTIL:Print("Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.", false)
-		HUD:Print("Warning 404: Attempted to set tone "..tone_string.." but, was unable to locate approved_tones. (UTIL:SetToneByPos("..tone_string..","..pos.."))", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
+		UTIL:Print("^3Warning 404: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.." in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
@@ -180,22 +178,22 @@ end
 
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and specific ID.]]
-function UTIL:SetToneByID(tone_string, tone_id)
+function UTIL:SetToneByID(tone, tone_id)
 	if UTIL:IsApprovedTone(tone_id) then
-		if tone_string == 'MAIN_MEM' then
+		if tone == 'MAIN_MEM' then
 			tone_main_mem_id = tone_id
-		elseif tone_string == 'PMANU' then
+		elseif tone == 'PMANU' then
 			tone_PMANU_id = tone_id
-		elseif tone_string == 'SMANU' then
+		elseif tone == 'SMANU' then
 			tone_SMANU_id = tone_id
-		elseif tone_string == 'AUX' then
+		elseif tone == 'AUX' then
 			tone_AUX_id = tone_id
-		elseif tone_string == 'ARHRN' then
+		elseif tone == 'ARHRN' then
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 503:~s~ Permission denied, tone not approved. See console.", false)
-		HUD:Print("Warning 503: Attempted to set tone "..tone_string.." to "..tone_id.." a not approved tone in SIREN_ASSIGNEMENTS. (UTIL:SetToneByID("..tone_string..","..tone_id.."))", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
+		UTIL:Print("Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
