@@ -65,15 +65,18 @@ function HUD:GetHudScale()
 	SendNUIMessage({
 	  _type = "hud:getHudScale"
 	})
+	HUD_scale = HUD_scale or 0.6
 	return HUD_scale
 end
 
 --[[Setter for HUD scale. Updates JS & CSS.]]
 function HUD:SetHudScale(scale)
-	SendNUIMessage({
-	  _type = "hud:setHudScale",
-	  scale = scale,
-	})
+	if scale ~= nil then
+		SendNUIMessage({
+		  _type = "hud:setHudScale",
+		  scale = scale,
+		})
+	end
 end
 
 --[[Callback for JS -> LUA to set HUD_scale with current CSS]]
