@@ -29,27 +29,27 @@ SIREN TONE TABLE:
 ]]
 -- CHANGE SIREN NAMES, AUDIONAME, AUDIOREF
 SIRENS = {	
---[[1]]	  { Name = "Airhorn", 		String = "SIRENS_AIRHORN", 								Ref = 0 }, --1
---[[2]]	  { Name = "Wail", 			String = "VEHICLES_HORNS_SIREN_1", 						Ref = 0 }, --2
---[[3]]	  { Name = "Yelp", 			String = "VEHICLES_HORNS_SIREN_2", 						Ref = 0 }, --3
---[[4]]	  { Name = "Priority", 		String = "VEHICLES_HORNS_POLICE_WARNING", 				Ref = 0 }, --4
---[[5]]	  { Name = "Futura", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_01", 			Ref = 0 }, --5
---[[6]]	  { Name = "Hetro", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_02", 			Ref = 0 }, --6
---[[7]]	  { Name = "Sweep-1", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_03", 			Ref = 0 }, --7
---[[8]]	  { Name = "Sweep-2", 		String = "RESIDENT_VEHICLES_SIREN_QUICK_01", 			Ref = 0 }, --8
---[[9]]	  { Name = "Hi-Low",		String = "RESIDENT_VEHICLES_SIREN_QUICK_02",			Ref = 0 }, --9
---[[10]]  { Name = "Whine Down",	String = "RESIDENT_VEHICLES_SIREN_QUICK_03", 			Ref = 0 }, --10
---[[11]]  { Name = "Powercall", 	String = "VEHICLES_HORNS_AMBULANCE_WARNING", 			Ref = 0 }, --11
---[[12]]  { Name = "QSiren", 		String = "VEHICLES_HORNS_FIRETRUCK_WARNING", 			Ref = 0 }, --12
---[[13]]  { Name = "Fire Yelp", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", 	Ref = 0 }, --13
---[[14]]  { Name = "Fire Yelp", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", 	Ref = 0 }, --14
-}
-
---ASSIGN SIRENS TO VEHICLES
-SIREN_ASSIGNMENTS = {
---['<gameName>'] = {tones},
-['DEFAULT'] = { 1, 2, 3, 4 }, 
-['FIRETRUK'] = { 12, 13, 14, 11 }, 
-['AMBULAN'] = { 1, 2, 3, 4, 11 }, 
-['LGUARD'] = { 1, 2, 3, 4, 11 },
-}
+	--[[1]]	  { Name = "Airhorn", 		String = "SIRENS_AIRHORN", 								Ref = 0 }, --1
+	--[[2]]	  { Name = "Wail", 			String = "VEHICLES_HORNS_SIREN_1", 						Ref = 0 }, --2
+	--[[3]]	  { Name = "Yelp", 			String = "VEHICLES_HORNS_SIREN_2", 						Ref = 0 }, --3
+	--[[4]]	  { Name = "Priority", 		String = "VEHICLES_HORNS_POLICE_WARNING", 				Ref = 0 }, --4
+	--[[5]]	  { Name = "Futura", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_01", 			Ref = 0 }, --5
+	--[[6]]	  { Name = "Hetro", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_02", 			Ref = 0 }, --6
+	--[[7]]	  { Name = "Sweep-1", 		String = "RESIDENT_VEHICLES_SIREN_WAIL_03", 			Ref = 0 }, --7
+	--[[8]]	  { Name = "Sweep-2", 		String = "RESIDENT_VEHICLES_SIREN_QUICK_01", 			Ref = 0 }, --8
+	--[[9]]	  { Name = "Hi-Low",		String = "RESIDENT_VEHICLES_SIREN_QUICK_02",			Ref = 0 }, --9
+	--[[10]]  { Name = "Whine Down",	String = "RESIDENT_VEHICLES_SIREN_QUICK_03", 			Ref = 0 }, --10
+	--[[11]]  { Name = "Powercall", 	String = "VEHICLES_HORNS_AMBULANCE_WARNING", 			Ref = 0 }, --11
+	--[[12]]  { Name = "Fire Horn", 		String = "VEHICLES_HORNS_FIRETRUCK_WARNING", 			Ref = 0 }, --12
+	--[[13]]  { Name = "Fire Yelp", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", 	Ref = 0 }, --13
+	--[[14]]  { Name = "Fire Wail", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", 	Ref = 0 }, --14
+	}
+	
+	--ASSIGN SIRENS TO VEHICLES
+	SIREN_ASSIGNMENTS = {
+	--['<gameName>'] = {tones},
+	['DEFAULT'] = { 1, 2, 3, 4 }, 
+	['FIRETRUK'] = { 12, 13, 14, 11 }, 
+	['AMBULAN'] = { 1, 2, 3, 4, 11 }, 
+	['LGUARD'] = { 1, 2, 3, 4, 11 },
+	}
