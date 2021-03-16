@@ -40,7 +40,7 @@ SIRENS = {
 	--[[9]]	  { Name = "Hi-Low",		String = "RESIDENT_VEHICLES_SIREN_QUICK_02",			Ref = 0 }, --9
 	--[[10]]  { Name = "Whine Down",	String = "RESIDENT_VEHICLES_SIREN_QUICK_03", 			Ref = 0 }, --10
 	--[[11]]  { Name = "Powercall", 	String = "VEHICLES_HORNS_AMBULANCE_WARNING", 			Ref = 0 }, --11
-	--[[12]]  { Name = "Fire Horn", 		String = "VEHICLES_HORNS_FIRETRUCK_WARNING", 			Ref = 0 }, --12
+	--[[12]]  { Name = "Fire Horn", 	String = "VEHICLES_HORNS_FIRETRUCK_WARNING", 			Ref = 0 }, --12
 	--[[13]]  { Name = "Fire Yelp", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", 	Ref = 0 }, --13
 	--[[14]]  { Name = "Fire Wail", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", 	Ref = 0 }, --14
 	}
