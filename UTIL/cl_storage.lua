@@ -13,7 +13,7 @@ PURPOSE: Handle save/load functions and version
 ]]
 Storage = { }
 
-local save_prefix = "lvc_"..community_id.."_"
+local save_prefix = "lvc_"
 local repo_version = nil
 local backup_tone_table = {}
 local custom_tone_names = false
@@ -22,7 +22,6 @@ local profiles = { }
 				
 ------------------------------------------------
 --Deletes all saved KVPs for that vehicle profile
---	This should never be removed. It is the only easy way for end users to delete LVC data.
 RegisterCommand('lvcfactoryreset', function(source, args)
 	local choice = HUD:FrontEndAlert("Warning", "Are you sure you want to delete all saved LVC data and Factory Reset?")
 	if choice then
@@ -43,7 +42,7 @@ end)
 --Prints all KVP keys and values to console
 if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
 	RegisterCommand('lvcdumpkvp', function(source, args)
-		local handle = StartFindKvp(save_prefix);
+		local handle = StartFindKvp(save_prefix.."save_version");
 		local key = FindKvp(handle)
 		while key ~= nil do
 			if GetResourceKvpString(key) ~= nil then
@@ -62,9 +61,8 @@ end
 -- Resource Start Initialization
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	TriggerServerEvent('lvc:GetRepoVersion_s')
+	TriggerServerEvent('lvc_GetRepoVersion_s')
 	Storage:FindSavedProfiles()
-	Citizen.Wait(5000)
 end)
 
 --[[Getter for current version used in RageUI.]]
@@ -90,7 +88,7 @@ end
 --[[Saves all KVP values.]]
 function Storage:SaveSettings()
 	local settings_string = nil
-	SetResourceKvp(save_prefix.."save_version", Storage:GetCurrentVersion())
+	SetResourceKvp(save_prefix .. "save_version", Storage:GetCurrentVersion())
 
 	--HUD Settings
 	local hud_save_data = { Show_HUD = HUD:GetHudState(),
@@ -124,7 +122,7 @@ function Storage:SaveSettings()
 									   }
 							
 			SetResourceKvp(save_prefix .. "profile_"..profile_name.."!",  json.encode(profile_save_data))
-			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name.."!")
+			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name)
 
 			--Audio Settings
 			local audio_save_data = {	button_sfx_scheme 			= button_sfx_scheme,
@@ -279,7 +277,7 @@ function Storage:ResetSettings()
 	lock_reminder_volume 		= default_lock_reminder_volume
 	activity_reminder_volume 	= default_reminder_volume
 	
-	profiles = { }
+	profile = { }
 	Storage:FindSavedProfiles()
 end
 
@@ -301,7 +299,6 @@ function Storage:FindSavedProfiles()
 			end
 			
 			if not found then
-				print("inserting: "..saved_profile_name)
 				table.insert(profiles, saved_profile_name)
 			end
 		end
@@ -363,7 +360,7 @@ end
 
 ---------------------------------------------------------------------
 --[[Callback for Server -> Client version update.]]
-RegisterNetEvent('lvc:SendRepoVersion_c')
-AddEventHandler('lvc:SendRepoVersion_c', function(version)
+RegisterNetEvent("lvc_SendRepoVersion_c")
+AddEventHandler("lvc_SendRepoVersion_c", function(version)
 	repo_version = version
 end)

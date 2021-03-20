@@ -11,7 +11,7 @@ PURPOSE: Handle version checking, syncing sirens,
 and opening links.
 ---------------------------------------------------
 ]]
-RegisterServerEvent('lvc:TogTkdState_s')
-AddEventHandler('lvc:TogTkdState_s', function(newstate)
-	TriggerClientEvent('lvc:TogTkdState_c', -1, source, newstate)
+RegisterServerEvent("lvc_TogTkdState_s")
+AddEventHandler("lvc_TogTkdState_s", function(newstate)
+	TriggerClientEvent("lvc_TogTkdState_c", -1, source, newstate)
 end)

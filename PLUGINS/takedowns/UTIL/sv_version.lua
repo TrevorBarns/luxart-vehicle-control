@@ -12,7 +12,7 @@ PURPOSE: Handle plugin version checking.
 ]]
 
 local plugin_name = "takedowns"
-local plugin_version = "0.9.1"
+local plugin_version = "1.0.0"
 
 RegisterServerEvent("lvc:plugins_getVersions") 
 AddEventHandler("lvc:plugins_getVersions", function()

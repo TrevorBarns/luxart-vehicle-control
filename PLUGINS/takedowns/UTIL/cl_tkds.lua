@@ -86,7 +86,7 @@ Citizen.CreateThread(function()
 			----- AUTO BROADCAST VEH STATES -----
 			if count_bcast_timer > delay_bcast_timer then
 				count_bcast_timer = 0
-				TriggerServerEvent('lvc:TogTkdState_s', state_tkd[veh])
+				TriggerServerEvent("lvc_TogTkdState_s", state_tkd[veh])
 			else
 				count_bcast_timer = count_bcast_timer + 1
 			end		
@@ -168,8 +168,8 @@ function TKDS:DrawTakeDown(veh)
 end
 
 ---------------------------------------------------------------------
-RegisterNetEvent('lvc:TogTkdState_c')
-AddEventHandler('lvc:TogTkdState_c', function(sender, toggle)
+RegisterNetEvent("lvc_TogTkdState_c")
+AddEventHandler("lvc_TogTkdState_c", function(sender, toggle)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
