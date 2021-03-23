@@ -1,3 +1,17 @@
+--[[
+---------------------------------------------------
+LUXART VEHICLE CONTROL V3 (FOR FIVEM)
+---------------------------------------------------
+Coded by Lt.Caine
+ELS Clicks by Faction
+Additional Modification by TrevorBarns
+Traffic Advisor Plugin by Dawson
+---------------------------------------------------
+FILE: cl_advisor.lua
+PURPOSE: Contains threads, functions to 
+change traffic advisor state through extras.
+---------------------------------------------------
+]]
 TA = {}
 local taExtras = {}
 state_ta = {}
