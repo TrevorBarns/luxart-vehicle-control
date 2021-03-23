@@ -4,7 +4,7 @@ tkd_masterswitch = true
 tkd_key = 74
 --	Key to toggle TKD light. (default: 74 (H))
 tkd_combokey = 21 
---  Key that needs to be pressed in combination with tkd_key. Set to 0 to disable. (default: 21 (Left Shift))
+--  Key that needs to be pressed in combination with tkd_key. Set to false to disable. (default: 21 (Left Shift))
 tkd_intensity_default = 100
 --  Overall brightness of TKD light.
 tkd_radius_default = 50
