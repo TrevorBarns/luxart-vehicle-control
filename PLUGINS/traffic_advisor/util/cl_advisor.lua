@@ -4,48 +4,55 @@ state_ta = {}
 
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
-		if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
-			if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
-				if state_ta[veh] == 1 then
-					TA:TogVehicleExtras(veh, taExtras.left.off, true)
-					PlayAudio("Downgrade", downgrade_volume)
-					state_ta[veh] = 0
-				else
-					TA:TogVehicleExtras(veh, taExtras.left.on, true)
-					PlayAudio("Upgrade", upgrade_volume)
-					state_ta[veh] = 1
+		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
+			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
+				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
+					if state_ta[veh] == 1 then
+						TA:TogVehicleExtras(veh, taExtras.left.off, true)
+						PlayAudio("Downgrade", downgrade_volume)
+						state_ta[veh] = 0
+					else
+						TA:TogVehicleExtras(veh, taExtras.left.on, true)
+						PlayAudio("Upgrade", upgrade_volume)
+						state_ta[veh] = 1
+					end
 				end
 			end
 		end
 	end)
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
-		if taExtras.lightbar ~= nil and veh ~= nil then
-			if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
-				if state_ta[veh] == 2 then
-					TA:TogVehicleExtras(veh, taExtras.right.off, true)
-					PlayAudio("Downgrade", downgrade_volume)
-					state_ta[veh] = 0
-				else
-					TA:TogVehicleExtras(veh, taExtras.right.on, true)
-					PlayAudio("Upgrade", upgrade_volume)
-					state_ta[veh] = 2
+		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
+			if taExtras.lightbar ~= nil and veh ~= nil then
+				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
+				
+					if state_ta[veh] == 2 then
+						TA:TogVehicleExtras(veh, taExtras.right.off, true)
+						PlayAudio("Downgrade", downgrade_volume)
+						state_ta[veh] = 0
+					else
+						TA:TogVehicleExtras(veh, taExtras.right.on, true)
+						PlayAudio("Upgrade", upgrade_volume)
+						state_ta[veh] = 2
+					end
 				end
 			end
 		end
 	end)
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
-		if taExtras.lightbar ~= nil and veh ~= nil then
-			if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
-				if state_ta[veh] == 3 then
-					TA:TogVehicleExtras(veh, taExtras.middle.off, true)
-					PlayAudio("Downgrade", downgrade_volume)
-					state_ta[veh] = 0
-				else
-					TA:TogVehicleExtras(veh, taExtras.middle.on, true)
-					PlayAudio("Upgrade", upgrade_volume)
-					state_ta[veh] = 3
+		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
+			if taExtras.lightbar ~= nil and veh ~= nil then
+				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
+					if state_ta[veh] == 3 then
+						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
+						PlayAudio("Downgrade", downgrade_volume)
+						state_ta[veh] = 0
+					else
+						TA:TogVehicleExtras(veh, taExtras.middle.on, true)
+						PlayAudio("Upgrade", upgrade_volume)
+						state_ta[veh] = 3
+					end
 				end
 			end
 		end
@@ -133,7 +140,7 @@ RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
 		TA:UpdateExtrasTable(veh)
-    state_ta[veh] = 0
+		state_ta[veh] = 0
 	end
 end)
 
