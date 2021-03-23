@@ -325,12 +325,6 @@ Citizen.CreateThread(function()
 						HUD:ResetPosition()
 					end,
 				});
-				RageUI.Button('Save Default', "Save HUD default position.", {}, hud_state, {
-					onSelected = function()
-						Storage:SaveDefaultHUDSettings()
-						HUD:ShowNotification("~g~Success~s~: Your default HUD settings have been saved.", true)
-					end,
-				});
 			end)	    
 		--AUDIO SETTINGS MENU
 		RageUI.IsVisible(RMenu:Get('lvc', 'audiosettings'), function()
