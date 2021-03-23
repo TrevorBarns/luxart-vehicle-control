@@ -172,8 +172,8 @@ function TA:SetTAStateForVeh(veh, newstate)
   end
 end
 
-RegisterNetEvent("lvc_SetTAState_c")
-AddEventHandler("lvc_SetTAState_c", function(sender, newstate)
+RegisterNetEvent("lvc:SetTAState_c")
+AddEventHandler("lvc:SetTAState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
