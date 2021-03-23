@@ -150,6 +150,15 @@ function Storage:SaveSettings()
 	end
 end
 
+function Storage:SaveDefaultHUDSettings()
+	local hud_save_data = {
+		Show_HUD = HUD:GetHudState(),
+		HUD_Scale = HUD:GetHudScale(), 
+		HUD_pos = HUD:GetHudPosition(),
+	}
+	SetResourceKvp(save_prefix .. "def_hud_data",  json.encode(hud_save_data))
+end
+
 ------------------------------------------------
 --[[Loads all KVP values.]]
 function Storage:LoadSettings(profile_name)	
@@ -237,6 +246,15 @@ function Storage:LoadSettings(profile_name)
 			else
 				HUD:ShowNotification("~b~LVC:~r~ LOADING ERROR~s~: profile_name after gsub is nil.", true)
 			end
+		end
+	else
+		local def_hud_save_data = GetResourceKvpString(save_prefix.."def_hud_data")
+		if def_hud_save_data ~= nil then
+			hud_save_data = json.decode(def_hud_save_data)
+			HUD:SetHudState(hud_save_data.Show_HUD)
+			HUD:SetHudScale(hud_save_data.HUD_Scale)
+			HUD:SetHudPosition(hud_save_data.HUD_pos)
+			UTIL:Print("LVC:STORAGE: loaded HUD data.")	
 		end
 	end
 end
