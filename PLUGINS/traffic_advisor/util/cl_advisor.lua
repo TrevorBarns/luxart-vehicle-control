@@ -4,7 +4,6 @@ state_ta = {}
 
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
-		print(json.encode(state_ta))
 		if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
 			if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
 				if state_ta[veh] == 1 then
