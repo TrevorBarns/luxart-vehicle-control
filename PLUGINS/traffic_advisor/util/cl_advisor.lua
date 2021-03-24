@@ -98,20 +98,23 @@ function TA:TogVehicleExtras(veh, extra_id, state, repair)
 				TogVehicleExtras(veh, extra_id.toggle, state, extra_id.repair)
 			end
 		-- Toggle Different Extras Mode
-		elseif extra_id.add ~= nil and extra_id.remove ~= nil then
-			if type(extra_id.add) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.add) do
-					TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+		else
+			if extra_id.add ~= nil then 
+				if type(extra_id.add) == 'table' then
+					for i, singe_extra_id in ipairs(extra_id.add) do
+						TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+					end
+				else
+					TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
 				end
-			else
-				TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
-			end
-			if type(extra_id.remove) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.remove) do
-					TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
+			if extra_id.remove ~= nil then
+				if type(extra_id.remove) == 'table' then
+					for i, singe_extra_id in ipairs(extra_id.remove) do
+						TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
+					end
+				else
+					TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
 				end
-			else
-				TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
 			end
 		end
 	else
