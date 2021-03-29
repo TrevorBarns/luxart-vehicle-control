@@ -102,12 +102,12 @@ Citizen.CreateThread( function()
 		elseif curr_version  > repo_version then
 			print("\t|\t           ^3EXPERIMENTAL VERSION                  ^7|")
 			-- IS THE USER AWARE THEY DOWNLOADED EXPERMENTAL CHECK CONVARS
-			if experimental == 'false' then
-			print("\t|^3 THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED  ^7|")
-			print("\t|^3 FOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE ^7|")
-			print("\t|^3 LATEST STABLE RELEASE AT:                              ^7|")
-			print("\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|")
-			print("\t|^3 TO MUTE THIS: SET CONVAR 'experimental' to 'true'      ^7|")
+			if not experimental then
+				print("\t|^3 THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED  ^7|")
+				print("\t|^3 FOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE ^7|")
+				print("\t|^3 LATEST STABLE RELEASE AT:                              ^7|")
+				print("\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|")
+				print("\t|^3 TO MUTE THIS: SET CONVAR 'experimental' to 'true'      ^7|")
 			end
 		end
 		
