@@ -40,9 +40,14 @@ end
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
 	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
 		approved_tones = SIREN_ASSIGNMENTS[veh_name]
 		profile = veh_name
+	elseif SIREN_ASSIGNMENTS[veh_name_wildcard] ~= nil then				--Does profile exist using # as wildcard for any digits.
+		approved_tones = SIREN_ASSIGNMENTS[veh_name_wildcard]
+		profile = veh_name_wildcard
 	else 
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
