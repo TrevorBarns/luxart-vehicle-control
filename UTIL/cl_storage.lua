@@ -64,7 +64,6 @@ Citizen.CreateThread(function()
 	Citizen.Wait(500)
 	TriggerServerEvent('lvc:GetRepoVersion_s')
 	Storage:FindSavedProfiles()
-	Citizen.Wait(5000)
 end)
 
 --[[Getter for current version used in RageUI.]]
@@ -87,18 +86,24 @@ function Storage:GetIsNewerVersion()
 	return IsNewerVersion(repo_version, Storage:GetCurrentVersion())
 end
 
+--[[Saves HUD settings, separated from SaveSettings]]
+function Storage:SaveHUDSettings()
+	local hud_save_data = { Show_HUD = HUD:GetHudState(),
+							HUD_Scale = HUD:GetHudScale(), 
+							HUD_pos = HUD:GetHudPosition(),
+						  }
+	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
+end
+
+
 --[[Saves all KVP values.]]
 function Storage:SaveSettings()
 	local settings_string = nil
 	SetResourceKvp(save_prefix.."save_version", Storage:GetCurrentVersion())
 
 	--HUD Settings
-	local hud_save_data = { Show_HUD = HUD:GetHudState(),
-							HUD_Scale = HUD:GetHudScale(), 
-							HUD_pos = HUD:GetHudPosition(),
-						  }
-	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
-
+	Storage:SaveHUDSettings()
+	
 	--Tone Names
 	if custom_tone_names then
 		local tone_names = { }
@@ -237,6 +242,15 @@ function Storage:LoadSettings(profile_name)
 			else
 				HUD:ShowNotification("~b~LVC:~r~ LOADING ERROR~s~: profile_name after gsub is nil.", true)
 			end
+		end
+	else
+		local hud_save_data = GetResourceKvpString(save_prefix.."hud_data")
+		if hud_save_data ~= nil then
+			hud_save_data = json.decode(hud_save_data)
+			HUD:SetHudState(hud_save_data.Show_HUD)
+			HUD:SetHudScale(hud_save_data.HUD_Scale)
+			HUD:SetHudPosition(hud_save_data.HUD_pos)
+			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
 		end
 	end
 end
