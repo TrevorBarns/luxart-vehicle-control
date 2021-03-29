@@ -76,7 +76,7 @@ Citizen.CreateThread( function()
 			if responseText ~= nil and responseText ~= "" then
 				plugins_rv[name] = responseText
 			else
-				plugins_rv[name] = "unkn"
+				plugins_rv[name] = "UNKWN"
 			end
 		end)
 	end
@@ -90,7 +90,7 @@ Citizen.CreateThread( function()
 		print("\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|")   
 		print("\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|")   
 		print("\t|\t                                                 |")   
-		print("\t|\t           COMMUNITY ID: "..community_id.."                |")   
+		print(string.format("\t|\t            COMMUNITY ID: %-23s|", community_id))
 		print("\t|\t         INSTALLED VERSION: "..curr_version.."                |")   
 		print("\t|\t           LATEST VERSION:  "..repo_version.."                |") 
 		--	UPDATE DETECTED
@@ -117,9 +117,9 @@ Citizen.CreateThread( function()
 			print("\t^7|INSTALLED PLUGINS               | INSTALLED |  LATEST   |") 			
 			for name, version in pairs(plugins_cv) do
 				local plugin_string
-				if plugins_cv[name] < plugins_rv[name] then
+				if plugins_rv[name] ~= "UNKWN" and plugins_cv[name] < plugins_rv[name]  then
 					plugin_string = string.format("\t|^8  %-30s^7|^8   %s   ^7|^8   %s   ^7|^8 UPDATE REQUIRED    ^7", name, plugins_cv[name], plugins_rv[name])					
-				elseif plugins_cv[name] > plugins_rv[name] then
+				elseif plugins_cv[name] > plugins_rv[name] or plugins_rv[name] == "UNKWN" then
 					plugin_string = string.format("\t|^3  %-30s^7|^3   %s   ^7|^3   %s   ^7|^3 EXPERIMENTAL VERSION ^7", name, plugins_cv[name], plugins_rv[name])					
 				else
 					plugin_string = string.format("\t|  %-30s|   %s   |   %s   |", name, plugins_cv[name], plugins_rv[name])
