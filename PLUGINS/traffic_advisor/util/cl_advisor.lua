@@ -37,7 +37,7 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if taExtras.lightbar ~= nil and veh ~= nil then
+			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
 				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
 				
 					if state_ta[veh] == 2 then
@@ -56,7 +56,7 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if taExtras.lightbar ~= nil and veh ~= nil then
+			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
 				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
 						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
