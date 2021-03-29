@@ -1,3 +1,14 @@
+-- THE "I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000"
+Citizen.CreateThread(function()
+	local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
+	AddTextEntry("lvc_wrong_branch","~y~THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED\nFOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE\nLATEST STABLE RELEASE AT:\n~g~github.com/TrevorBarns/luxart-vehicle-control~p~~h~/releases~h~")
+	while not experimental do
+		HUD:ShowText(0.5, 0.0, 0, "~b~LVC~w~: ~o~Warning~w~: This is the development branch (master)", 0.5)
+		HUD:ShowText(0.5, 0.04, 0, nil, nil, "lvc_wrong_branch")
+		HUD:ShowText(0.5, 0.15, 0, "~b~TO MUTE THIS~w~: Set CONVAR '~o~experimental~w~' to '~o~true~w~' in fxmanifest.", 0.3)
+		Citizen.Wait(0)
+	end
+end)
 --[[
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
