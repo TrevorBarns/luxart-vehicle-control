@@ -60,7 +60,7 @@ Citizen.CreateThread(function()
 				----- CONTROLS -----
 				if not IsPauseMenuActive() then
 					if not key_lock and tkd_mode ~= 3 then
-						if IsControlPressed(0, tkd_combokey) or tkd_combokey == 0  then
+						if IsControlPressed(0, tkd_combokey) or tkd_combokey == false  then
 							DisableControlAction(0, tkd_key, true)
 							if IsDisabledControlJustReleased(0, tkd_key) then
 								if state_tkd[veh] == true then
