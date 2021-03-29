@@ -75,12 +75,6 @@ if ta_masterswitch then
 	RegisterKeyMapping('lvctogleftta', 'LVC Toggle Left TA', 'keyboard', 'left')
 	RegisterKeyMapping('lvctogrightta', 'LVC Toggle Right TA', 'keyboard', 'right')
 	RegisterKeyMapping('lvctogmidta', 'LVC Toggle Middle TA', 'keyboard', 'down')
-
-	Citizen.CreateThread(function()
-		TriggerEvent('chat:removeSuggestion', '/lvctogleftta')
-		TriggerEvent('chat:removeSuggestion', '/lvctogrightta')
-		TriggerEvent('chat:removeSuggestion', '/lvctogmidta')
-	end)
 end
 
 function TA:TogVehicleExtras(veh, extra_id, state, repair)
