@@ -81,8 +81,8 @@ function TA:TogVehicleExtras(veh, extra_id, state, repair)
 	if type(extra_id) == 'table' then
 		if extra_id.add ~= nil then 
 			if type(extra_id.add) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.add) do
-					TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+				for i, single_extra_id in ipairs(extra_id.add) do
+					TogVehicleExtras(veh, single_extra_id, state, extra_id.repair)
 				end
 			else
 				TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
@@ -90,8 +90,8 @@ function TA:TogVehicleExtras(veh, extra_id, state, repair)
 		end
 		if extra_id.remove ~= nil then
 			if type(extra_id.remove) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.remove) do
-					TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
+				for i, single_extra_id in ipairs(extra_id.remove) do
+					TogVehicleExtras(veh, single_extra_id, not state, extra_id.repair)
 				end
 			else
 				TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
