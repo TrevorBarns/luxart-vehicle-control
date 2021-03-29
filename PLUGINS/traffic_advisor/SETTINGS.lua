@@ -4,6 +4,8 @@ ta_masterswitch = true
 ta_combokey = false
 --  Key that needs to be pressed in combination with registered key mapping. Set to false to disable. (default: disabled (false))
 
+--[[ Documentation / Wiki: https://github.com/TrevorBarns/luxart-vehicle-control/wiki/Traffic-Advisor ]]
+
 TA_ASSIGNMENTS = {
-  ['DEFAULT'] = {}
+  ['DEFAULT'] = { },
 }
