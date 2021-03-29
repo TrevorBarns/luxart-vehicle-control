@@ -19,8 +19,8 @@ state_ta = {}
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
-				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
 						TA:TogVehicleExtras(veh, taExtras.left.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
@@ -37,9 +37,8 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
-				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
-				
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
 						TA:TogVehicleExtras(veh, taExtras.right.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
@@ -56,8 +55,8 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and taExtras.lightbar ~= nil and veh ~= nil then
-				if IsVehicleExtraTurnedOn(veh, taExtras.lightbar) and IsVehicleSirenOn(veh) then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
 						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
