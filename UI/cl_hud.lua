@@ -145,7 +145,7 @@ end
 
 ------------------------------------------------
 --Drawn On Screen Text at X, Y
-function HUD:ShowText(x, y, align, text, scale)
+function HUD:ShowText(x, y, align, text, scale, label)
 	scale = scale or 0.4
 	SetTextJustification(align)
 	SetTextFont(0)
@@ -156,8 +156,12 @@ function HUD:ShowText(x, y, align, text, scale)
 	SetTextEdge(1, 0, 0, 0, 255)
 	SetTextDropShadow()
 	SetTextOutline()
-	SetTextEntry("STRING")
-	AddTextComponentString(text)
+	if text ~= nil then
+		SetTextEntry("STRING")
+		AddTextComponentString(text)
+	else
+		SetTextEntry(label)
+	end
 	DrawText(x, y)
 	ResetScriptGfxAlign()
 end
