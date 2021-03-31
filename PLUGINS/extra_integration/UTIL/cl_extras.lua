@@ -36,7 +36,7 @@ Citizen.CreateThread( function()
 					else
 						TogVehicleExtras(veh, extras.Brake, false)				
 					end
-				else
+				elseif extras.Brake ~= nil then
 					TogVehicleExtras(veh, extras.Brake, false)
 				end
 				
@@ -76,6 +76,7 @@ Citizen.CreateThread( function()
 				if door_ei_enabled then
 					if extras.DDoor ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
+							UTIL:Print("EI: Drivers door open, calling EI function.", false)
 							TogVehicleExtras(veh, extras.DDoor, true)
 						else
 							TogVehicleExtras(veh, extras.DDoor, false)
@@ -184,6 +185,7 @@ function TogVehicleExtras(veh, extra_id, state, repair)
 				end
 				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
+				UTIL:Print("EI: Toggling extra "..extra_id.." on", false)
 				SetVehicleAutoRepairDisabled(veh, repair)
 				if repair then
 					for i = 0,6 do
@@ -196,6 +198,7 @@ function TogVehicleExtras(veh, extra_id, state, repair)
 		else
 			if IsVehicleExtraTurnedOn(veh, extra_id) then
 				SetVehicleExtra(veh, extra_id, true)
+				UTIL:Print("EI: Toggling extra "..extra_id.." off", false)
 			end	
 		end
 	end
@@ -319,16 +322,17 @@ end
 
 --[[Sets extras table a copy of EXTRA_ASSIGNMENTS for this vehicle]]
 function EI:UpdateExtrasTable(veh)
-	local veh_name = UTIL:GetVehicleProfileName()
+	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	if EXTRA_ASSIGNMENTS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		extras = EXTRA_ASSIGNMENTS[veh_name]
+		UTIL:Print("EI: Profile found for "..veh_name, false)
 	else 
 		extras = EXTRA_ASSIGNMENTS['DEFAULT']
 	end
 	
 	for _, item in pairs(extras) do
 		if type(item) == 'table' then
-
+			
 		else
 			if not DoesExtraExist(veh, item) then
 				HUD:ShowNotification("~b~LVC: ~y~Warning:~s~ Extra "..item.." does not exist for "..veh_name". Verify EI Settings.", true)
@@ -336,4 +340,3 @@ function EI:UpdateExtrasTable(veh)
 		end
 	end
 end
-
