@@ -315,7 +315,6 @@ function Storage:FindSavedProfiles()
 			end
 			
 			if not found then
-				print("inserting: "..saved_profile_name)
 				table.insert(profiles, saved_profile_name)
 			end
 		end
