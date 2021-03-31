@@ -90,42 +90,48 @@ local snd_airmanu = {}
 -- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
 -- Disables controls faster than previous thread. 
 Citizen.CreateThread(function()
-	if community_id ~= nil and community_id ~= "" then
-		while true do
-			playerped = GetPlayerPed(-1)	
-			--IS IN VEHICLE
-			player_is_emerg_driver = false
-			if IsPedInAnyVehicle(playerped, false) then
-				veh = GetVehiclePedIsUsing(playerped)	
-				--IS DRIVER
-				if GetPedInVehicleSeat(veh, -1) == playerped then
-					--IS EMERGENCY VEHICLE
-					if GetVehicleClass(veh) == 18 then
-						player_is_emerg_driver = true
-						DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
-						DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
-						DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
-						DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
-						if IsControlPressed(0, 243) then
-							while IsControlPressed(0, 243) do
-								radio_wheel_active = true
-								SetControlNormal(0, 85, 1.0)
-								Citizen.Wait(0)
+	if GetCurrentResourceName() == 'lvc' then	
+		if community_id ~= nil and community_id ~= "" then
+			while true do
+				playerped = GetPlayerPed(-1)	
+				--IS IN VEHICLE
+				player_is_emerg_driver = false
+				if IsPedInAnyVehicle(playerped, false) then
+					veh = GetVehiclePedIsUsing(playerped)	
+					--IS DRIVER
+					if GetPedInVehicleSeat(veh, -1) == playerped then
+						--IS EMERGENCY VEHICLE
+						if GetVehicleClass(veh) == 18 then
+							player_is_emerg_driver = true
+							DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
+							DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
+							DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
+							DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
+							if IsControlPressed(0, 243) then
+								while IsControlPressed(0, 243) do
+									radio_wheel_active = true
+									SetControlNormal(0, 85, 1.0)
+									Citizen.Wait(0)
+								end
+								Citizen.Wait(100)
+								radio_wheel_active = false
+							else
+								DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
 							end
-							Citizen.Wait(100)
-							radio_wheel_active = false
-						else
-							DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
 						end
 					end
 				end
+				Citizen.Wait(1)
 			end
-			Citizen.Wait(1)
+		else
+			Citizen.Wait(1000)
+			HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.", true)
+			UTIL:Print("^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.", true)
 		end
 	else
 		Citizen.Wait(1000)
-		HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.", true)
-		UTIL:Print("^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.", true)
+		HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.", true)
+		UTIL:Print("^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS '^3lvc^1' (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.", true)
 	end
 end)
 
