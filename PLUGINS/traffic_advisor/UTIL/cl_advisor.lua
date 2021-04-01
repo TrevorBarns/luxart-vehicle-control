@@ -130,7 +130,7 @@ end
 
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	EI:FixOversizeKeys()
+	TA:FixOversizeKeys()
 end) 
 
 RegisterNetEvent('lvc:onVehicleChange')
