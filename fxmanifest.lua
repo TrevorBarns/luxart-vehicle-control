@@ -27,7 +27,8 @@ files({
     'UI/html/style.css',
 	'UI/sounds/*.ogg',
 	'UI/sounds/**/*.ogg',
-	'UI/textures/*.png'
+	'UI/textures/**/*.png',
+	'UI/textures/**/*.gif',
 })
 
 
