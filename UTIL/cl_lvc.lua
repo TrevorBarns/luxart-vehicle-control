@@ -135,8 +135,9 @@ Citizen.CreateThread(function()
 	end
 end)
 
+----------------THREADED FUNCTIONS----------------
 
-------PARK KILL THREADS------
+----------------PARK KILL THREADS----------------
 --Kill siren on Exit
 Citizen.CreateThread(function()
 	while park_kill or park_kill_masterswitch do
@@ -262,10 +263,14 @@ function RegisterKeyMaps()
 							if tone_option ~= nil then
 								if tone_option == 1 or tone_option == 3 then
 									if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
+										HUD:SetItemState("siren", true)
 										PlayAudio("Upgrade", upgrade_volume)
 										SetLxSirenStateForVeh(veh, proposed_tone)
 										count_bcast_timer = delay_bcast_timer
 									else
+										if state_pwrcall[veh] == 0 then
+											HUD:SetItemState("siren", false)
+										end
 										PlayAudio("Downgrade", downgrade_volume)
 										SetLxSirenStateForVeh(veh, 0)
 										count_bcast_timer = delay_bcast_timer				
