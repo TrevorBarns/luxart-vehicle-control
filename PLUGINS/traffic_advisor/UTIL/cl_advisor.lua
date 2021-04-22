@@ -14,22 +14,51 @@ change traffic advisor state through extras.
 ]]
 TA = {}
 local taExtras = {}
+local temp_hud_disable
+preserve_ta_state = false
 state_ta = {}
+
+Citizen.CreateThread(function()
+	while ta_masterswitch do 
+		if player_is_emerg_driver then
+			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
+				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
+					HUD:SetItemState("ta", false)
+					temp_hud_disable = true
+					if not save_ta_state then
+						print("disabling Extras")
+						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
+						state_ta[veh] = 0
+					end
+				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
+					HUD:SetItemState("ta", state_ta[veh])
+					temp_hud_disable = false
+				end
+			else
+				Citizen.Wait(500)
+			end
+		else
+			Citizen.Wait(500)
+		end
+		Citizen.Wait(0)
+	end
+end) 
 
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
-						TA:TogVehicleExtras(veh, taExtras.left.off, true)
+						TA:TogVehicleExtras(veh, taExtras.left.off)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.left.on, true)
+						TA:TogVehicleExtras(veh, taExtras.left.on)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 1
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 					
 				end
 			end
 		end
@@ -37,17 +66,18 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
-						TA:TogVehicleExtras(veh, taExtras.right.off, true)
+						TA:TogVehicleExtras(veh, taExtras.right.off)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.right.on, true)
+						TA:TogVehicleExtras(veh, taExtras.right.on)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 2
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 
 				end
 			end
 		end
@@ -55,7 +85,7 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
 						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
@@ -66,6 +96,7 @@ if ta_masterswitch then
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 3
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 					
 				end
 			end
 		end
@@ -130,7 +161,7 @@ end
 
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	EI:FixOversizeKeys()
+	TA:FixOversizeKeys()
 end) 
 
 RegisterNetEvent('lvc:onVehicleChange')
@@ -159,6 +190,9 @@ function TA:UpdateExtrasTable(veh)
   else
     taExtras = TA_ASSIGNMENTS['DEFAULT']
   end
+  
+  hud_pattern = taExtras.hud_pattern or 1
+  --HUD:SetItemState("ta_pattern", hud_pattern)
 end
 
 function TA:SetTAStateForVeh(veh, newstate)
