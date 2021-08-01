@@ -1,4 +1,4 @@
-smart_siren_masterswitch = true
+smart_siren_masterswitch = false
 --	Enabled Smart Siren plug-in.
 smart_siren_timer = 2
 --	Time in seconds 
