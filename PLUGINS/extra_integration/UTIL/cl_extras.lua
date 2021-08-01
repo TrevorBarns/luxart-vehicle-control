@@ -295,7 +295,7 @@ end)
 ---------------ON RESOURCE STARTUP-----------------
  Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	EI:FixOversizeKeys()
+	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
 end) 
 
 ---------------------------------------------------------------------
@@ -306,19 +306,6 @@ AddEventHandler('lvc:onVehicleChange', function()
 		EI:UpdateExtrasTable(veh)
 	end
 end)
-
----------------------------------------------------------------------
---[[Shorten oversized <gameName> strings in EXTRA_ASSIGNMENTS (extra_integration/SETTINGS.LUA). 
-    GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
-function EI:FixOversizeKeys()
-	for i, tbl in pairs(EXTRA_ASSIGNMENTS) do
-		if string.len(i) > 11 then
-			local shortened_gameName = string.sub(i,1,11)
-			EXTRA_ASSIGNMENTS[shortened_gameName] = EXTRA_ASSIGNMENTS[i]
-			EXTRA_ASSIGNMENTS[i] = nil
-		end
-	end
-end
 
 --[[Sets extras table a copy of EXTRA_ASSIGNMENTS for this vehicle]]
 function EI:UpdateExtrasTable(veh)

@@ -108,7 +108,7 @@ end
 
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	TA:FixOversizeKeys()
+	UTIL:FixOversizeKeys(TA_ASSIGNMENTS)
 end) 
 
 RegisterNetEvent('lvc:onVehicleChange')
@@ -118,16 +118,6 @@ AddEventHandler('lvc:onVehicleChange', function()
 		state_ta[veh] = 0
 	end
 end)
-
-function TA:FixOversizeKeys()
-  for i, tbl in pairs (TA_ASSIGNMENTS) do
-    if string.len(i) > 11 then
-      local shortened_gameName = string.gsub(i, 1, 11)
-      TA_ASSIGNMENTS[shortened_gameName] = TA_ASSIGNMENTS[i]
-      TA_ASSIGNMENTS[i] = nil
-    end
-  end
-end
 
 function TA:UpdateExtrasTable(veh)
   local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
@@ -139,7 +129,7 @@ function TA:UpdateExtrasTable(veh)
   end
   
   hud_pattern = taExtras.hud_pattern or 1
-  --HUD:SetItemState("ta_pattern", hud_pattern)
+  HUD:SetItemState("ta_pattern", hud_pattern)
 end
 
 function TA:SetTAStateForVeh(veh, newstate)
