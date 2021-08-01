@@ -7,7 +7,7 @@ Made by TrevorBarns
 */
 
 var resourceName = "";
-var time_folder = "night/";
+var time_folder = "day/";
 var ta_pattern = "ta/pattern_3/";
 var audioPlayer = null;
 var soundID = 0;
@@ -101,6 +101,7 @@ window.addEventListener('message', function(event) {
 				break;			
 			case "ta_pattern":
 					ta_pattern = "ta/pattern_" + state + "/"
+					break;
 			case "time":
 					time_folder = state + "/"
 					console.log("time "+state)
