@@ -28,6 +28,7 @@ key_lock = false
 playerped = nil
 last_veh = nil
 veh = nil
+trailer = nil
 player_is_emerg_driver = false
 
 --	MAIN SIREN SETTINGS
@@ -98,6 +99,7 @@ Citizen.CreateThread(function()
 				player_is_emerg_driver = false
 				if IsPedInAnyVehicle(playerped, false) then
 					veh = GetVehiclePedIsUsing(playerped)	
+					_, trailer = GetVehicleTrailerVehicle(veh)					
 					--IS DRIVER
 					if GetPedInVehicleSeat(veh, -1) == playerped then
 						--IS EMERGENCY VEHICLE
@@ -638,12 +640,19 @@ Citizen.CreateThread(function()
 									HUD:SetItemState("siren", false) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, false)
+									if trailer ~= nil and trailer ~= 0 then
+										SetVehicleSiren(trailer, false)
+									end
+
 								else
 									PlayAudio("On", on_volume) -- On
 									--	SET NUI IMAGES
 									HUD:SetItemState("switch", true) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, true)
+									if trailer ~= nil and trailer ~= 0 then
+										SetVehicleSiren(trailer, true)
+									end
 								end
 								SetActivityTimer()							
 								count_bcast_timer = delay_bcast_timer
