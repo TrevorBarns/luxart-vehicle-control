@@ -17,12 +17,13 @@ RMenu:Get('lvc', 'tasettings'):DisplayGlare(false)
 Citizen.CreateThread(function()
     while true do
 		--TKD SETTINGS
-		RageUI.IsVisible(RMenu:Get('lvc', 'tasettings'), function()			
-			RageUI.List('Combo Key', {"Disabled", "LSHIFT", "LCTRL", "LALT", "LSHIFT & (X)", "LCTRL & (L3)"}, ta_combokey_index, "Select key that needs to be held in addition to TA Keys to activate. '~b~(<key>)~s~' indicates controller key.", {}, true, {
+		RageUI.IsVisible(RMenu:Get('lvc', 'tasettings'), function()	
+			--[[
+			RageUI.List('Combo Key', {"Disabled", "LSHIFT", "LCTRL", "LALT", "LSHIFT OR (X)", "LCTRL OR (L3)"}, ta_combokey_index, "Select key that needs to be held in addition to TA Keys to activate. '~b~( )~s~' indicates controller key.", {}, true, {
 			  onListChange = function(Index, Item)
-				tkd_scheme = Index
+				ta_combokey_index = Index
 			  end,
-			})			
+			})	]]		
 			RageUI.List('TA HUD Pattern', {"1", "2", "3", "4", "5", "6", "7"}, hud_pattern, "Change pattern displayed on HUD traffic advisor indicators.", {}, true, {
 			  onListChange = function(Index, Item)
 				hud_pattern = Index
