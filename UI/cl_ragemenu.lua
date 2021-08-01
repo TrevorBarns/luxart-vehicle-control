@@ -302,6 +302,7 @@ Citizen.CreateThread(function()
 		--HUD SETTINGS
 	    RageUI.IsVisible(RMenu:Get('lvc', 'hudsettings'), function()
 			local hud_state = HUD:GetHudState()
+			local hud_backlight_mode = HUD:GetHudBacklightMode()
 			RageUI.Checkbox('Enabled', "Toggles whether HUD is displayed. Requires GTA V HUD to be enabled.", hud_state, {}, {
 				onChecked = function()
 					HUD:SetHudState(true)
@@ -319,7 +320,13 @@ Citizen.CreateThread(function()
 				onSliderChange = function(Index)
 				HUD:SetHudScale(Index/4)
 				end,
-			});
+			});			
+			RageUI.List('Backlight', {"Auto", "Off", "On"}, hud_backlight_mode, "Changes HUD backlight behavior. ~b~Auto~s~ is determined by headlight state.", {}, true, {
+			  onListChange = function(Index, Item)
+				hud_backlight_mode = Index
+				HUD:SetHudBacklightMode(hud_backlight_mode)
+			  end,
+			})	
 			RageUI.Button('Reset', "Reset HUD position to default.", {}, hud_state, {
 				onSelected = function()
 					HUD:ResetPosition()

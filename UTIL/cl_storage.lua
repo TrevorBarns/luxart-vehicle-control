@@ -91,6 +91,7 @@ function Storage:SaveHUDSettings()
 	local hud_save_data = { Show_HUD = HUD:GetHudState(),
 							HUD_Scale = HUD:GetHudScale(), 
 							HUD_pos = HUD:GetHudPosition(),
+							HUD_backlight_mode = HUD:GetHudBacklightMode(),
 						  }
 	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
 end
@@ -177,6 +178,7 @@ function Storage:LoadSettings(profile_name)
 			HUD:SetHudState(hud_save_data.Show_HUD)
 			HUD:SetHudScale(hud_save_data.HUD_Scale)
 			HUD:SetHudPosition(hud_save_data.HUD_pos)
+			HUD:SetHudBacklightMode(hud_save_data.HUD_backlight_mode)
 			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
 		end
 		
@@ -262,6 +264,7 @@ function Storage:ResetSettings()
 	show_HUD = hud_first_default
 	HUD:SetHudScale(0.7)
 	HUD:ResetPosition()
+	HUD:SetHudBacklightMode(1)
 	key_lock = false				
 	
 	UTIL:SetToneByPos('ARHRN', 1)

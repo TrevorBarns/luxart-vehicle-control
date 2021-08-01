@@ -135,7 +135,26 @@ Citizen.CreateThread(function()
 	end
 end)
 
-----------------THREADED FUNCTIONS----------------
+-------------------HUD BACKLIGHT------------------
+Citizen.CreateThread(function()
+	local current_backlight_state
+	while true do
+		if player_is_emerg_driver then 
+			while HUD:GetHudBacklightMode() == 1 do
+				_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
+				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
+					HUD:SetHudBacklightState(false)	
+				end
+				Citizen.Wait(500)
+			end		
+		end
+		Citizen.Wait(1000)
+	end
+end) 
 
 ----------------PARK KILL THREADS----------------
 --Kill siren on Exit
