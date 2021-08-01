@@ -61,10 +61,8 @@ window.addEventListener('message', function(event) {
 			case "siren":
 				if ( state == true ) {
 					elements.siren.src= "../textures/" + time_folder + "siren_on.png";
-					console.log("siren "+state+" "+time_folder)
 				}else{
 					elements.siren.src= "../textures/" + time_folder + "siren_off.png";		
-					console.log("siren "+state+" "+time_folder)					
 				}			
 				break;
 			case "horn":
@@ -104,7 +102,6 @@ window.addEventListener('message', function(event) {
 					break;
 			case "time":
 					time_folder = state + "/"
-					console.log("time "+state)
 					break;
 			default:
 				break;
