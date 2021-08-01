@@ -434,7 +434,7 @@ end
 ---------------------------------------------------------------------
 function SetLxSirenStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if newstate ~= state_lxsiren[veh] then
+		if newstate ~= state_lxsiren[veh] and newstate ~= nil then
 				
 			if snd_lxsiren[veh] ~= nil then
 				StopSound(snd_lxsiren[veh])
@@ -454,7 +454,7 @@ end
 ---------------------------------------------------------------------
 function SetPowercallStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if newstate ~= state_pwrcall[veh] then
+		if newstate ~= state_pwrcall[veh] and newstate ~= nil then
 			if snd_pwrcall[veh] ~= nil then
 				StopSound(snd_pwrcall[veh])
 				ReleaseSoundId(snd_pwrcall[veh])
@@ -472,7 +472,7 @@ end
 ---------------------------------------------------------------------
 function SetAirManuStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if newstate ~= state_airmanu[veh] then
+		if newstate ~= state_airmanu[veh] and newstate ~= nil then
 			if snd_airmanu[veh] ~= nil then
 				StopSound(snd_airmanu[veh])
 				ReleaseSoundId(snd_airmanu[veh])
