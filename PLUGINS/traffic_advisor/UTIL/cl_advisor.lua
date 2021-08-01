@@ -26,8 +26,7 @@ Citizen.CreateThread(function()
 					HUD:SetItemState("ta", false)
 					temp_hud_disable = true
 					if not save_ta_state then
-						print("disabling Extras")
-						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
+						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						state_ta[veh] = 0
 					end
 				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
@@ -50,11 +49,11 @@ if ta_masterswitch then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
-						TA:TogVehicleExtras(veh, taExtras.left.off)
+						UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.left.on)
+						UTIL:TogVehicleExtras(veh, taExtras.left.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 1
 					end
@@ -69,11 +68,11 @@ if ta_masterswitch then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
-						TA:TogVehicleExtras(veh, taExtras.right.off)
+						UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.right.on)
+						UTIL:TogVehicleExtras(veh, taExtras.right.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 2
 					end
@@ -88,11 +87,11 @@ if ta_masterswitch then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
-						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
+						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.middle.on, true)
+						UTIL:TogVehicleExtras(veh, taExtras.middle.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 3
 					end
@@ -105,58 +104,6 @@ if ta_masterswitch then
 	RegisterKeyMapping('lvctogleftta', 'LVC Toggle Left TA', 'keyboard', 'left')
 	RegisterKeyMapping('lvctogrightta', 'LVC Toggle Right TA', 'keyboard', 'right')
 	RegisterKeyMapping('lvctogmidta', 'LVC Toggle Middle TA', 'keyboard', 'down')
-end
-
-function TA:TogVehicleExtras(veh, extra_id, state, repair)
-	local repair = repair or false
-	if type(extra_id) == 'table' then
-		if extra_id.add ~= nil then 
-			if type(extra_id.add) == 'table' then
-				for i, single_extra_id in ipairs(extra_id.add) do
-					TA:TogVehicleExtras(veh, single_extra_id, state, extra_id.repair)
-				end
-			else
-				TA:TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
-			end
-		end
-		if extra_id.remove ~= nil then
-			if type(extra_id.remove) == 'table' then
-				for i, single_extra_id in ipairs(extra_id.remove) do
-					TA:TogVehicleExtras(veh, single_extra_id, not state, extra_id.repair)
-				end
-			else
-				TA:TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
-			end
-		end
-	else
-		if state then
-			if not IsVehicleExtraTurnedOn(veh, extra_id) then
-				local doors =  { }
-				if repair then
-					for i = 0,6 do
-						doors[i] = GetVehicleDoorAngleRatio(veh, i)
-					end
-				end
-				SetVehicleAutoRepairDisabled(veh, not repair)
-				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print("TA: Toggling extra "..extra_id.." on", false)
-				SetVehicleAutoRepairDisabled(veh, repair)
-				if repair then
-					for i = 0,6 do
-						if doors[i] > 0.0 then
-							SetVehicleDoorOpen(veh, i, false, false)
-						end
-					end
-				end
-			end
-		else
-			if IsVehicleExtraTurnedOn(veh, extra_id) then
-				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("TA: Toggling extra "..extra_id.." off", false)
-			end	
-		end
-	end
-  SetVehicleAutoRepairDisabled(veh, false)
 end
 
 Citizen.CreateThread(function()

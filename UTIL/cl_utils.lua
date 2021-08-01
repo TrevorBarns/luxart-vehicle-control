@@ -293,3 +293,72 @@ function UTIL:Print(string, override)
 		print(string)
 	end
 end
+
+---------------------------------------------------------------------
+--[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
+	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
+	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
+	which can add and remove multiple different extras at once and adds flag to repair the vehicle
+	for extras that are too large and require the vehicle to be reloaded. Once it figures out the 
+	users config layout it calls itself again (recursive) with the id we actually need toggled right now.]]
+function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
+	local repair = repair or false
+	if type(extra_id) == 'table' then
+		-- Toggle Same Extras Mode
+		if extra_id.toggle ~= nil then
+			-- Toggle Multiple Extras
+			if type(extra_id.toggle) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.toggle) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+				end
+			-- Toggle a Single Extra (no table)
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.toggle, state, extra_id.repair)
+			end
+		-- Toggle Different Extras Mode
+		elseif extra_id.add ~= nil and extra_id.remove ~= nil then
+			if type(extra_id.add) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.add) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+				end
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
+			end
+			if type(extra_id.remove) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.remove) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
+				end
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
+			end
+		end
+	else
+		if state then
+			if not IsVehicleExtraTurnedOn(veh, extra_id) then
+				local doors =  { }
+				if repair then
+					for i = 0,6 do
+						doors[i] = GetVehicleDoorAngleRatio(veh, i)
+					end
+				end
+				SetVehicleAutoRepairDisabled(veh, not repair)
+				SetVehicleExtra(veh, extra_id, false)
+				UTIL:Print("UTIL:: Toggling extra "..extra_id.." on", false)
+				SetVehicleAutoRepairDisabled(veh, repair)
+				if repair then
+					for i = 0,6 do
+						if doors[i] > 0.0 then
+							SetVehicleDoorOpen(veh, i, false, false)
+						end
+					end
+				end
+			end
+		else
+			if IsVehicleExtraTurnedOn(veh, extra_id) then
+				SetVehicleExtra(veh, extra_id, true)
+				UTIL:Print("UTIL:: Toggling extra "..extra_id.." off", false)
+			end	
+		end
+	end
+	SetVehicleAutoRepairDisabled(veh, false)
+end
