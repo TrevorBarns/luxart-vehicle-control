@@ -176,7 +176,7 @@ end)
 -- Trigger Counter for Hold
 Citizen.CreateThread(function()
 	while true do
-		if player_is_emerg_driver and not key_locked then	
+		if player_is_emerg_driver and not key_locked and smart_siren_masterswitch then	
 			HUD:ShowText(0.5, 0.8, 1, ss_run_timer, 0.5)
 		end
 		Citizen.Wait(0)
