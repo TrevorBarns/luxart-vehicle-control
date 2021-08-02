@@ -45,6 +45,20 @@ Citizen.CreateThread(function()
 				}, RMenu:Get('lvc', 'tasettings'))	
 			end		
 			-----------------------------------------------------------------------------------------------------------------
+			if trailer_masterswitch then
+				RageUI.Button('Trailer Support Settings', "Open trailer support settings menu. (trailer_support)", {RightLabel = "→→→"}, true, {
+				  onSelected = function()
+				  end,
+				}, RMenu:Get('lvc', 'trailersettings'))	
+			end		
+			-----------------------------------------------------------------------------------------------------------------
+			if ec_masterswitch then
+				RageUI.Button('Extra Controls Settings', "Open extra controls settings menu. (extra_controls)", {RightLabel = "→→→"}, true, {
+				  onSelected = function()
+				  end,
+				}, RMenu:Get('lvc', 'extracontrols'))	
+			end		
+			-----------------------------------------------------------------------------------------------------------------
 		end)
         Citizen.Wait(0)
 	end
@@ -56,5 +70,7 @@ function IsPluginMenuOpen()
 	return 	RageUI.Visible(RMenu:Get('lvc', 'smartsiren')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) or
-			RageUI.Visible(RMenu:Get('lvc', 'tasettings')) 		
+			RageUI.Visible(RMenu:Get('lvc', 'tasettings')) or
+			RageUI.Visible(RMenu:Get('lvc', 'trailersettings')) or
+			RageUI.Visible(RMenu:Get('lvc', 'extracontrols')) 
 end
