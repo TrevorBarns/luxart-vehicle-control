@@ -39,13 +39,12 @@ end)
 
 --Control Handling
 Citizen.CreateThread(function()
-	while ec_masterswitch and ec_controls_active do
+	while ec_masterswitch do
+	  if ec_controls_active and not IsMenuOpen() then
 		if player_is_emerg_driver and #EC.extras > 0 then
 			for _, tog_table in ipairs(EC.extras) do
 				if tog_table.Combo == false or IsControlPressed(0, tog_table.Combo) then
-					print(tog_table.Key)
 					if IsControlJustPressed(0, tog_table.Key) then
-						print("keys captured")
 						if tog_table.State == nil then
 							tog_table.State = true
 						else
@@ -58,16 +57,10 @@ Citizen.CreateThread(function()
 		else
 			Citizen.Wait(500)
 		end
-		Citizen.Wait(0)
-	end
-end)
-
-Citizen.CreateThread(function()
-	while ec_masterswitch and ec_controls_active do
-		for _, tog_table in ipairs(EC.extras) do
-			print(tog_table.Combo, tog_table.Key)
-		end
-		Citizen.Wait(1000)
+	  else
+		Citizen.Wait(500)
+	  end
+	  Citizen.Wait(0)
 	end
 end)
 
