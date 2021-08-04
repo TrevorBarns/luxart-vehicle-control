@@ -602,6 +602,11 @@ Citizen.CreateThread(function()
 			
 			--- IS EMERG VEHICLE ---
 			if GetVehicleClass(veh) == 18 then
+				--  FORCE RADIO ENABLED PER FRAME
+				if radio_masterswitch then
+					SetVehicleRadioEnabled(veh, true)
+				end
+				
 				if UpdateOnscreenKeyboard() ~= 0 and not IsEntityDead(veh) then
 					--- SET INIT TABLE VALUES ---
 					if state_lxsiren[veh] == nil then
