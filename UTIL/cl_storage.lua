@@ -133,7 +133,9 @@ function Storage:SaveSettings()
 			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name.."!")
 
 			--Audio Settings
-			local audio_save_data = {	button_sfx_scheme 			= button_sfx_scheme,
+			local audio_save_data = {	
+										radio_masterswitch			= radio_masterswitch,				
+										button_sfx_scheme 			= button_sfx_scheme,
 										on_volume 					= on_volume,
 										off_volume 					= off_volume,
 										upgrade_volume 				= upgrade_volume,
@@ -227,6 +229,7 @@ function Storage:LoadSettings(profile_name)
 				local audio_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."_audio_data")
 				if audio_save_data ~= nil then
 					audio_save_data = json.decode(audio_save_data)
+					radio_masterswitch			= audio_save_data.radio_masterswitch
 					button_sfx_scheme 			= audio_save_data.button_sfx_scheme
 					on_volume 					= audio_save_data.on_volume
 					off_volume 					= audio_save_data.off_volume
@@ -285,7 +288,8 @@ function Storage:ResetSettings()
 	activity_reminder_index = 1
 	last_activity_timer = 0
 
-	button_sfx_scheme_id = 1
+	radio_masterswitch 			= true
+	button_sfx_scheme_id 		= 1
 	button_sfx_scheme 			= default_sfx_scheme_name
 	on_volume 					= default_on_volume	
 	off_volume 					= default_off_volume	

@@ -37,6 +37,7 @@ tone_airhorn_intrp 			= airhorn_interrupt_default
 park_kill 					= park_kill_default
 
 --	AUDIO SETTINGS
+radio_masterswitch 			= true
 airhorn_button_SFX 			= false
 manu_button_SFX 			= false
 activity_reminder_index		= 1
@@ -109,7 +110,7 @@ Citizen.CreateThread(function()
 							DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
 							DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
 							DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
-							if IsControlPressed(0, 243) then
+							if IsControlPressed(0, 243) and radio_masterswitch then
 								while IsControlPressed(0, 243) do
 									radio_wheel_active = true
 									SetControlNormal(0, 85, 1.0)
@@ -118,7 +119,8 @@ Citizen.CreateThread(function()
 								Citizen.Wait(100)
 								radio_wheel_active = false
 							else
-								DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
+								DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL
+								SetVehicleRadioEnabled(veh, false)
 							end
 						end
 					end

@@ -335,6 +335,14 @@ Citizen.CreateThread(function()
 		end)	    
 		--AUDIO SETTINGS MENU
 		RageUI.IsVisible(RMenu:Get('lvc', 'audiosettings'), function()
+			RageUI.Checkbox('Radio Controls', "When enabled, the tilde key will act as a radio wheel key.", radio_masterswitch, {}, {
+			  onChecked = function()
+				  radio_masterswitch = true
+			  end,
+			  onUnChecked = function()
+				  radio_masterswitch = false
+			  end,
+            })
 			RageUI.List("Siren Box SFX Scheme", button_sfx_scheme_choices, button_sfx_scheme_id, "Change what SFX to use for siren box clicks.", {}, true, {
 			  onListChange = function(Index, Item)
 				button_sfx_scheme_id = Index
@@ -431,7 +439,7 @@ Citizen.CreateThread(function()
 			  onSelected = function(Index, Item)
 				TriggerEvent("audio", "Locked_Press", lock_reminder_volume, true)
 			  end,			  
-			})			
+			})
         end)
 		---------------------------------------------------------------------
 		----------------------------SAVE LOAD MENU---------------------------
