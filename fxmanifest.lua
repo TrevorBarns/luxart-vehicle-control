@@ -29,6 +29,7 @@ files({
 	'UI/sounds/**/*.ogg',
 	'UI/textures/**/*.png',
 	'UI/textures/**/*.gif',
+	'PLUGINS/**/*.json'
 })
 
 
