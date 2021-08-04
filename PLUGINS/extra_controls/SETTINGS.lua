@@ -8,7 +8,7 @@ allow_custom_controls = true
 EXTRA_CONTROLS = {
 	['DEFAULT'] = { 
 			--  	{ '<name>, {<extras table>}, <default combo>, <key> }
-			--	ex: { Name = 'Front Cut', Extras = {toggle = {1, 2}, repair = true}, Combo = 326, Key = 188 }, --LCTRL+UPARROW
+			{ Name = 'Front Cut', Extras = {toggle = {1, 2}, repair = true}, Combo = 326, Key = 188 }, --LCTRL+UPARROW
 				  },
 }
 
@@ -17,4 +17,6 @@ CONTROLS = {
 	--	   KEYS = { <list of index/key ID of approved toggle keys> }
 	-- ex: COMBOS = { 326, 155, 19 },	--LCTRL, LSHIFT, LALT
 	-- ex: KEYS = { 187, 188, 189, 190, 20 }, -- ARROW LFT, DWN, UP, RGT, Z 
+	COMBOS = { },
+	KEYS = { }
 }
