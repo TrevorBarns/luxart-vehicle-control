@@ -121,9 +121,14 @@ end)
 
 function TA:UpdateExtrasTable(veh)
   local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+  local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
   if TA_ASSIGNMENTS[veh_name] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name]
     UTIL:Print('TA: Profile found for ' .. veh_name, false)
+  elseif TA_ASSIGNMENTS[veh_name_wildcard] ~= nil then
+    taExtras = TA_ASSIGNMENTS[veh_name_wildcard]
+    UTIL:Print('TA: Wildcard profile found for ' .. veh_name, false)
   else
     taExtras = TA_ASSIGNMENTS['DEFAULT']
   end

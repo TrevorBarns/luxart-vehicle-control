@@ -23,7 +23,9 @@ end)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
-		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil then
+		local veh_name_wildcard = string.gsub(TRAIL:GetCabDisplayName(), "%d+", "#")
+
+		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil or TRAILERS[veh_name_wildcard] ~= nil then
 			TRAIL.custom_toggles_set = true
 		else
 			TRAIL.custom_toggles_set = false

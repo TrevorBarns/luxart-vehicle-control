@@ -310,10 +310,15 @@ end)
 --[[Sets extras table a copy of EXTRA_ASSIGNMENTS for this vehicle]]
 function EI:UpdateExtrasTable(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
 	if EXTRA_ASSIGNMENTS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		extras = EXTRA_ASSIGNMENTS[veh_name]
 		UTIL:Print("EI: Profile found for "..veh_name, false)
-	else 
+	elseif EXTRA_ASSIGNMENTS[veh_name_wildcard] ~= nil then				
+		extras = EXTRA_ASSIGNMENTS[veh_name_wildcard]
+		UTIL:Print("EI: Wildcard profile found for "..veh_name, false)
+	else
 		extras = EXTRA_ASSIGNMENTS['DEFAULT']
 	end
 	

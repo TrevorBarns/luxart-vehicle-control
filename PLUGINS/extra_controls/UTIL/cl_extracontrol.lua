@@ -144,10 +144,15 @@ end)
 --[[Sets extras table a copy of EXTRA_CONTROLS for this vehicle]]
 function EC:UpdateExtrasTable(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
 	if EXTRA_CONTROLS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		EC.extras = EXTRA_CONTROLS[veh_name]
 		UTIL:Print("EC: Profile found for "..veh_name, false)
-	else 
+	elseif EXTRA_CONTROLS[veh_name_wildcard] ~= nil then
+		EC.extras = EXTRA_CONTROLS[veh_name_wildcard]
+		UTIL:Print("EC: Wildcard profile found for "..veh_name..".", false)
+	else
 		EC.extras = EXTRA_CONTROLS['DEFAULT']
 		UTIL:Print("EC: Profile not found for "..veh_name.." using default.", false)
 	end
