@@ -105,12 +105,14 @@ function HUD:GetHudBacklightMode()
 end
 
 function HUD:SetHudBacklightMode(mode)
-	HUD_backlight_mode = mode
-	
-	if mode == 2 then
-		HUD:SetHudBacklightState(false)
-	elseif mode == 3 then
-		HUD:SetHudBacklightState(true)	
+	if mode ~= nil then
+		HUD_backlight_mode = mode
+		
+		if mode == 2 then
+			HUD:SetHudBacklightState(false)
+		elseif mode == 3 then
+			HUD:SetHudBacklightState(true)	
+		end
 	end
 end
 
@@ -119,14 +121,16 @@ function HUD:GetHudBacklightState()
 end
 
 function HUD:SetHudBacklightState(state)
-	HUD_backlight_state = state
-	if state then
-		HUD:SetItemState("time", "night")
-	else
-		HUD:SetItemState("time", "day")
+	if state ~= nil then
+		HUD_backlight_state = state
+		if state then
+			HUD:SetItemState("time", "night")
+		else
+			HUD:SetItemState("time", "day")
+		end
+		
+		HUD:RefreshHudItemStates()
 	end
-	
-	HUD:RefreshHudItemStates()
 end
 
 ------------------------------------------------
