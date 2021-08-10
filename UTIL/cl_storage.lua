@@ -229,7 +229,9 @@ function Storage:LoadSettings(profile_name)
 				local audio_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."_audio_data")
 				if audio_save_data ~= nil then
 					audio_save_data = json.decode(audio_save_data)
-					radio_masterswitch			= audio_save_data.radio_masterswitch
+					if audio_save_data.radio_masterswitch ~= nil then
+						radio_masterswitch			= audio_save_data.radio_masterswitch
+					end
 					button_sfx_scheme 			= audio_save_data.button_sfx_scheme
 					on_volume 					= audio_save_data.on_volume
 					off_volume 					= audio_save_data.off_volume
@@ -255,6 +257,7 @@ function Storage:LoadSettings(profile_name)
 			HUD:SetHudState(hud_save_data.Show_HUD)
 			HUD:SetHudScale(hud_save_data.HUD_Scale)
 			HUD:SetHudPosition(hud_save_data.HUD_pos)
+			HUD:SetHudBacklightMode(hud_save_data.HUD_backlight_mode)
 			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
 		end
 	end
