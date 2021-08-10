@@ -53,9 +53,9 @@ window.addEventListener('message', function(event) {
 				break;
 			case "switch":
 				if ( state == true ) {
-					elements.lswitch.src= "../textures/slide_on.png";
+					elements.lswitch.src= "../textures/"+ time_folder + "slide_on.png";
 				}else{
-					elements.lswitch.src= "../textures/slide_off.png";					
+					elements.lswitch.src= "../textures/"+ time_folder + "slide_off.png";					
 				}
 				break;
 			case "siren":
@@ -94,7 +94,7 @@ window.addEventListener('message', function(event) {
 				}else if ( state == 3 ){
 					elements.ta.src = "../textures/" + ta_pattern + "ta_center.gif";
 				}else if ( state == 0 ){
-					elements.ta.src = "../textures/" + "ta_off.gif";
+					elements.ta.src = "../textures/" + time_folder + "ta_off.gif";
 				}
 				break;			
 			case "ta_pattern":

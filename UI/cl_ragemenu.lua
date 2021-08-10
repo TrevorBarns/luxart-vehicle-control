@@ -330,6 +330,8 @@ Citizen.CreateThread(function()
 			RageUI.Button('Reset', "Reset HUD position to default.", {}, hud_state, {
 				onSelected = function()
 					HUD:ResetPosition()
+					HUD:SetHudState(false)
+					HUD:SetHudState(true)
 				end,
 			});
 		end)	    

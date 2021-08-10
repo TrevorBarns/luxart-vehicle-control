@@ -163,6 +163,14 @@ function HUD:RefreshHudItemStates()
 	else
 		HUD:SetItemState("lock", false)
 	end
+	
+	if state_ta[veh] ~= nil then
+		HUD:SetItemState("ta", state_ta[veh])
+	else
+		HUD:SetItemState("ta", 0)
+	end	
+	
+	HUD:SetItemState("switch", IsVehicleSirenOn(veh))
 end
 
 ------------------------------------------------
