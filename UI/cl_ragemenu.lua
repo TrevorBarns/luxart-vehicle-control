@@ -304,28 +304,28 @@ Citizen.CreateThread(function()
 			local hud_state = HUD:GetHudState()
 			RageUI.Checkbox('Enabled', "Toggles whether HUD is displayed. Requires GTA V HUD to be enabled.", hud_state, {}, {
 			  onChecked = function()
-				  HUD:SetHudState(true)
+				HUD:SetHudState(true)
 			  end,
 			  onUnChecked = function()
-				  HUD:SetHudState(false)
+				HUD:SetHudState(false)
 			  end,
 			})
 			RageUI.Button('Move Mode', "Move HUD position on screen. To exit ~r~right-click~s~ or hit '~r~Esc~s~'.", {}, hud_state, {
 			  onSelected = function()
-					HUD:SetMoveMode(true, true)
-				end,
-			  });		
-			RageUI.Slider('Scale', (HUD:GetHudScale()*4), 3, 0.2, "Change opacity of of the HUD background rectangle.", false, {}, hud_state, {
+				HUD:SetMoveMode(true, true)
+			  end,
+			});		
+			RageUI.Slider('Scale', (HUD:GetHudScale()*4), 6, 0.2, "Change opacity of of the HUD background rectangle.", false, {}, hud_state, {
 			  onSliderChange = function(Index)
 				HUD:SetHudScale(Index/4)
 			  end,
 			});
 			RageUI.Button('Reset', "Reset HUD position to default.", {}, hud_state, {
 			  onSelected = function()
-					HUD:ResetPosition()
-				end,
-			  });
-        end)	    
+				HUD:ResetPosition()
+			  end,
+			});
+		end)	    
 		--AUDIO SETTINGS MENU
 		RageUI.IsVisible(RMenu:Get('lvc', 'audiosettings'), function()
 			RageUI.List("Siren Box SFX Scheme", button_sfx_scheme_choices, button_sfx_scheme_id, "Change what SFX to use for siren box clicks.", {}, true, {

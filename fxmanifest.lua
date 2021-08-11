@@ -5,7 +5,7 @@ games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.2.2'	
+version '3.2.3'	
 compatible '3.2.2'
 
 ------------------------------
@@ -30,6 +30,10 @@ files({
 	'UI/textures/*.png'
 })
 
+
+shared_script {
+	'SETTINGS.lua',
+}
 
 client_scripts {
 	---------------RAGE-UI---------------
@@ -60,7 +64,6 @@ client_scripts {
     "@RageUI/menu/panels/UIStatisticsPanel.lua",
     "@RageUI/menu/windows/UIHeritage.lua",
 	-------------------------------------
-	'SETTINGS.lua',
 	'SIRENS.lua',
 	'/UTIL/cl_*.lua',
 	'/UI/cl_*.lua',
@@ -73,5 +76,4 @@ server_script {
 	'/UTIL/sv_lvc.lua',
 	'/PLUGINS/**/sv_*.lua'
 }
-
 ------------------------------
