@@ -13,7 +13,7 @@ PURPOSE: Handle save/load functions and version
 ]]
 Storage = { }
 
-local save_prefix = "lvc_"..community_id.."_"
+local save_prefix = "lvc_"
 local repo_version = nil
 local backup_tone_table = {}
 local custom_tone_names = false
@@ -22,7 +22,6 @@ local profiles = { }
 				
 ------------------------------------------------
 --Deletes all saved KVPs for that vehicle profile
---	This should never be removed. It is the only easy way for end users to delete LVC data.
 RegisterCommand('lvcfactoryreset', function(source, args)
 	local choice = HUD:FrontEndAlert("Warning", "Are you sure you want to delete all saved LVC data and Factory Reset?")
 	if choice then
@@ -43,7 +42,7 @@ end)
 --Prints all KVP keys and values to console
 if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
 	RegisterCommand('lvcdumpkvp', function(source, args)
-		local handle = StartFindKvp(save_prefix);
+		local handle = StartFindKvp(save_prefix.."save_version");
 		local key = FindKvp(handle)
 		while key ~= nil do
 			if GetResourceKvpString(key) ~= nil then
@@ -62,7 +61,7 @@ end
 -- Resource Start Initialization
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	TriggerServerEvent('lvc:GetRepoVersion_s')
+	TriggerServerEvent('lvc_GetRepoVersion_s')
 	Storage:FindSavedProfiles()
 end)
 
@@ -86,24 +85,18 @@ function Storage:GetIsNewerVersion()
 	return IsNewerVersion(repo_version, Storage:GetCurrentVersion())
 end
 
---[[Saves HUD settings, separated from SaveSettings]]
-function Storage:SaveHUDSettings()
+--[[Saves all KVP values.]]
+function Storage:SaveSettings()
+	local settings_string = nil
+	SetResourceKvp(save_prefix .. "save_version", Storage:GetCurrentVersion())
+
+	--HUD Settings
 	local hud_save_data = { Show_HUD = HUD:GetHudState(),
 							HUD_Scale = HUD:GetHudScale(), 
 							HUD_pos = HUD:GetHudPosition(),
 						  }
 	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
-end
 
-
---[[Saves all KVP values.]]
-function Storage:SaveSettings()
-	local settings_string = nil
-	SetResourceKvp(save_prefix.."save_version", Storage:GetCurrentVersion())
-
-	--HUD Settings
-	Storage:SaveHUDSettings()
-	
 	--Tone Names
 	if custom_tone_names then
 		local tone_names = { }
@@ -129,7 +122,7 @@ function Storage:SaveSettings()
 									   }
 							
 			SetResourceKvp(save_prefix .. "profile_"..profile_name.."!",  json.encode(profile_save_data))
-			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name.."!")
+			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name)
 
 			--Audio Settings
 			local audio_save_data = {	button_sfx_scheme 			= button_sfx_scheme,
@@ -243,15 +236,6 @@ function Storage:LoadSettings(profile_name)
 				HUD:ShowNotification("~b~LVC:~r~ LOADING ERROR~s~: profile_name after gsub is nil.", true)
 			end
 		end
-	else
-		local hud_save_data = GetResourceKvpString(save_prefix.."hud_data")
-		if hud_save_data ~= nil then
-			hud_save_data = json.decode(hud_save_data)
-			HUD:SetHudState(hud_save_data.Show_HUD)
-			HUD:SetHudScale(hud_save_data.HUD_Scale)
-			HUD:SetHudPosition(hud_save_data.HUD_pos)
-			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
-		end
 	end
 end
 
@@ -293,7 +277,7 @@ function Storage:ResetSettings()
 	lock_reminder_volume 		= default_lock_reminder_volume
 	activity_reminder_volume 	= default_reminder_volume
 	
-	profiles = { }
+	profile = { }
 	Storage:FindSavedProfiles()
 end
 
@@ -376,7 +360,7 @@ end
 
 ---------------------------------------------------------------------
 --[[Callback for Server -> Client version update.]]
-RegisterNetEvent('lvc:SendRepoVersion_c')
-AddEventHandler('lvc:SendRepoVersion_c', function(version)
+RegisterNetEvent("lvc_SendRepoVersion_c")
+AddEventHandler("lvc_SendRepoVersion_c", function(version)
 	repo_version = version
 end)
