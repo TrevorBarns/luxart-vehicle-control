@@ -43,13 +43,13 @@ SIRENS = {
 	--[[12]]  { Name = "Fire Horn", 	String = "VEHICLES_HORNS_FIRETRUCK_WARNING", 			Ref = 0 }, --12
 	--[[13]]  { Name = "Fire Yelp", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01", 	Ref = 0 }, --13
 	--[[14]]  { Name = "Fire Wail", 	String = "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01", 	Ref = 0 }, --14
-	}
+}
 	
-	--ASSIGN SIRENS TO VEHICLES
-	SIREN_ASSIGNMENTS = {
+--ASSIGN SIRENS TO VEHICLES
+SIREN_ASSIGNMENTS = {
 	--['<gameName>'] = {tones},
 	['DEFAULT'] = { 1, 2, 3, 4 }, 
 	['FIRETRUK'] = { 12, 13, 14, 11 }, 
 	['AMBULAN'] = { 1, 2, 3, 4, 11 }, 
 	['LGUARD'] = { 1, 2, 3, 4, 11 },
-	}
+}

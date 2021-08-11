@@ -26,12 +26,12 @@ local tone_ARHRN_id = nil
 ---------------------------------------------------------------------
 --[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA). 
     GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
-function UTIL:FixOversizeKeys()
-	for i, tbl in pairs(SIREN_ASSIGNMENTS) do
+function UTIL:FixOversizeKeys(TABLE)
+	for i, tbl in pairs(TABLE) do
 		if string.len(i) > 11 then
 			local shortened_gameName = string.sub(i,1,11)
-			SIREN_ASSIGNMENTS[shortened_gameName] = SIREN_ASSIGNMENTS[i]
-			SIREN_ASSIGNMENTS[i] = nil
+			TABLE[shortened_gameName] = TABLE[i]
+			TABLE[i] = nil
 		end
 	end
 end
