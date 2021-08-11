@@ -40,9 +40,14 @@ end
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
 	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
 		approved_tones = SIREN_ASSIGNMENTS[veh_name]
 		profile = veh_name
+	elseif SIREN_ASSIGNMENTS[veh_name_wildcard] ~= nil then				--Does profile exist using # as wildcard for any digits.
+		approved_tones = SIREN_ASSIGNMENTS[veh_name_wildcard]
+		profile = veh_name_wildcard
 	else 
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
@@ -134,20 +139,26 @@ end
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and position of desired tone in approved_tones.]]
 function UTIL:SetToneByPos(tone_string, pos)
-	if approved_tones[pos] ~= nil then
-		if tone_string == 'MAIN_MEM' then
-			tone_main_mem_id = approved_tones[pos]
-		elseif tone_string == 'PMANU' then
-			tone_PMANU_id = approved_tones[pos]
-		elseif tone_string == 'SMANU' then
-			tone_SMANU_id = approved_tones[pos]
-		elseif tone_string == 'AUX' then
-			tone_AUX_id = approved_tones[pos]
-		elseif tone_string == 'ARHRN' then
-			tone_ARHRN_id = approved_tones[pos]
+	if approved_tones ~= nil then
+		if approved_tones[pos] ~= nil then
+			if tone_string == 'MAIN_MEM' then
+				tone_main_mem_id = approved_tones[pos]
+			elseif tone_string == 'PMANU' then
+				tone_PMANU_id = approved_tones[pos]
+			elseif tone_string == 'SMANU' then
+				tone_SMANU_id = approved_tones[pos]
+			elseif tone_string == 'AUX' then
+				tone_AUX_id = approved_tones[pos]
+			elseif tone_string == 'ARHRN' then
+				tone_ARHRN_id = approved_tones[pos]
+			end
+		else
+			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
+			UTIL:Print("Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 3: ~s~UTIL:SetToneByPos("..tone..", "..pos.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
+		UTIL:Print("^3Warning 404: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.." in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
@@ -186,7 +197,8 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 4: ~s~UTIL:SetToneByID("..tone..", "..tone_id.."), not approved.", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
+		UTIL:Print("Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
@@ -281,5 +293,3 @@ function UTIL:Print(string, override)
 		print(string)
 	end
 end
-
-
