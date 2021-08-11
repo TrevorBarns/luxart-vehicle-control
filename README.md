@@ -16,7 +16,7 @@ Community Upgrade Guides: https://drive.google.com/drive/folders/1trjNXnpmlh_5Q5
 __LuxHUD:__ 
 A small togglable and adjustable visual representation of the scripts functionality modeled after real siren controllers. Includes 3 position switch, siren, horn, takedown, and lockout textures. Includes ability to move and save location and opacity of HUD. 
 <p align="center">
-<img align="center" width="530" src="https://i.gyazo.com/5b30d59b82922c3555bdee92ca4c15ff.jpg">
+<img align="center" width="530" src="https://cdn.discordapp.com/attachments/749048472073666641/820404142841004062/LVC_HUD_v2_copy.png">
 </p>
 
 __Additional Tones ("Siren Mastery"):__
