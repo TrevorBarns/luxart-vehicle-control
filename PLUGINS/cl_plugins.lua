@@ -38,6 +38,13 @@ Citizen.CreateThread(function()
 				}, RMenu:Get('lvc', 'extrasettings'))	
 			end		
 			-----------------------------------------------------------------------------------------------------------------
+			if ta_masterswitch then
+				RageUI.Button('Traffic Advisor Settings', "Open traffic advisor menu. (traffic_advisor)", {RightLabel = "→→→"}, true, {
+				  onSelected = function()
+				  end,
+				}, RMenu:Get('lvc', 'tasettings'))	
+			end	
+			-----------------------------------------------------------------------------------------------------------------
 		end)
         Citizen.Wait(0)
 	end
@@ -48,5 +55,6 @@ end)
 function IsPluginMenuOpen()
 	return 	RageUI.Visible(RMenu:Get('lvc', 'smartsiren')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
-			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) 		
+			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) or 
+			RageUI.Visible(RMenu:Get('lvc', 'tasettings')
 end
