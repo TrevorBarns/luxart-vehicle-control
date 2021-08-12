@@ -152,7 +152,7 @@ function HUD:RefreshHudItemStates()
 		HUD:SetItemState("horn", false)
 	end
 	
-	if state_tkd[veh] ~= nil and state_tkd[veh] then
+	if state_tkd ~= nil and state_ta[veh] ~= nil and state_tkd[veh] then
 		HUD:SetItemState("tkd", true)
 	else
 		HUD:SetItemState("tkd", false)
@@ -164,7 +164,7 @@ function HUD:RefreshHudItemStates()
 		HUD:SetItemState("lock", false)
 	end
 	
-	if state_ta[veh] ~= nil then
+	if state_ta ~= nil and state_ta[veh] ~= nil then
 		HUD:SetItemState("ta", state_ta[veh])
 	else
 		HUD:SetItemState("ta", 0)
