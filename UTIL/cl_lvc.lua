@@ -440,8 +440,8 @@ end
 ------------------------------------------------
 ----------------EVENT HANDLERS------------------
 ------------------------------------------------
-RegisterNetEvent("lvc_TogIndicState_c")
-AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
+RegisterNetEvent("lvc:TogIndicState_c")
+AddEventHandler("lvc:TogIndicState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -455,8 +455,8 @@ AddEventHandler("lvc_TogIndicState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc_TogDfltSrnMuted_c")
-AddEventHandler("lvc_TogDfltSrnMuted_c", function(sender, toggle)
+RegisterNetEvent("lvc:TogDfltSrnMuted_c")
+AddEventHandler("lvc:TogDfltSrnMuted_c", function(sender, toggle)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -470,8 +470,8 @@ AddEventHandler("lvc_TogDfltSrnMuted_c", function(sender, toggle)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc_SetLxSirenState_c")
-AddEventHandler("lvc_SetLxSirenState_c", function(sender, newstate)
+RegisterNetEvent("lvc:SetLxSirenState_c")
+AddEventHandler("lvc:SetLxSirenState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -485,8 +485,8 @@ AddEventHandler("lvc_SetLxSirenState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc_SetPwrcallState_c")
-AddEventHandler("lvc_SetPwrcallState_c", function(sender, newstate)
+RegisterNetEvent("lvc:SetPwrcallState_c")
+AddEventHandler("lvc:SetPwrcallState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -500,8 +500,8 @@ AddEventHandler("lvc_SetPwrcallState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc_SetAirManuState_c")
-AddEventHandler("lvc_SetAirManuState_c", function(sender, newstate)
+RegisterNetEvent("lvc:SetAirManuState_c")
+AddEventHandler("lvc:SetAirManuState_c", function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -516,8 +516,8 @@ end)
 
 ---------------------------------------------------------------------
 --[[
-RegisterNetEvent("lvc_ShareAudio_c")
-AddEventHandler("lvc_ShareAudio_c", function(sender, version)
+RegisterNetEvent("lvc:ShareAudio_c")
+AddEventHandler("lvc:ShareAudio_c", function(sender, version)
 
 end)
 ]]
@@ -834,13 +834,13 @@ Citizen.CreateThread(function()
 					count_bcast_timer = 0
 					--- IS EMERG VEHICLE ---
 					if GetVehicleClass(veh) == 18 then
-						TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
-						TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
-						TriggerServerEvent("lvc_SetPwrcallState_s", state_pwrcall[veh])
-						TriggerServerEvent("lvc_SetAirManuState_s", state_airmanu[veh])
+						TriggerServerEvent("lvc:TogDfltSrnMuted_s", dsrn_mute)
+						TriggerServerEvent("lvc:SetLxSirenState_s", state_lxsiren[veh])
+						TriggerServerEvent("lvc:SetPwrcallState_s", state_pwrcall[veh])
+						TriggerServerEvent("lvc:SetAirManuState_s", state_airmanu[veh])
 					end
 					--- IS ANY OTHER VEHICLE ---
-					TriggerServerEvent("lvc_TogIndicState_s", state_indic[veh])
+					TriggerServerEvent("lvc:TogIndicState_s", state_indic[veh])
 				else
 					count_bcast_timer = count_bcast_timer + 1
 				end
