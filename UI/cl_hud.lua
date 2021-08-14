@@ -118,7 +118,7 @@ end
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( "hud:setHudPositon", function(data, cb)
 	HUD_pos = data
-	Storage:SaveDefaultHUDSettings()
+	Storage:SaveHUDSettings()
 end )
 
 ------------------------------------------------
