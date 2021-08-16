@@ -45,7 +45,7 @@ local profile_c_op = { }
 local profile_s_op = 75
 local profile_l_op = 75
 local hazard_state = false
-local button_sfx_scheme_id = 1
+local button_sfx_scheme_id = -1
 local sl_btn_debug_msg = ""
 local settings_init = false
 
@@ -67,6 +67,16 @@ Keys.Register(open_menu_key, open_menu_key, 'LVC: Open Menu', function()
 		profiles = Storage:GetSavedProfiles()
 		RageUI.Visible(RMenu:Get('lvc', 'main'), not RageUI.Visible(RMenu:Get('lvc', 'main')))
 	end
+end)
+
+---------------------------------------------------------------------
+--Triggered when vehicle changes (cl_lvc.lua)
+RegisterNetEvent('lvc:onVehicleChange')
+AddEventHandler('lvc:onVehicleChange', function()
+	Citizen.CreateThread(function()
+		Citizen.Wait(500)
+		button_sfx_scheme_id = UTIL:IndexOf(button_sfx_scheme_choices, button_sfx_scheme) or 1
+	end)
 end)
 
 --Returns true if any menu is open
@@ -419,9 +429,9 @@ Citizen.CreateThread(function()
 			  end,
 			  onSelected = function(Index, Item)
 				if hazard_state then
-					PlayAudio("Hazards_On", hazards_volume)
+					PlayAudio("Hazards_On", hazards_volume, true)
 				else
-					PlayAudio("Hazards_Off", hazards_volume)
+					PlayAudio("Hazards_Off", hazards_volume, true)
 				end
 				hazard_state = not hazard_state
 			  end,			  
