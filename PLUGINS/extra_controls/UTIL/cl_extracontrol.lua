@@ -49,6 +49,13 @@ Citizen.CreateThread(function()
 							tog_table.State = true
 						else
 							tog_table.State = not tog_table.State
+							if tog_table.Audio ~= nil and tog_table.Audio then
+								if tog_table.State then
+									PlayAudio("Downgrade", downgrade_volume)
+								else
+									PlayAudio("Upgrade", upgrade_volume)
+								end
+							end
 						end
 						EC:TogVehicleExtras(veh, tog_table.Extras, tog_table.State)
 					end
@@ -113,7 +120,7 @@ function EC:TogVehicleExtras(veh, extra_id, state, repair)
 				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
 				UTIL:Print("EC: Toggling extra "..extra_id.." on", false)
-				SetVehicleAutoRepairDisabled(veh, repair)
+				SetVehicleAutoRepairDisabled(veh, false)
 				if repair then
 					for i = 0,6 do
 						if doors[i] > 0.0 then
@@ -154,6 +161,6 @@ function EC:UpdateExtrasTable(veh)
 		UTIL:Print("EC: Wildcard profile found for "..veh_name..".", false)
 	else
 		EC.extras = EXTRA_CONTROLS['DEFAULT']
-		UTIL:Print("EC: Profile not found for "..veh_name.." using default.", false)
+		UTIL:Print("EC: using default profile for "..veh_name, false)
 	end
 end
