@@ -14,6 +14,8 @@ PURPOSE: Handle RageUI
 RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),"Luxart Vehicle Control", "Extra Controls Settings"))
 RMenu:Get('lvc', 'extracontrols'):DisplayGlare(false)
 
+local combo_id = {} 
+local key_id = {}
 --Create Menus
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
@@ -65,9 +67,9 @@ Citizen.CreateThread(function()
 		if allow_custom_controls then
 			for i, extra_shortcut in ipairs(EC.extras) do
 				RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'..'_'..i), function()
-					RageUI.List('Combo', approved_combo_strings, combo_id, "Key that needs to be pressed in addition to 'Key' to toggle extras.", {}, true, {
+					RageUI.List('Combo', approved_combo_strings, combo_id[i] or 1, "Key that needs to be pressed in addition to 'Key' to toggle extras.", {}, true, {
 					  onListChange = function(Index, Item)
-						combo_id = Index
+						combo_id[i] = Index
 						if Index > 1 then
 							extra_shortcut.Combo = CONTROLS.COMBOS[Index-1]
 						else
@@ -75,9 +77,9 @@ Citizen.CreateThread(function()
 						end
 					  end,
 					})					
-					RageUI.List('Key', approved_key_strings, key_id, "Key that needs to be pressed in addition to 'Combo' to toggle extras.", {}, true, {
+					RageUI.List('Key', approved_key_strings, key_id[i] or 1, "Key that needs to be pressed in addition to 'Combo' to toggle extras.", {}, true, {
 					  onListChange = function(Index, Item)
-						key_id = Index
+						key_id[i] = Index
 						if Index > 1 then
 							extra_shortcut.Key = CONTROLS.KEYS[Index-1]
 						else
