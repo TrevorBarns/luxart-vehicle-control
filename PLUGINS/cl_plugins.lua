@@ -72,5 +72,7 @@ function IsPluginMenuOpen()
 			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'tasettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'trailersettings')) or
+			RageUI.Visible(RMenu:Get('lvc', 'trailerextras')) or
+			RageUI.Visible(RMenu:Get('lvc', 'trailerdoors')) or
 			RageUI.Visible(RMenu:Get('lvc', 'extracontrols')) 
 end
