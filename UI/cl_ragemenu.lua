@@ -378,7 +378,7 @@ Citizen.CreateThread(function()
 				on_volume = (Index / 100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "On", on_volume)
+				PlayAudio("On", on_volume)
 			  end,
 			})			
 			RageUI.Slider('Off Volume', (off_volume*100), 100, 2, "Set volume of light slider / button. Plays when lights are turned ~r~off~s~. Press Enter to play the sound.", true, {MuteOnSelected = true}, true, {
@@ -386,7 +386,7 @@ Citizen.CreateThread(function()
 				off_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Off", off_volume)
+				PlayAudio("Off", off_volume)
 			  end,
 			})			
 			RageUI.Slider('Upgrade Volume', (upgrade_volume*100), 100, 2, "Set volume of siren button. Plays when siren is turned ~g~on~s~. Press Enter to play the sound.", true, {MuteOnSelected = true}, true, {
@@ -394,7 +394,7 @@ Citizen.CreateThread(function()
 				upgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Upgrade", upgrade_volume)
+				PlayAudio("Upgrade", upgrade_volume)
 			  end,			  
 			})			
 			RageUI.Slider('Downgrade Volume', (downgrade_volume*100), 100, 2, "Set volume of siren button. Plays when siren is turned ~r~off~s~. Press Enter to play the sound.", true, {MuteOnSelected = true}, true, {
@@ -402,7 +402,7 @@ Citizen.CreateThread(function()
 				downgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Downgrade", downgrade_volume)
+				PlayAudio("Downgrade", downgrade_volume)
 			  end,			  
 			})	
 			RageUI.Slider('Activity Reminder Volume', (activity_reminder_volume*500), 100, 2, "Set volume of activity reminder tone. Plays when lights are ~g~on~s~, siren is ~r~off~s~, and timer is has finished. Press Enter to play the sound.", true, {MuteOnSelected = true}, true, {
@@ -410,7 +410,7 @@ Citizen.CreateThread(function()
 				activity_reminder_volume = (Index/500)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Reminder", activity_reminder_volume)
+				PlayAudio("Reminder", activity_reminder_volume)
 			  end,			  
 			})				
 			RageUI.Slider('Hazards Volume', (hazards_volume*100), 100, 2, "Set volume of hazards button. Plays when hazards are toggled. Press Enter to play the sound.", true, {MuteOnSelected = true}, true, {
@@ -419,9 +419,9 @@ Citizen.CreateThread(function()
 			  end,
 			  onSelected = function(Index, Item)
 				if hazard_state then
-					TriggerEvent("audio", "Hazards_On", hazards_volume, true)
+					PlayAudio("Hazards_On", hazards_volume)
 				else
-					TriggerEvent("audio", "Hazards_Off", hazards_volume, true)
+					PlayAudio("Hazards_Off", hazards_volume)
 				end
 				hazard_state = not hazard_state
 			  end,			  
@@ -431,7 +431,7 @@ Citizen.CreateThread(function()
 				lock_volume = (Index/100)			
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Key_Lock", lock_volume, true)
+				PlayAudio("Key_Lock", lock_volume, true)				
 			  end,			  
 			})					
 			RageUI.Slider('Lock Reminder Volume', (lock_reminder_volume*100), 100, 2, "Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.", true, {}, true, {
@@ -439,7 +439,7 @@ Citizen.CreateThread(function()
 				lock_reminder_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				TriggerEvent("audio", "Locked_Press", lock_reminder_volume, true)
+				PlayAudio("Locked_Press", lock_reminder_volume, true)
 			  end,			  
 			})
         end)
