@@ -45,8 +45,8 @@ function TRAIL:GetCabDisplayName()
 	return GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 end
 
-function TRAIL:SetExtraState(trailer, extra_id, state)
-	if trailer then
+function TRAIL:SetExtraState(is_trailer, extra_id, state)
+	if is_trailer then
 		if DoesExtraExist(trailer, extra_id) then
 			SetVehicleExtra(trailer, extra_id, not state)
 		end
