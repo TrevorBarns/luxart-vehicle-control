@@ -1,4 +1,4 @@
---------------------TRAFFIC ADVISOR SETTINGS---------------------
+--------------------TRAILER SUPPORT SETTINGS---------------------
 trailer_masterswitch = true
 --	Determines if trailer_support plugin can be activated.
 
