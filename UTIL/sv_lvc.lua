@@ -127,10 +127,10 @@ Citizen.CreateThread( function()
 					end
 					print(plugin_string)
 				end
-				print("\t^7|________________________________________________________|") 
-				print("\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|")   
-				print("\t^7|________________________________________________________|\n\n")   
 			end
+			print("\t^7|________________________________________________________|") 
+			print("\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|")   
+			print("\t^7|________________________________________________________|\n\n")   
 		else
 			print("\n\t^7 ________________________________________________________")   
 			print("\t|\t^8      __                       ^9___               ^7|")   
