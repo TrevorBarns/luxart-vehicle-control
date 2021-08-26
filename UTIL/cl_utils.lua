@@ -295,6 +295,17 @@ function UTIL:Print(string, override)
 end
 
 ---------------------------------------------------------------------
+--[[Finds index of element in table given table and element.]]
+function UTIL:IndexOf(tbl, tgt)
+	for i, v in pairs(tbl) do
+		if v == tgt then
+			return i
+		end
+	end
+	return nil
+end
+
+---------------------------------------------------------------------
 --[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
 	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
 	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
@@ -344,7 +355,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
 				UTIL:Print("UTIL:: Toggling extra "..extra_id.." on", false)
-				SetVehicleAutoRepairDisabled(veh, repair)
+				SetVehicleAutoRepairDisabled(veh, false)
 				if repair then
 					for i = 0,6 do
 						if doors[i] > 0.0 then
