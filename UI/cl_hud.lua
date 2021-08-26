@@ -152,7 +152,7 @@ function HUD:RefreshHudItemStates()
 		HUD:SetItemState("horn", false)
 	end
 	
-	if state_tkd ~= nil and state_tkd[veh] ~= nil then
+	if state_tkd ~= nil and state_tkd[veh] ~= nil and state_tkd[veh] then
 		HUD:SetItemState("tkd", true)
 	else
 		HUD:SetItemState("tkd", false)
@@ -198,7 +198,7 @@ end
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( "hud:setHudPositon", function(data, cb)
 	HUD_pos = data
-	Storage:SaveHUDSettings()
+	Storage:SaveDefaultHUDSettings()
 end )
 
 ------------------------------------------------
