@@ -59,7 +59,7 @@ hazard_hold_duration = 750
 
 ----------------SOUND EFFECT VOLUMES---------------
 button_sfx_scheme_choices = { 'SSP2000', 'SSP3000', 'Cencom', 'ST300' }
---Customize which button SFX schemes are available. An item here must match exactly the folder name located in `lux_vehcontrol\UI\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)
+--Customize which button SFX schemes are available. An item here must match exactly the folder name located in `lvc\UI\sounds`, recommend NOT using spaces instead use a dash (e.g. Cencom-Gold)
 default_sfx_scheme_name = 'SSP2000'
 default_on_volume = 0.5			
 default_off_volume = 0.7			
