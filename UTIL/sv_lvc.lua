@@ -127,11 +127,11 @@ Citizen.CreateThread( function()
 					end
 					print(plugin_string)
 				end
-				print("\t^7|________________________________________________________|") 
-				print("\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|")   
-				print("\t^7|________________________________________________________|\n\n")   
 			end
-		else
+			print("\t^7|________________________________________________________|") 
+			print("\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|")   
+			print("\t^7|________________________________________________________|\n\n")   
+		else	-- NO COMMUNITY ID SET
 			print("\n\t^7 ________________________________________________________")   
 			print("\t|\t^8      __                       ^9___               ^7|")   
 			print("\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|")   
@@ -149,7 +149,7 @@ Citizen.CreateThread( function()
 			print("\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|")   
 			print("\t^7|________________________________________________________|\n\n") 
 		end
-	else
+	else	-- INCORRECT RESOURCE NAME
 			print("\n\t^7 ________________________________________________________")   
 			print("\t|\t^8      __                       ^9___               ^7|")   
 			print("\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|")   

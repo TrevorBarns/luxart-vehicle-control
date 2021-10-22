@@ -5,7 +5,7 @@ games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.2.4'	
+version '3.2.5'	
 compatible '3.2.2'
 
 ------------------------------
@@ -27,7 +27,9 @@ files({
     'UI/html/style.css',
 	'UI/sounds/*.ogg',
 	'UI/sounds/**/*.ogg',
-	'UI/textures/*.png'
+	'UI/textures/**/*.png',
+	'UI/textures/**/*.gif',
+	'PLUGINS/**/*.json'
 })
 
 

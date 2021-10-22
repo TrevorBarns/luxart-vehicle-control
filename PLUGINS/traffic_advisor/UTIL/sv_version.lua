@@ -12,7 +12,7 @@ PURPOSE: Handle plugin version checking.
 ]]
 
 local plugin_name = "traffic_advisor"
-local plugin_version = "0.1.0"
+local plugin_version = "1.0.2"
 
 RegisterServerEvent("lvc:plugins_getVersions") 
 AddEventHandler("lvc:plugins_getVersions", function()

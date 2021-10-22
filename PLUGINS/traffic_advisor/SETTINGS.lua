@@ -7,5 +7,5 @@ ta_combokey = false
 --[[ Documentation / Wiki: https://github.com/TrevorBarns/luxart-vehicle-control/wiki/Traffic-Advisor ]]
 
 TA_ASSIGNMENTS = {
-
+  ['DEFAULT'] = { },
 }

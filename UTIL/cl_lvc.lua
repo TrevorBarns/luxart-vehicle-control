@@ -17,6 +17,7 @@ key_lock = false
 playerped = nil
 last_veh = nil
 veh = nil
+trailer = nil
 player_is_emerg_driver = false
 
 --	MAIN SIREN SETTINGS
@@ -25,6 +26,7 @@ tone_airhorn_intrp 			= airhorn_interrupt_default
 park_kill 					= park_kill_default
 
 --	AUDIO SETTINGS
+radio_masterswitch 			= true
 airhorn_button_SFX 			= false
 manu_button_SFX 			= false
 activity_reminder_index		= 1
@@ -79,41 +81,74 @@ local snd_airmanu = {}
 -- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
 -- Disables controls faster than previous thread. 
 Citizen.CreateThread(function()
-	while true do
-		playerped = GetPlayerPed(-1)	
-		--IS IN VEHICLE
-		player_is_emerg_driver = false
-		if IsPedInAnyVehicle(playerped, false) then
-			veh = GetVehiclePedIsUsing(playerped)	
-			--IS DRIVER
-			if GetPedInVehicleSeat(veh, -1) == playerped then
-				--IS EMERGENCY VEHICLE
-				if GetVehicleClass(veh) == 18 then
-					player_is_emerg_driver = true
-					DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
-					DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
-					DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
-					DisableControlAction(0, 19, true) -- INPUT_CHARACTER_WHEEL 
-					if IsControlPressed(0, 243) then
-						while IsControlPressed(0, 243) do
-							radio_wheel_active = true
-							SetControlNormal(0, 85, 1.0)
-							Citizen.Wait(0)
+	if GetCurrentResourceName() == 'lvc' then	
+		if community_id ~= nil and community_id ~= "" then
+			while true do
+				playerped = GetPlayerPed(-1)	
+				--IS IN VEHICLE
+				player_is_emerg_driver = false
+				if IsPedInAnyVehicle(playerped, false) then
+					veh = GetVehiclePedIsUsing(playerped)	
+					_, trailer = GetVehicleTrailerVehicle(veh)					
+					--IS DRIVER
+					if GetPedInVehicleSeat(veh, -1) == playerped then
+						--IS EMERGENCY VEHICLE
+						if GetVehicleClass(veh) == 18 then
+							player_is_emerg_driver = true
+							DisableControlAction(0, 80, true) -- INPUT_VEH_CIN_CAM														 									   								
+							DisableControlAction(0, 86, true) -- INPUT_VEH_HORN	
+							DisableControlAction(0, 172, true) -- INPUT_CELLPHONE_UP  
+							if IsControlPressed(0, 243) and radio_masterswitch then
+								while IsControlPressed(0, 243) do
+									radio_wheel_active = true
+									SetControlNormal(0, 85, 1.0)
+									Citizen.Wait(0)
+								end
+								Citizen.Wait(100)
+								radio_wheel_active = false
+							else
+								DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL
+								SetVehicleRadioEnabled(veh, false)
+							end
 						end
-						Citizen.Wait(100)
-						radio_wheel_active = false
-					else
-						DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL 										
 					end
 				end
+				Citizen.Wait(1)
 			end
+		else
+			Citizen.Wait(1000)
+			HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.", true)
+			UTIL:Print("^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.", true)
 		end
-		Citizen.Wait(1)
+	else
+		Citizen.Wait(1000)
+		HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.", true)
+		UTIL:Print("^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS '^3lvc^1' (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.", true)
 	end
 end)
 
+-------------------HUD BACKLIGHT------------------
+Citizen.CreateThread(function()
+	local current_backlight_state
+	while true do
+		if player_is_emerg_driver then 
+			while HUD:GetHudBacklightMode() == 1 do
+				_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
+				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
+					HUD:SetHudBacklightState(false)	
+				end
+				Citizen.Wait(500)
+			end		
+		end
+		Citizen.Wait(1000)
+	end
+end) 
 
-------PARK KILL THREADS------
+----------------PARK KILL THREADS----------------
 --Kill siren on Exit
 Citizen.CreateThread(function()
 	while park_kill or park_kill_masterswitch do
@@ -126,7 +161,7 @@ Citizen.CreateThread(function()
 				SetPowercallStateForVeh(veh, 0)
 				SetAirManuStateForVeh(veh, 0)	
 				HUD:SetItemState("siren", false)
-				HUD:SetItemState("horn", false)				
+				HUD:SetItemState("horn", false)
 				count_bcast_timer = delay_bcast_timer
 				Citizen.Wait(1000)		
 			end
@@ -195,6 +230,8 @@ AddEventHandler('lvc:onVehicleChange', function()
 	Storage:LoadSettings()
 	UTIL:BuildToneOptions()
 	SetVehRadioStation(veh, "OFF")
+	Citizen.Wait(500)
+	SetVehRadioStation(veh, "OFF")
 end)
 
 
@@ -237,18 +274,22 @@ function RegisterKeyMaps()
 							if tone_option ~= nil then
 								if tone_option == 1 or tone_option == 3 then
 									if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
+										HUD:SetItemState("siren", true)
 										PlayAudio("Upgrade", upgrade_volume)
 										SetLxSirenStateForVeh(veh, proposed_tone)
 										count_bcast_timer = delay_bcast_timer
 									else
+										if state_pwrcall[veh] == 0 then
+											HUD:SetItemState("siren", false)
+										end
 										PlayAudio("Downgrade", downgrade_volume)
 										SetLxSirenStateForVeh(veh, 0)
 										count_bcast_timer = delay_bcast_timer				
 									end
 								end
 							else
-								HUD:ShowNotification("~r~LVC ERROR 2: ~s~Nil value caught.\ndetails: (" .. i .. "," .. proposed_tone .. "," .. UTIL:GetVehicleProfileName() .. ")", true)
-								HUD:ShowNotification("~b~LVC ERROR 2: ~s~Try switching vehicles and switching back OR loading profile settings (if save present).", true)
+								HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Nil value caught.\ndetails: (" .. i .. "," .. proposed_tone .. "," .. UTIL:GetVehicleProfileName() .. ")", true)
+								HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Try switching vehicles and switching back OR loading profile settings (if save present).", true)
 							end
 						end
 					end
@@ -386,6 +427,7 @@ end
 function SetLxSirenStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_lxsiren[veh] and newstate ~= nil then
+				
 			if snd_lxsiren[veh] ~= nil then
 				StopSound(snd_lxsiren[veh])
 				ReleaseSoundId(snd_lxsiren[veh])
@@ -440,8 +482,8 @@ end
 ------------------------------------------------
 ----------------EVENT HANDLERS------------------
 ------------------------------------------------
-RegisterNetEvent("lvc:TogIndicState_c")
-AddEventHandler("lvc:TogIndicState_c", function(sender, newstate)
+RegisterNetEvent('lvc:TogIndicState_c')
+AddEventHandler('lvc:TogIndicState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -455,8 +497,8 @@ AddEventHandler("lvc:TogIndicState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc:TogDfltSrnMuted_c")
-AddEventHandler("lvc:TogDfltSrnMuted_c", function(sender, toggle)
+RegisterNetEvent('lvc:TogDfltSrnMuted_c')
+AddEventHandler('lvc:TogDfltSrnMuted_c', function(sender, toggle)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -470,8 +512,8 @@ AddEventHandler("lvc:TogDfltSrnMuted_c", function(sender, toggle)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc:SetLxSirenState_c")
-AddEventHandler("lvc:SetLxSirenState_c", function(sender, newstate)
+RegisterNetEvent('lvc:SetLxSirenState_c')
+AddEventHandler('lvc:SetLxSirenState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -485,8 +527,8 @@ AddEventHandler("lvc:SetLxSirenState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc:SetPwrcallState_c")
-AddEventHandler("lvc:SetPwrcallState_c", function(sender, newstate)
+RegisterNetEvent('lvc:SetPwrcallState_c')
+AddEventHandler('lvc:SetPwrcallState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -500,8 +542,8 @@ AddEventHandler("lvc:SetPwrcallState_c", function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
-RegisterNetEvent("lvc:SetAirManuState_c")
-AddEventHandler("lvc:SetAirManuState_c", function(sender, newstate)
+RegisterNetEvent('lvc:SetAirManuState_c')
+AddEventHandler('lvc:SetAirManuState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
@@ -514,13 +556,7 @@ AddEventHandler("lvc:SetAirManuState_c", function(sender, newstate)
 	end
 end)
 
----------------------------------------------------------------------
---[[
-RegisterNetEvent("lvc:ShareAudio_c")
-AddEventHandler("lvc:ShareAudio_c", function(sender, version)
 
-end)
-]]
 ---------------------------------------------------------------------
 Citizen.CreateThread(function()
 	while true do
@@ -554,6 +590,11 @@ Citizen.CreateThread(function()
 			
 			--- IS EMERG VEHICLE ---
 			if GetVehicleClass(veh) == 18 then
+				--  FORCE RADIO ENABLED PER FRAME
+				if radio_masterswitch then
+					SetVehicleRadioEnabled(veh, true)
+				end
+				
 				if UpdateOnscreenKeyboard() ~= 0 and not IsEntityDead(veh) then
 					--- SET INIT TABLE VALUES ---
 					if state_lxsiren[veh] == nil then
@@ -594,12 +635,19 @@ Citizen.CreateThread(function()
 									HUD:SetItemState("siren", false) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, false)
+									if trailer ~= nil and trailer ~= 0 then
+										SetVehicleSiren(trailer, false)
+									end
+
 								else
 									PlayAudio("On", on_volume) -- On
 									--	SET NUI IMAGES
 									HUD:SetItemState("switch", true) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, true)
+									if trailer ~= nil and trailer ~= 0 then
+										SetVehicleSiren(trailer, true)
+									end
 								end
 								SetActivityTimer()							
 								count_bcast_timer = delay_bcast_timer
@@ -772,11 +820,9 @@ Citizen.CreateThread(function()
 				-- DISABLE SIREN AUDIO FOR ALL VEHICLES NOT VC_EMERGENCY (VEHICLES.META)
 				TogMuteDfltSrnForVeh(veh, true)					
 			end
-
-			
 				
 			--- IS ANY LAND VEHICLE ---	
-			if GetVehicleClass(veh) ~= 14 and GetVehicleClass(veh) ~= 15 and GetVehicleClass(veh) ~= 16 and GetVehicleClass(veh) ~= 21 then		
+			if GetVehicleClass(veh) ~= 14 and GetVehicleClass(veh) ~= 15 and GetVehicleClass(veh) ~= 16 and GetVehicleClass(veh) ~= 21 then
 				----- CONTROLS -----
 				if not IsPauseMenuActive() then
 					-- IND L
@@ -834,13 +880,13 @@ Citizen.CreateThread(function()
 					count_bcast_timer = 0
 					--- IS EMERG VEHICLE ---
 					if GetVehicleClass(veh) == 18 then
-						TriggerServerEvent("lvc:TogDfltSrnMuted_s", dsrn_mute)
-						TriggerServerEvent("lvc:SetLxSirenState_s", state_lxsiren[veh])
-						TriggerServerEvent("lvc:SetPwrcallState_s", state_pwrcall[veh])
-						TriggerServerEvent("lvc:SetAirManuState_s", state_airmanu[veh])
+						TriggerServerEvent('lvc:TogDfltSrnMuted_s', dsrn_mute)
+						TriggerServerEvent('lvc:SetLxSirenState_s', state_lxsiren[veh])
+						TriggerServerEvent('lvc:SetPwrcallState_s', state_pwrcall[veh])
+						TriggerServerEvent('lvc:SetAirManuState_s', state_airmanu[veh])
 					end
 					--- IS ANY OTHER VEHICLE ---
-					TriggerServerEvent("lvc:TogIndicState_s", state_indic[veh])
+					TriggerServerEvent('lvc:TogIndicState_s', state_indic[veh])
 				else
 					count_bcast_timer = count_bcast_timer + 1
 				end

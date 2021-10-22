@@ -7,7 +7,8 @@ Made by TrevorBarns
 */
 
 var resourceName = "";
-var folder_prefix = "../textures/";
+var time_folder = "day/";
+var ta_pattern = "ta/pattern_3/";
 var audioPlayer = null;
 var soundID = 0;
 var scale = 0.6;
@@ -21,6 +22,7 @@ const elements =
 	horn: 		document.getElementById("horn"),
 	tkd: 		document.getElementById("tkd"),
 	lock: 		document.getElementById("lock"),
+	ta: 		document.getElementById("ta"),
 }
 
 const backup = 
@@ -51,39 +53,56 @@ window.addEventListener('message', function(event) {
 				break;
 			case "switch":
 				if ( state == true ) {
-					elements.lswitch.src= folder_prefix +"lux_slide_on.png";
+					elements.lswitch.src= "../textures/"+ time_folder + "slide_on.png";
 				}else{
-					elements.lswitch.src= folder_prefix +"lux_slide_off.png";					
+					elements.lswitch.src= "../textures/"+ time_folder + "slide_off.png";					
 				}
 				break;
 			case "siren":
 				if ( state == true ) {
-					elements.siren.src= folder_prefix +"lux_siren_on.png";
+					elements.siren.src= "../textures/" + time_folder + "siren_on.png";
 				}else{
-					elements.siren.src= folder_prefix +"lux_siren_off.png";					
+					elements.siren.src= "../textures/" + time_folder + "siren_off.png";		
 				}			
 				break;
 			case "horn":
 				if ( state == true ) {
-					elements.horn.src= folder_prefix +"lux_horn_on.png";					
+					elements.horn.src= "../textures/" + time_folder + "horn_on.png";					
 				}else{
-					elements.horn.src= folder_prefix +"lux_horn_off.png";
+					elements.horn.src= "../textures/" + time_folder + "horn_off.png";
 				}				
 				break;
 			case "tkd":
 				if ( state == true ) {
-					elements.tkd.src= folder_prefix +"lux_tkd_on.png";					
+					elements.tkd.src= "../textures/" + time_folder + "tkd_on.png";					
 				}else{
-					elements.tkd.src= folder_prefix +"lux_tkd_off.png";
+					elements.tkd.src= "../textures/" + time_folder + "tkd_off.png";
 				}			
 				break;			
 			case "lock":
 				if ( state == true ) {
-					elements.lock.src= folder_prefix +"lux_lock_on.png";					
+					elements.lock.src= "../textures/" + time_folder + "lock_on.png";					
 				}else{
-					elements.lock.src= folder_prefix +"lux_lock_off.png";
+					elements.lock.src= "../textures/" + time_folder + "lock_off.png";
 				}				
 				break;
+			case "ta":
+				if ( state == 1 ) {
+					elements.ta.src = "../textures/" + ta_pattern + "ta_left.gif";
+				}else if ( state == 2 ){
+					elements.ta.src = "../textures/" + ta_pattern + "ta_right.gif";
+				}else if ( state == 3 ){
+					elements.ta.src = "../textures/" + ta_pattern + "ta_center.gif";
+				}else if ( state == 0 ){
+					elements.ta.src = "../textures/" + time_folder + "ta_off.gif";
+				}
+				break;			
+			case "ta_pattern":
+					ta_pattern = "ta/pattern_" + state + "/"
+					break;
+			case "time":
+					time_folder = state + "/"
+					break;
 			default:
 				break;
 		}

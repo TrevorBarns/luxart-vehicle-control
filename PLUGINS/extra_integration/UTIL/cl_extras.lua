@@ -295,7 +295,7 @@ end)
 ---------------ON RESOURCE STARTUP-----------------
  Citizen.CreateThread(function()
 	Citizen.Wait(500)
-	EI:FixOversizeKeys()
+	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
 end) 
 
 ---------------------------------------------------------------------
@@ -307,37 +307,23 @@ AddEventHandler('lvc:onVehicleChange', function()
 	end
 end)
 
----------------------------------------------------------------------
---[[Shorten oversized <gameName> strings in EXTRA_ASSIGNMENTS (extra_integration/SETTINGS.LUA). 
-    GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
-function EI:FixOversizeKeys()
-	for i, tbl in pairs(EXTRA_ASSIGNMENTS) do
-		if string.len(i) > 11 then
-			local shortened_gameName = string.sub(i,1,11)
-			EXTRA_ASSIGNMENTS[shortened_gameName] = EXTRA_ASSIGNMENTS[i]
-			EXTRA_ASSIGNMENTS[i] = nil
-		end
-	end
-end
-
 --[[Sets extras table a copy of EXTRA_ASSIGNMENTS for this vehicle]]
 function EI:UpdateExtrasTable(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+
 	if EXTRA_ASSIGNMENTS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		extras = EXTRA_ASSIGNMENTS[veh_name]
 		UTIL:Print("EI: Profile found for "..veh_name, false)
-	else 
-		extras = EXTRA_ASSIGNMENTS['DEFAULT']
-	end
-	
-	for _, item in pairs(extras) do
-		if type(item) == 'table' then
-			
+	elseif EXTRA_ASSIGNMENTS[veh_name_wildcard] ~= nil then				
+		extras = EXTRA_ASSIGNMENTS[veh_name_wildcard]
+		UTIL:Print("EI: Wildcard profile found for "..veh_name, false)
+	else
+		if EXTRA_ASSIGNMENTS['DEFAULT'] ~= nil then
+			extras = EXTRA_ASSIGNMENTS['DEFAULT']
+			UTIL:Print("EI: using default profile for "..veh_name, false)
 		else
-			if not DoesExtraExist(veh, item) then
-				HUD:ShowNotification("~b~LVC: ~y~Warning:~s~ Extra "..item.." does not exist for "..veh_name". Verify EI Settings.", true)
-			end
-		end
-	end
+			extras = { }
+			UTIL:Print("^3LVC WARNING: (EXTRA_INTEGRATION) 'DEFAULT' table missing from EXTRA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+		end	end
 end
-

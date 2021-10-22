@@ -6,11 +6,12 @@ body {
 
 .slide {
 	padding-top: 52px;
-	z-index: 950;
+    margin-left: 6px;
+    z-index: 950;
 }
 
 .button {
-
+    margin-right: -3px;
 }
 
 #buttonbox {
@@ -18,8 +19,8 @@ body {
 	grid-template-areas: 'siren horn tkd lock';
 	position: absolute;
 	float: right;
-	right: 2.5%;
-	top: 10%;
+    right: 17px;
+    top: 24px;
 	z-index: 900;
 }
 
@@ -27,8 +28,8 @@ body {
 	display: none;
 	position: absolute;
 	overflow: hidden;
-	width: 625px;
-	height: 143px;
+	width: 602px;
+	height: 161px;
 	left: 0%;
 	top: 68%;
 	transform-origin: left top;

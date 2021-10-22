@@ -14,22 +14,50 @@ change traffic advisor state through extras.
 ]]
 TA = {}
 local taExtras = {}
+local temp_hud_disable
+preserve_ta_state = false
 state_ta = {}
+
+Citizen.CreateThread(function()
+	while ta_masterswitch do 
+		if player_is_emerg_driver then
+			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
+				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
+					HUD:SetItemState("ta", false)
+					temp_hud_disable = true
+					if not save_ta_state then
+						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
+						state_ta[veh] = 0
+					end
+				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
+					HUD:SetItemState("ta", state_ta[veh])
+					temp_hud_disable = false
+				end
+			else
+				Citizen.Wait(500)
+			end
+		else
+			Citizen.Wait(500)
+		end
+		Citizen.Wait(0)
+	end
+end) 
 
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
-						TA:TogVehicleExtras(veh, taExtras.left.off, true)
+						UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.left.on, true)
+						UTIL:TogVehicleExtras(veh, taExtras.left.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 1
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 					
 				end
 			end
 		end
@@ -37,17 +65,18 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
-						TA:TogVehicleExtras(veh, taExtras.right.off, true)
+						UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.right.on, true)
+						UTIL:TogVehicleExtras(veh, taExtras.right.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 2
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 
 				end
 			end
 		end
@@ -55,17 +84,18 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
-						TA:TogVehicleExtras(veh, taExtras.middle.off, true)
+						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						PlayAudio("Downgrade", downgrade_volume)
 						state_ta[veh] = 0
 					else
-						TA:TogVehicleExtras(veh, taExtras.middle.on, true)
+						UTIL:TogVehicleExtras(veh, taExtras.middle.on, true)
 						PlayAudio("Upgrade", upgrade_volume)
 						state_ta[veh] = 3
 					end
+					HUD:SetItemState("ta", state_ta[veh]) 					
 				end
 			end
 		end
@@ -74,58 +104,6 @@ if ta_masterswitch then
 	RegisterKeyMapping('lvctogleftta', 'LVC Toggle Left TA', 'keyboard', 'left')
 	RegisterKeyMapping('lvctogrightta', 'LVC Toggle Right TA', 'keyboard', 'right')
 	RegisterKeyMapping('lvctogmidta', 'LVC Toggle Middle TA', 'keyboard', 'down')
-end
-
-function TA:TogVehicleExtras(veh, extra_id, state, repair)
-	local repair = repair or false
-	if type(extra_id) == 'table' then
-		if extra_id.add ~= nil then 
-			if type(extra_id.add) == 'table' then
-				for i, single_extra_id in ipairs(extra_id.add) do
-					TA:TogVehicleExtras(veh, single_extra_id, state, extra_id.repair)
-				end
-			else
-				TA:TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
-			end
-		end
-		if extra_id.remove ~= nil then
-			if type(extra_id.remove) == 'table' then
-				for i, single_extra_id in ipairs(extra_id.remove) do
-					TA:TogVehicleExtras(veh, single_extra_id, not state, extra_id.repair)
-				end
-			else
-				TA:TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
-			end
-		end
-	else
-		if state then
-			if not IsVehicleExtraTurnedOn(veh, extra_id) then
-				local doors =  { }
-				if repair then
-					for i = 0,6 do
-						doors[i] = GetVehicleDoorAngleRatio(veh, i)
-					end
-				end
-				SetVehicleAutoRepairDisabled(veh, not repair)
-				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print("TA: Toggling extra "..extra_id.." on", false)
-				SetVehicleAutoRepairDisabled(veh, repair)
-				if repair then
-					for i = 0,6 do
-						if doors[i] > 0.0 then
-							SetVehicleDoorOpen(veh, i, false, false)
-						end
-					end
-				end
-			end
-		else
-			if IsVehicleExtraTurnedOn(veh, extra_id) then
-				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("TA: Toggling extra "..extra_id.." off", false)
-			end	
-		end
-	end
-  SetVehicleAutoRepairDisabled(veh, false)
 end
 
 Citizen.CreateThread(function()
@@ -151,9 +129,18 @@ function TA:UpdateExtrasTable(veh)
   elseif TA_ASSIGNMENTS[veh_name_wildcard] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name_wildcard]
     UTIL:Print('TA: Wildcard profile found for ' .. veh_name, false)
-  else
-    UTIL:Print('TA: No profile found for ' .. veh_name)
-  end
+	else
+		if TA_ASSIGNMENTS['DEFAULT'] ~= nil then
+			taExtras = TA_ASSIGNMENTS['DEFAULT']
+			UTIL:Print("TA: using default profile for "..veh_name, false)
+		else
+			taExtras = { }
+			UTIL:Print("^3LVC WARNING: (TRAFFIC_ADVISOR) 'DEFAULT' table missing from TA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+		end
+	end
+  
+  hud_pattern = taExtras.hud_pattern or 1
+  HUD:SetItemState("ta_pattern", hud_pattern)
 end
 
 function TA:SetTAStateForVeh(veh, newstate)

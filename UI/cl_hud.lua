@@ -17,6 +17,8 @@ local show_HUD = hud_first_default
 local HUD_temp_hidden = false
 local HUD_scale
 local HUD_pos 
+local HUD_backlight_mode = 1 
+local HUD_backlight_state = false
 
 ---------------------------------------------------------------------
 --[[Gets initial HUD scale from JS]]
@@ -33,9 +35,11 @@ Citizen.CreateThread(function()
 	while true do
 		if show_HUD or HUD_temp_hidden then
 			if (not player_is_emerg_driver) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) then
-				HUD:SetHudState(false, true)
-				HUD_temp_hidden = true
-			elseif player_is_emerg_driver and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) then
+				if not HUD_temp_hidden then
+					HUD:SetHudState(false, true)
+					HUD_temp_hidden = true
+				end
+			elseif player_is_emerg_driver and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) and HUD_temp_hidden then
 				HUD:SetHudState(true, true)
 				HUD_temp_hidden = false
 			end
@@ -93,6 +97,82 @@ function HUD:SetItemState(item, state)
 	  state = state
 	})
 end
+
+------------------------------------------------
+--[[HUD Backlight Modes: 1 - auto, 2 - off, 3 - on]]
+function HUD:GetHudBacklightMode()
+	return HUD_backlight_mode
+end
+
+function HUD:SetHudBacklightMode(mode)
+	if mode ~= nil then
+		HUD_backlight_mode = mode
+		
+		if mode == 2 then
+			HUD:SetHudBacklightState(false)
+		elseif mode == 3 then
+			HUD:SetHudBacklightState(true)	
+		end
+	end
+end
+
+function HUD:GetHudBacklightState()
+	return HUD_backlight_state
+end
+
+function HUD:SetHudBacklightState(state)
+	if state ~= nil then
+		HUD_backlight_state = state
+		if state then
+			HUD:SetItemState("time", "night")
+		else
+			HUD:SetItemState("time", "day")
+		end
+		
+		HUD:RefreshHudItemStates()
+	end
+end
+
+------------------------------------------------
+--[[Verifies HUD item states are correct]]
+function HUD:RefreshHudItemStates()
+	if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
+		HUD:SetItemState("siren", true)
+	else
+		HUD:SetItemState("siren", false)
+	end
+	
+	if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
+		HUD:SetItemState("siren", true)
+	end
+	
+	if state_airmanu[veh] ~= nil and state_airmanu[veh] > 0 then
+		HUD:SetItemState("horn", true)
+	else
+		HUD:SetItemState("horn", false)
+	end
+	
+	if state_tkd ~= nil and state_tkd[veh] ~= nil and state_tkd[veh] then
+		HUD:SetItemState("tkd", true)
+	else
+		HUD:SetItemState("tkd", false)
+	end
+	
+	if key_lock then
+		HUD:SetItemState("lock", true)
+	else
+		HUD:SetItemState("lock", false)
+	end
+	
+	if state_ta ~= nil and state_ta[veh] ~= nil then
+		HUD:SetItemState("ta", state_ta[veh])
+	else
+		HUD:SetItemState("ta", 0)
+	end	
+	
+	HUD:SetItemState("switch", IsVehicleSirenOn(veh))
+end
+
 ------------------------------------------------
 --[[Setter for HUD position, used when loading save data.]]
 function HUD:SetHudPosition(data)
@@ -118,7 +198,7 @@ end
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( "hud:setHudPositon", function(data, cb)
 	HUD_pos = data
-	Storage:SaveHUDSettings()
+	Storage:SaveDefaultHUDSettings()
 end )
 
 ------------------------------------------------

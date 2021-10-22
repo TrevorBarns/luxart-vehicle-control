@@ -154,7 +154,7 @@ function UTIL:SetToneByPos(tone_string, pos)
 			end
 		else
 			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
-			UTIL:Print("Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+			UTIL:Print("^3Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 		end
 	else
 		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
@@ -198,7 +198,7 @@ function UTIL:SetToneByID(tone, tone_id)
 		end
 	else
 		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
-		UTIL:Print("Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		UTIL:Print("^3Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
@@ -292,4 +292,84 @@ function UTIL:Print(string, override)
 	if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
 		print(string)
 	end
+end
+
+---------------------------------------------------------------------
+--[[Finds index of element in table given table and element.]]
+function UTIL:IndexOf(tbl, tgt)
+	for i, v in pairs(tbl) do
+		if v == tgt then
+			return i
+		end
+	end
+	return nil
+end
+
+---------------------------------------------------------------------
+--[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
+	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
+	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
+	which can add and remove multiple different extras at once and adds flag to repair the vehicle
+	for extras that are too large and require the vehicle to be reloaded. Once it figures out the 
+	users config layout it calls itself again (recursive) with the id we actually need toggled right now.]]
+function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
+	local repair = repair or false
+	if type(extra_id) == 'table' then
+		-- Toggle Same Extras Mode
+		if extra_id.toggle ~= nil then
+			-- Toggle Multiple Extras
+			if type(extra_id.toggle) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.toggle) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+				end
+			-- Toggle a Single Extra (no table)
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.toggle, state, extra_id.repair)
+			end
+		-- Toggle Different Extras Mode
+		elseif extra_id.add ~= nil and extra_id.remove ~= nil then
+			if type(extra_id.add) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.add) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
+				end
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
+			end
+			if type(extra_id.remove) == 'table' then
+				for i, singe_extra_id in ipairs(extra_id.remove) do
+					UTIL:TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
+				end
+			else
+				UTIL:TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
+			end
+		end
+	else
+		if state then
+			if not IsVehicleExtraTurnedOn(veh, extra_id) then
+				local doors =  { }
+				if repair then
+					for i = 0,6 do
+						doors[i] = GetVehicleDoorAngleRatio(veh, i)
+					end
+				end
+				SetVehicleAutoRepairDisabled(veh, false)
+				SetVehicleExtra(veh, extra_id, false)
+				UTIL:Print("UTIL:: Toggling extra "..extra_id.." on", false)
+				SetVehicleAutoRepairDisabled(veh, false)
+				if repair then
+					for i = 0,6 do
+						if doors[i] > 0.0 then
+							SetVehicleDoorOpen(veh, i, false, false)
+						end
+					end
+				end
+			end
+		else
+			if IsVehicleExtraTurnedOn(veh, extra_id) then
+				SetVehicleExtra(veh, extra_id, true)
+				UTIL:Print("UTIL:: Toggling extra "..extra_id.." off", false)
+			end	
+		end
+	end
+	SetVehicleAutoRepairDisabled(veh, false)
 end
