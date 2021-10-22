@@ -12,7 +12,7 @@ PURPOSE: Handle plugin version checking.
 ]]
 
 local plugin_name = "trailer_support"
-local plugin_version = "0.1.1"
+local plugin_version = "1.0.0"
 
 RegisterServerEvent("lvc:plugins_getVersions") 
 AddEventHandler("lvc:plugins_getVersions", function()

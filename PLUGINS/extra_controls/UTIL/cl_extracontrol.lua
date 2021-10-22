@@ -160,7 +160,12 @@ function EC:UpdateExtrasTable(veh)
 		EC.extras = EXTRA_CONTROLS[veh_name_wildcard]
 		UTIL:Print("EC: Wildcard profile found for "..veh_name..".", false)
 	else
-		EC.extras = EXTRA_CONTROLS['DEFAULT']
-		UTIL:Print("EC: using default profile for "..veh_name, false)
+		if EXTRA_CONTROLS['DEFAULT'] ~= nil then
+			EC.extras = EXTRA_CONTROLS['DEFAULT']
+			UTIL:Print("EC: using default profile for "..veh_name, false)
+		else
+			EC.extras = { }
+			UTIL:Print("^3LVC WARNING: (EXTRA_CONTROLS) 'DEFAULT' table missing from EXTRA_CONTROLS table. Using empty table for "..veh_name, false)
+		end
 	end
 end

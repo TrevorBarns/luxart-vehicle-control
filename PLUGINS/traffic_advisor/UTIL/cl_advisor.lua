@@ -129,9 +129,15 @@ function TA:UpdateExtrasTable(veh)
   elseif TA_ASSIGNMENTS[veh_name_wildcard] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name_wildcard]
     UTIL:Print('TA: Wildcard profile found for ' .. veh_name, false)
-  else
-    taExtras = TA_ASSIGNMENTS['DEFAULT']
-  end
+	else
+		if TA_ASSIGNMENTS['DEFAULT'] ~= nil then
+			taExtras = TA_ASSIGNMENTS['DEFAULT']
+			UTIL:Print("TA: using default profile for "..veh_name, false)
+		else
+			taExtras = { }
+			UTIL:Print("^3LVC WARNING: (TRAFFIC_ADVISOR) 'DEFAULT' table missing from TA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+		end
+	end
   
   hud_pattern = taExtras.hud_pattern or 1
   HUD:SetItemState("ta_pattern", hud_pattern)

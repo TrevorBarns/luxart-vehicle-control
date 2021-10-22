@@ -319,16 +319,11 @@ function EI:UpdateExtrasTable(veh)
 		extras = EXTRA_ASSIGNMENTS[veh_name_wildcard]
 		UTIL:Print("EI: Wildcard profile found for "..veh_name, false)
 	else
-		extras = EXTRA_ASSIGNMENTS['DEFAULT']
-	end
-	
-	for _, item in pairs(extras) do
-		if type(item) == 'table' then
-			
+		if EXTRA_ASSIGNMENTS['DEFAULT'] ~= nil then
+			extras = EXTRA_ASSIGNMENTS['DEFAULT']
+			UTIL:Print("EI: using default profile for "..veh_name, false)
 		else
-			if not DoesExtraExist(veh, item) then
-				HUD:ShowNotification("~b~LVC: ~y~Warning:~s~ Extra "..item.." does not exist for "..veh_name". Verify EI Settings.", true)
-			end
-		end
-	end
+			extras = { }
+			UTIL:Print("^3LVC WARNING: (EXTRA_INTEGRATION) 'DEFAULT' table missing from EXTRA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+		end	end
 end
