@@ -28,7 +28,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil then
 			TRAIL.custom_toggles_set = true
 			UTIL:Print('TS: Profile found for ' .. TRAIL:GetCabDisplayName(), false)
-		else TRAILERS[veh_name_wildcard] ~= nil then
+		elseif TRAILERS[veh_name_wildcard] ~= nil then
 			TRAIL.custom_toggles_set = true
 			UTIL:Print('TS: Wildcard profile found for ' .. TRAIL:GetCabDisplayName(), false)
 		else
