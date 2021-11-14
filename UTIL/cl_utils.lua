@@ -89,8 +89,14 @@ function UTIL:BuildToneOptions()
 	local temp_array = { }
 	local option
 	for i, id in pairs(approved_tones) do
-		option = SIRENS[id].Option or 1
-		temp_array[id] = option
+		if SIRENS[id] ~= nil then
+			option = SIRENS[id].Option or 1
+			temp_array[id] = option
+		else
+			HUD:ShowNotification("~b~LVC ~r~Error 204:~s~ tone does not exist. See console.", true)
+			UTIL:Print(string.format("^1LVC Error 204: approved tone '%d' does not exist. Verify all approved tones exist in SIRENS table.", id), true)
+			break;
+		end
 	end
 	tone_options = temp_array
 end
@@ -367,7 +373,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 		else
 			if IsVehicleExtraTurnedOn(veh, extra_id) then
 				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("UTIL:: Toggling extra "..extra_id.." off", false)
+				UTIL:Print("UTIL: Toggling extra "..extra_id.." off", false)
 			end	
 		end
 	end
