@@ -682,9 +682,10 @@ Citizen.CreateThread(function()
 											end
 											
 										else
-											local option = UTIL:GetToneOption(2)
+											local cur_tone = UTIL:GetToneAtPos(2)
+											local option = UTIL:GetToneOption(cur_tone)
 											if option == 3 or option == 4 then
-												new_tone = UTIL:GetNextSirenTone(2, veh, true) 
+												new_tone = UTIL:GetNextSirenTone(cur_tone, veh, true) 
 											else
 												new_tone = UTIL:GetToneAtPos(2)
 											end
