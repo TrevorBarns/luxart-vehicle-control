@@ -67,8 +67,8 @@ local actv_ind_timer = false
 local count_ind_timer = 0
 local delay_ind_timer = 180
 
-actv_lxsrnmute_temp = false
-srntone_temp = 0
+local actv_lxsrnmute_temp = false
+local srntone_temp = 0
 local dsrn_mute = true
 
 state_indic = {}
