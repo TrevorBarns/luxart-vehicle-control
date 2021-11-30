@@ -32,43 +32,43 @@ Citizen.CreateThread( function()
 					   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
 					   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
 					   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == "-0.0")) then						-- Is vehicle not reversing or at max reverse speed
-						TogVehicleExtras(veh, extras.Brake, true)
+						UTIL:TogVehicleExtras(veh, extras.Brake, true)
 					else
-						TogVehicleExtras(veh, extras.Brake, false)				
+						UTIL:TogVehicleExtras(veh, extras.Brake, false)				
 					end
 				elseif extras.Brake ~= nil then
-					TogVehicleExtras(veh, extras.Brake, false)
+					UTIL:TogVehicleExtras(veh, extras.Brake, false)
 				end
 				
 				--REVERSE LIGHTS
 				if player_is_emerg_driver and reverse_ei_enabled and extras.Reverse ~= nil then
 					accel_pedal = GetVehicleThrottleOffset(veh)
 					if accel_pedal < 0 or tostring(accel_pedal) == "-0.0" then
-						TogVehicleExtras(veh, extras.Reverse, true)
+						UTIL:TogVehicleExtras(veh, extras.Reverse, true)
 					else
-						TogVehicleExtras(veh, extras.Reverse, false)
+						UTIL:TogVehicleExtras(veh, extras.Reverse, false)
 					end
 				end					
 				
 				--INDICATORS
 				if player_is_emerg_driver and indicators_ei_enabled and extras.LIndicator ~= nil and extras.RIndicator ~= nil then
 					if state_indic[veh] == 1 then
-						TogVehicleExtras(veh, extras.LIndicator, true)
+						UTIL:TogVehicleExtras(veh, extras.LIndicator, true)
 					elseif state_indic[veh] == 2 then
-						TogVehicleExtras(veh, extras.RIndicator, true)				
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)				
 					elseif state_indic[veh] == 3 then
-						TogVehicleExtras(veh, extras.LIndicator, true)
-						TogVehicleExtras(veh, extras.RIndicator, true)								
+						UTIL:TogVehicleExtras(veh, extras.LIndicator, true)
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)								
 					else
-						TogVehicleExtras(veh, extras.LIndicator, false)
-						TogVehicleExtras(veh, extras.RIndicator, false)												
+						UTIL:TogVehicleExtras(veh, extras.LIndicator, false)
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, false)												
 					end
 				end
 				
 				--TAKEDOWNS
 				if player_is_emerg_driver and takedown_ei_enabled and tkd_masterswitch and extras.Takedowns ~= nil then
 					if state_tkd[veh] ~= nil then
-						TogVehicleExtras(veh, extras.Takedowns, state_tkd[veh])
+						UTIL:TogVehicleExtras(veh, extras.Takedowns, state_tkd[veh])
 					end
 				end
 				
@@ -77,23 +77,23 @@ Citizen.CreateThread( function()
 					if extras.DDoor ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
 							UTIL:Print("EI: Drivers door open, calling EI function.", false)
-							TogVehicleExtras(veh, extras.DDoor, true)
+							UTIL:TogVehicleExtras(veh, extras.DDoor, true)
 						else
-							TogVehicleExtras(veh, extras.DDoor, false)
+							UTIL:TogVehicleExtras(veh, extras.DDoor, false)
 						end
 					end
 					if extras.PDoor ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 1) > 0.0 then
-							TogVehicleExtras(veh, extras.PDoor, true)
+							UTIL:TogVehicleExtras(veh, extras.PDoor, true)
 						else
-							TogVehicleExtras(veh, extras.PDoor, false)
+							UTIL:TogVehicleExtras(veh, extras.PDoor, false)
 						end
 					end
 					if extras.Trunk ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 5) > 0.0 then
-							TogVehicleExtras(veh, extras.Trunk, true)
+							UTIL:TogVehicleExtras(veh, extras.Trunk, true)
 						else
-							TogVehicleExtras(veh, extras.Trunk, false)
+							UTIL:TogVehicleExtras(veh, extras.Trunk, false)
 						end
 					end
 				end
@@ -102,30 +102,30 @@ Citizen.CreateThread( function()
 				if player_is_emerg_driver and siren_controller_ei_enabled then 
 					if extras.MainSiren ~= nil then
 						if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
-							TogVehicleExtras(veh, extras.MainSiren, true)
+							UTIL:TogVehicleExtras(veh, extras.MainSiren, true)
 						else
-							TogVehicleExtras(veh, extras.MainSiren, false)
+							UTIL:TogVehicleExtras(veh, extras.MainSiren, false)
 						end
 					end					
 					if extras.AuxSiren ~= nil then
 						if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
-							TogVehicleExtras(veh, extras.AuxSiren, true)
+							UTIL:TogVehicleExtras(veh, extras.AuxSiren, true)
 						else
-							TogVehicleExtras(veh, extras.AuxSiren, false)
+							UTIL:TogVehicleExtras(veh, extras.AuxSiren, false)
 						end
 					end					
 					if extras.AirHorn ~= nil then
 						if actv_horn ~= nil and actv_horn and not actv_manu then
-							TogVehicleExtras(veh, extras.AirHorn, true)
+							UTIL:TogVehicleExtras(veh, extras.AirHorn, true)
 						else
-							TogVehicleExtras(veh, extras.AirHorn, false)
+							UTIL:TogVehicleExtras(veh, extras.AirHorn, false)
 						end
 					end					
 					if extras.Manu ~= nil then
 						if actv_manu ~= nil and actv_manu then
-							TogVehicleExtras(veh, extras.Manu, true)
+							UTIL:TogVehicleExtras(veh, extras.Manu, true)
 						else
-							TogVehicleExtras(veh, extras.Manu, false)
+							UTIL:TogVehicleExtras(veh, extras.Manu, false)
 						end
 					end
 				end
@@ -135,74 +135,6 @@ Citizen.CreateThread( function()
 		Citizen.Wait(1000)
     end
 end)
-
-
---[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
-	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
-	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
-	which can add and remove multiple different extras at once and adds flag to repair the vehicle
-	for extras that are too large and require the vehicle to be reloaded. Once it figures out the 
-	users config layout it calls itself again with the id we actually need toggled right now.]]
-function TogVehicleExtras(veh, extra_id, state, repair)
-	local repair = repair or false
-	if type(extra_id) == 'table' then
-		-- Toggle Same Extras Mode
-		if extra_id.toggle ~= nil then
-			-- Toggle Multiple Extras
-			if type(extra_id.toggle) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.toggle) do
-					TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
-				end
-			-- Toggle a Single Extra (no table)
-			else
-				TogVehicleExtras(veh, extra_id.toggle, state, extra_id.repair)
-			end
-		-- Toggle Different Extras Mode
-		elseif extra_id.add ~= nil and extra_id.remove ~= nil then
-			if type(extra_id.add) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.add) do
-					TogVehicleExtras(veh, singe_extra_id, state, extra_id.repair)
-				end
-			else
-				TogVehicleExtras(veh, extra_id.add, state, extra_id.repair)
-			end
-			if type(extra_id.remove) == 'table' then
-				for i, singe_extra_id in ipairs(extra_id.remove) do
-					TogVehicleExtras(veh, singe_extra_id, not state, extra_id.repair)
-				end
-			else
-				TogVehicleExtras(veh, extra_id.remove, not state, extra_id.repair)
-			end
-		end
-	else
-		if state then
-			if not IsVehicleExtraTurnedOn(veh, extra_id) then
-				local doors =  { }
-				if repair then
-					for i = 0,6 do
-						doors[i] = GetVehicleDoorAngleRatio(veh, i)
-					end
-				end
-				SetVehicleAutoRepairDisabled(veh, not repair)
-				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print("EI: Toggling extra "..extra_id.." on", false)
-				SetVehicleAutoRepairDisabled(veh, repair)
-				if repair then
-					for i = 0,6 do
-						if doors[i] > 0.0 then
-							SetVehicleDoorOpen(veh, i, false, false)
-						end
-					end
-				end
-			end
-		else
-			if IsVehicleExtraTurnedOn(veh, extra_id) then
-				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("EI: Toggling extra "..extra_id.." off", false)
-			end	
-		end
-	end
-end
 
 -----------AUTO BRAKE LIGHTS INTEGRATION------------
 Citizen.CreateThread(function()
