@@ -339,12 +339,12 @@ end
 ------------------------------------------------
 --[[Setter for JSON string backup of SIRENS table in case of reset since we modify SIREN table directly.]]
 function Storage:SetBackupTable()
-	SIRENS_backup = json.encode(SIRENS)
+	SIRENS_backup_string = json.encode(SIRENS)
 end
 
 --[[Setter for SIRENS table using backup string of table.]]
 function Storage:RestoreBackupTable()
-	SIRENS = json.decode(SIRENS_backup)
+	SIRENS = json.decode(SIRENS_backup_string)
 end
 
 --[[Setter for bool that is used in saving to determine if tone strings have been modified.]]
