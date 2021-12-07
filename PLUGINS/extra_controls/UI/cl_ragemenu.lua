@@ -128,7 +128,6 @@ Citizen.CreateThread(function()
 								confirm_r_msg = nil
 								confirm_d_msg = nil
 							end						  
-							EC:LoadSettings()
 						  end,
 						})			
 						RageUI.Button("Reset Profile Controls", "~r~Reset this profiles controls to default, preserves existing saves. Will override any unsaved settings.", {RightLabel = confirm_r_msg}, true, {
