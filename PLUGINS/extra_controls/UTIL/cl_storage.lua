@@ -16,11 +16,11 @@ local backup_table
 
 function EC:SaveSettings()
 	local save_paragrams = { }
-	for i, ec_toggle in pairs(EC.table) do
+	for i, shortcut in pairs(EC.table) do
 		local save_paragram	= { }
-		save_paragram.Name = ec_toggle.Name
-		save_paragram.Combo = ec_toggle.Combo
-		save_paragram.Key = ec_toggle.Key
+		save_paragram.Name = shortcut.Name
+		save_paragram.Combo = shortcut.Combo
+		save_paragram.Key = shortcut.Key
 		table.insert(save_paragrams, save_paragram)
 	end
 	SetResourceKvp(save_prefix..EC.profile_name, json.encode(save_paragrams))
@@ -30,12 +30,24 @@ function EC:LoadSettings()
 	local save_paragrams = GetResourceKvpString(save_prefix..EC.profile_name)
 	if save_paragrams ~= nil then
 		save_paragrams = json.decode(save_paragrams)
+		--Iterate through all EC tables in save_paragrams (KVP table)
 		for i, save_data in pairs(save_paragrams) do
 			save_data.used = false
-			for j, ec_toggle in pairs(EC.table) do
-				if save_data.Name == ec_toggle.Name then
-					ec_toggle.Combo = save_data.Combo
-					ec_toggle.Key = save_data.Key
+			--Iterate through current EC table (does the extra specific shortcut still exist)
+			for j, shortcut in pairs(EC.table) do
+				if save_data.Name == shortcut.Name then
+					if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
+						shortcut.Combo = save_data.Combo
+					else
+						HUD:ShowNotification(string.format("~b~LVC ~y~Warning: Unable to load control for '%s'. See console.", shortcut.Name), true)
+						UTIL:Print(string.format("^3LVC Warning:  The saved control for '%s' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s", shortcut.Name, shortcut.Combo), true)		
+					end
+					if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
+						shortcut.Key = save_data.Key
+					else
+						HUD:ShowNotification(string.format("~b~LVC ~y~Warning: Unable to load control for '%s'. See console.", shortcut.Name), true)
+						UTIL:Print(string.format("^3LVC Warning:  The saved control for '%s' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s", shortcut.Name, shortcut.Key), true)		
+					end
 					save_data.used = true
 				end
 			end
