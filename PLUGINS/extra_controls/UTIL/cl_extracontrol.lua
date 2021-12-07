@@ -80,6 +80,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
 		EC:UpdateExtrasTable(veh)
 		EC:SetBackupTable()
+		EC:LoadSettings()
 		EC:RefreshRageIndexs()
 	end
 end)
