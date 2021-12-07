@@ -15,7 +15,9 @@ change traffic advisor state through extras.
 TA = {}
 local taExtras = {}
 local temp_hud_disable
-preserve_ta_state = false
+TA.preserve_ta_state = false
+TA.sync_ta_state = false
+TA.block_incorrect_combo = false
 state_ta = {}
 
 Citizen.CreateThread(function()
@@ -25,7 +27,32 @@ Citizen.CreateThread(function()
 				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
 					HUD:SetItemState("ta", false)
 					temp_hud_disable = true
-					if not save_ta_state then
+					if not TA.preserve_ta_state then
+						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
+						state_ta[veh] = 0
+					end
+				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
+					HUD:SetItemState("ta", state_ta[veh])
+					temp_hud_disable = false
+				end
+			else
+				Citizen.Wait(500)
+			end
+		else
+			Citizen.Wait(500)
+		end
+		Citizen.Wait(0)
+	end
+end) 
+
+Citizen.CreateThread(function()
+	while ta_masterswitch do 
+		if player_is_emerg_driver then
+			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
+				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
+					HUD:SetItemState("ta", false)
+					temp_hud_disable = true
+					if not TA.preserve_ta_state then
 						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						state_ta[veh] = 0
 					end
@@ -46,7 +73,7 @@ end)
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
 						UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
@@ -65,7 +92,7 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
 						UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
@@ -84,7 +111,7 @@ if ta_masterswitch then
 	
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
-			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() then
+			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
 						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)

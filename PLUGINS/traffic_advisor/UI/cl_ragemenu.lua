@@ -31,20 +31,29 @@ Citizen.CreateThread(function()
 				HUD:SetItemState("ta", state_ta[veh])
 			  end,
 			})
-			RageUI.Checkbox('Save TA State', "Preserves traffic advisor state on lights toggling. Unchecking this will turn TA extras off when lights are turned off.", save_ta_state, {}, {
+			--[[
+			RageUI.Checkbox('Disable Incorrect Combo Keys', "Disables key mapping when a combo key that is not assigned is pressed.", block_incorrect_combo, {}, {
 			  onChecked = function()
-				save_ta_state = true
+				block_incorrect_combo = true
 			  end,          
 			  onUnChecked = function()
-				save_ta_state = false
+				block_incorrect_combo = false
+			  end
+			})	]]			
+			RageUI.Checkbox('Save TA State', "Preserves traffic advisor state on lights toggling. Unchecking this will turn TA extras off when lights are turned off.", TA.preserve_ta_state, {}, {
+			  onChecked = function()
+				TA.preserve_ta_state = true
+			  end,          
+			  onUnChecked = function()
+				TA.preserve_ta_state = false
 			  end
 			})					
 			RageUI.Checkbox('Sync TA State', "~o~Coming Soon~c ~ When able, sync TA state to nearby vehicles.", false, {Enabled = false}, {
 			  onChecked = function()
-				sync_ta_state = true
+				TA.sync_ta_state = true
 			  end,          
 			  onUnChecked = function()
-				sync_ta_state = false
+				TA.sync_ta_state = false
 			  end
 			})
         end)
