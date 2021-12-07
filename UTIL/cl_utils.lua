@@ -160,11 +160,11 @@ function UTIL:SetToneByPos(tone_string, pos)
 			end
 		else
 			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
-			UTIL:Print("^3Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+			UTIL:Print("^3LVC Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
-		UTIL:Print("^3Warning 404: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.." in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.", false)
+		UTIL:Print("^3LVC Warning 404: Attempted to set tone "..tone_string.." but, was unable to locate approved_tones table. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
 	end
 end
 
@@ -203,8 +203,8 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
-		UTIL:Print("^3Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to locate in approved_tones. See console.", false)
+		UTIL:Print("^3LVC Warning 504: Attempted to set tone "..tone.." but, was unable to located pos: "..tone_id.." in approved_tones. (UTIL:SetToneByPos("..tone..", "..tone_id..")", true)
 	end
 end
 
