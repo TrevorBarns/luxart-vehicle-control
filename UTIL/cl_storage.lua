@@ -26,14 +26,7 @@ local profiles = { }
 RegisterCommand('lvcfactoryreset', function(source, args)
 	local choice = HUD:FrontEndAlert("Warning", "Are you sure you want to delete all saved LVC data and Factory Reset?")
 	if choice then
-		local handle = StartFindKvp(save_prefix);
-		local key = FindKvp(handle)
-		while key ~= nil do
-			DeleteResourceKvp(key)
-			UTIL:Print("LVC Info: Deleting Key \"" .. key .. "\"", true)
-			key = FindKvp(handle)
-			Citizen.Wait(0)
-		end
+		Storage:DeleteKVPs(save_prefix)
 		Storage:ResetSettings()
 		UTIL:Print("Success: cleared all save data.", true)
 		HUD:ShowNotification("~g~Success~s~: You have deleted all save data and reset LVC.", true)
@@ -65,6 +58,17 @@ Citizen.CreateThread(function()
 	TriggerServerEvent('lvc:GetRepoVersion_s')
 	Storage:FindSavedProfiles()
 end)
+--[[Function for Deleting KVPs]]
+function Storage:DeleteKVPs(prefix)
+	local handle = StartFindKvp(prefix);
+	local key = FindKvp(handle)
+	while key ~= nil do
+		DeleteResourceKvp(key)
+		UTIL:Print("LVC Info: Deleting Key \"" .. key .. "\"", true)
+		key = FindKvp(handle)
+		Citizen.Wait(0)
+	end
+end
 
 --[[Getter for current version used in RageUI.]]
 function Storage:GetCurrentVersion()
