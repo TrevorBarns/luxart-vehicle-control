@@ -12,8 +12,9 @@ states.
 ---------------------------------------------------
 ]]
 
-local curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
 local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
+local curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+local repo_version = ""
 
 local plugin_count = 0
 local plugins_cv = { }		-- table of active plugins current versions plugins_cv = { ['<pluginname>'] = <version> }
