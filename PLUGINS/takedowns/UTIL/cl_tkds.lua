@@ -161,7 +161,7 @@ function TKDS:DrawTakeDown(veh)
 		light_direction = vector3(light_end_pos-light_start_pos)	
 		DrawSpotLight(light_start_pos, light_direction, 200, 200, 255, tkd_distance+0.0, tkd_intensity+0.0, 0.0, tkd_radius+0.0, tkd_falloff+veh_dist[veh]/2+0.0)
 
-		if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' then
+		if debug_mode then
 			DrawLine(light_start_pos, light_end_pos, 255, 0, 0, 255)
 		end
 	end

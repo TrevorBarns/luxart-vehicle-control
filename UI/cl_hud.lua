@@ -216,7 +216,7 @@ end )
 --On screen GTA V notification
 function HUD:ShowNotification(text, override)
 	override = override or false
-	if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+	if debug_mode or override then
 		SetNotificationTextEntry("STRING")
 		AddTextComponentString(text)
 		DrawNotification(false, true)

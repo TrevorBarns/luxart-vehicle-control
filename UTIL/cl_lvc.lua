@@ -30,6 +30,7 @@ last_veh = nil
 veh = nil
 trailer = nil
 player_is_emerg_driver = false
+debug_mode = false
 
 --	MAIN SIREN SETTINGS
 tone_main_reset_standby 	= reset_to_standby_default
@@ -247,6 +248,19 @@ end)
 
 
 --------------REGISTERED COMMANDS---------------
+--Toggle Debug Mode
+RegisterCommand('lvcdebug', function(source, args)
+	debug_mode = not debug_mode
+	if debug_mode then
+		HUD:ShowNotification("~y~~h~Info:~h~ ~s~debug mode enabled. See console.", true)
+		UTIL:Print("^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to 'refresh' to see fxmanifest changes.", true)
+	else
+		HUD:ShowNotification("~y~~h~Info:~h~ ~s~debug mode disabled. See console.", true)
+		UTIL:Print("^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to 'refresh' to see fxmanifest changes.", true)
+	end
+	TriggerEvent('lvc:onVehicleChange')
+end)
+
 --Toggle LUX lock command
 RegisterCommand('lvclock', function(source, args)
 	CopyVehicleDamages(veh, 1000)
@@ -322,6 +336,7 @@ end
 --On resource start/restart
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
+	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
 	TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 	SetNuiFocus( false )
 	UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)

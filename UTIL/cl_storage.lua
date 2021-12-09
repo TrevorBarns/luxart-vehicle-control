@@ -34,7 +34,7 @@ RegisterCommand('lvcfactoryreset', function(source, args)
 end)
 
 --Prints all KVP keys and values to console
-if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+if debug_mode or override then
 	RegisterCommand('lvcdumpkvp', function(source, args)
 		local handle = StartFindKvp(save_prefix);
 		local key = FindKvp(handle)

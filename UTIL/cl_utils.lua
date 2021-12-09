@@ -295,7 +295,7 @@ end
 --[[Prints to FiveM console, prints more when debug flag is enabled or overridden for important information]]
 function UTIL:Print(string, override)
 	override = override or false
-	if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+	if debug_mode or override then
 		print(string)
 	end
 end
