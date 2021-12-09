@@ -46,7 +46,7 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver and #EC.table > 0 then
 			for _, tog_table in ipairs(EC.table) do
 				if tog_table.Combo == false or IsControlPressed(0, tog_table.Combo) then
-					if IsControlJustPressed(0, tog_table.Key) then
+					if IsControlJustPressed(0, tog_table.Key) and not key_lock then
 						if tog_table.State == nil then
 							tog_table.State = true
 						else
