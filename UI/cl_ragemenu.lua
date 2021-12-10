@@ -55,7 +55,7 @@ local PMANU
 local SMANU
 local AUX
 
-Keys.Register(open_menu_key, open_menu_key, 'LVC: Open Menu', function()
+Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
 	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 and settings_init then
 		if UTIL:GetVehicleProfileName() == "DEFAULT" then
 			local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
