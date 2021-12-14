@@ -12,7 +12,7 @@ PURPOSE: Handle version checking, syncing sirens,
 and opening links.
 ---------------------------------------------------
 ]]
-RegisterServerEvent("lvc:SetTAState_s")
-AddEventHandler("lvc:SetTAState_s", function(newstate)
-  TriggerClientEvent("lvc:SetTAState_c", -1, source, newstate)
+RegisterServerEvent('lvc:SetTAState_s')
+AddEventHandler('lvc:SetTAState_s', function(newstate)
+  TriggerClientEvent('lvc:SetTAState_c', -1, source, newstate)
 end)

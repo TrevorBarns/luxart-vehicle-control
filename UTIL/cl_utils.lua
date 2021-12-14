@@ -40,7 +40,7 @@ end
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+	local veh_name_wildcard = string.gsub(veh_name, '%d+', '#')
 
 	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
 		approved_tones = SIREN_ASSIGNMENTS[veh_name]
@@ -51,7 +51,7 @@ function UTIL:UpdateApprovedTones(veh)
 	else 
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
-		HUD:ShowNotification("~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \"~o~"..veh_name.."~s~\".", false)
+		HUD:ShowNotification('~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \'~o~'..veh_name..'~s~\'.', false)
 	end
 	
 	if not UTIL:IsApprovedTone('MAIN_MEM') then
@@ -93,8 +93,8 @@ function UTIL:BuildToneOptions()
 			option = SIRENS[id].Option or 1
 			temp_array[id] = option
 		else
-			HUD:ShowNotification("~b~LVC ~r~Error 204:~s~ tone does not exist. See console.", false)
-			UTIL:Print(string.format("^1LVC Error: approved tone '%d' does not exist. Verify all approved tones exist in SIRENS table.", id))
+			HUD:ShowNotification('~b~LVC ~r~Error 204:~s~ tone does not exist. See console.', false)
+			UTIL:Print(string.format('^1LVC Error: approved tone '%d' does not exist. Verify all approved tones exist in SIRENS table.', id))
 			break;
 		end
 	end
@@ -159,12 +159,12 @@ function UTIL:SetToneByPos(tone_string, pos)
 				tone_ARHRN_id = approved_tones[pos]
 			end
 		else
-			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
-			UTIL:Print("^3LVC Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+			HUD:ShowNotification('~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.', false)
+			UTIL:Print('^3LVC Warning 403: Too little sirens assigned. (UTIL:SetToneByPos('..tone_string..', '..pos..')', true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.", false)
-		UTIL:Print("^3LVC Warning 404: Attempted to set tone "..tone_string.." but, was unable to locate approved_tones table. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		HUD:ShowNotification('~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.', false)
+		UTIL:Print('^3LVC Warning 404: Attempted to set tone '..tone_string..' but, was unable to locate approved_tones table. (UTIL:SetToneByPos('..tone_string..', '..pos..')', true)
 	end
 end
 
@@ -203,8 +203,8 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to locate in approved_tones. See console.", false)
-		UTIL:Print("^3LVC Warning 504: Attempted to set tone "..tone.." but, was unable to located pos: "..tone_id.." in approved_tones. (UTIL:SetToneByPos("..tone..", "..tone_id..")", true)
+		HUD:ShowNotification('~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to locate in approved_tones. See console.', false)
+		UTIL:Print('^3LVC Warning 504: Attempted to set tone '..tone..' but, was unable to located pos: '..tone_id..' in approved_tones. (UTIL:SetToneByPos('..tone..', '..tone_id..')', true)
 	end
 end
 
@@ -360,7 +360,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 				end
 				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print("UTIL: Toggling extra "..extra_id.." on", false)
+				UTIL:Print('UTIL: Toggling extra '..extra_id..' on', false)
 				SetVehicleAutoRepairDisabled(veh, false)
 				if repair then
 					for i = 0,6 do
@@ -373,7 +373,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 		else
 			if IsVehicleExtraTurnedOn(veh, extra_id) then
 				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("UTIL: Toggling extra "..extra_id.." off", false)
+				UTIL:Print('UTIL: Toggling extra '..extra_id..' off', false)
 			end	
 		end
 	end

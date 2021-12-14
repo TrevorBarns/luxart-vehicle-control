@@ -11,7 +11,7 @@ PURPOSE: Handle plugin storage.
 ---------------------------------------------------
 ]]
 
-local save_prefix = "lvc_"..community_id.."_EC_"
+local save_prefix = 'lvc_'..community_id..'_EC_'
 local backup_table
 
 function EC:SaveSettings()
@@ -39,21 +39,21 @@ function EC:LoadSettings()
 					if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
 						shortcut.Combo = save_data.Combo
 					else
-						HUD:ShowNotification(string.format("~b~LVC ~y~Warning: Unable to load control for '%s'. See console.", shortcut.Name), true)
-						UTIL:Print(string.format("^3LVC Warning:  The saved control for '%s' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s", shortcut.Name, shortcut.Combo), true)		
+						HUD:ShowNotification(string.format('~b~LVC ~y~Warning: Unable to load control for "%s". See console.', shortcut.Name), true)
+						UTIL:Print(string.format('^3LVC Warning:  The saved control for "%s" is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s', shortcut.Name, shortcut.Combo), true)		
 					end
 					if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
 						shortcut.Key = save_data.Key
 					else
-						HUD:ShowNotification(string.format("~b~LVC ~y~Warning: Unable to load control for '%s'. See console.", shortcut.Name), true)
-						UTIL:Print(string.format("^3LVC Warning:  The saved control for '%s' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s", shortcut.Name, shortcut.Key), true)		
+						HUD:ShowNotification(string.format('~b~LVC ~y~Warning: Unable to load control for "%s". See console.', shortcut.Name), true)
+						UTIL:Print(string.format('^3LVC Warning:  The saved control for "%s" is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s', shortcut.Name, shortcut.Key), true)		
 					end
 					save_data.used = true
 				end
 			end
 			
 			if not save_data.used then
-				UTIL:Print("~b~LVC ~y~Info: found save data that did not align with current Extra Controls configuration. Likely old data that has since been changed by a server developer. You can delete this by re-saving.", true)
+				UTIL:Print('~b~LVC ~y~Info: found save data that did not align with current Extra Controls configuration. Likely old data that has since been changed by a server developer. You can delete this by re-saving.', true)
 			end
 		end
 		EC:RefreshRageIndexs()

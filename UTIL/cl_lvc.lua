@@ -1,11 +1,11 @@
--- THE "I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000"
+-- THE 'I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000'
 Citizen.CreateThread(function()
 	local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
-	AddTextEntry("lvc_wrong_branch","~y~THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED\nFOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE\nLATEST STABLE RELEASE AT:\n~g~github.com/TrevorBarns/luxart-vehicle-control~p~~h~/releases~h~")
+	AddTextEntry('lvc_wrong_branch','~y~THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED\nFOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE\nLATEST STABLE RELEASE AT:\n~g~github.com/TrevorBarns/luxart-vehicle-control~p~~h~/releases~h~')
 	while not experimental do
-		HUD:ShowText(0.5, 0.0, 0, "~b~LVC~w~: ~o~Warning~w~: This is the development branch (master)", 0.5)
-		HUD:ShowText(0.5, 0.04, 0, nil, nil, "lvc_wrong_branch")
-		HUD:ShowText(0.5, 0.15, 0, "~b~TO MUTE THIS~w~: Set CONVAR '~o~experimental~w~' to '~o~true~w~' in fxmanifest.", 0.3)
+		HUD:ShowText(0.5, 0.0, 0, '~b~LVC~w~: ~o~Warning~w~: This is the development branch (master)', 0.5)
+		HUD:ShowText(0.5, 0.04, 0, nil, nil, 'lvc_wrong_branch')
+		HUD:ShowText(0.5, 0.15, 0, '~b~TO MUTE THIS~w~: Set CONVAR "~o~experimental~w~" to "~o~true~w~" in fxmanifest.', 0.3)
 		Citizen.Wait(0)
 	end
 end)
@@ -94,7 +94,7 @@ local snd_airmanu = {}
 -- Disables controls faster than previous thread. 
 Citizen.CreateThread(function()
 	if GetCurrentResourceName() == 'lvc' then	
-		if community_id ~= nil and community_id ~= "" then
+		if community_id ~= nil and community_id ~= '' then
 			while true do
 				playerped = GetPlayerPed(-1)	
 				--IS IN VEHICLE
@@ -129,13 +129,13 @@ Citizen.CreateThread(function()
 			end
 		else
 			Citizen.Wait(1000)
-			HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.", true)
-			UTIL:Print("^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.", true)
+			HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.', true)
+			UTIL:Print('^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.', true)
 		end
 	else
 		Citizen.Wait(1000)
-		HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.", true)
-		UTIL:Print("^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS '^3lvc^1' (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.", true)
+		HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.', true)
+		UTIL:Print('^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS "^3lvc^1" (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.', true)
 	end
 end)
 
@@ -172,8 +172,8 @@ Citizen.CreateThread(function()
 				SetLxSirenStateForVeh(veh, 0)
 				SetPowercallStateForVeh(veh, 0)
 				SetAirManuStateForVeh(veh, 0)	
-				HUD:SetItemState("siren", false)
-				HUD:SetItemState("horn", false)
+				HUD:SetItemState('siren', false)
+				HUD:SetItemState('horn', false)
 				count_bcast_timer = delay_bcast_timer
 				Citizen.Wait(1000)		
 			end
@@ -189,7 +189,7 @@ Citizen.CreateThread(function()
 		while activity_reminder_index > 1 and player_is_emerg_driver do
 			if IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 then
 				if last_activity_timer < 1 then
-					PlayAudio("Reminder", activity_reminder_volume) 
+					PlayAudio('Reminder', activity_reminder_volume) 
 					SetActivityTimer()
 				end
 			end
@@ -241,9 +241,9 @@ AddEventHandler('lvc:onVehicleChange', function()
 	Storage:ResetSettings()
 	Storage:LoadSettings()
 	UTIL:BuildToneOptions()
-	SetVehRadioStation(veh, "OFF")
+	SetVehRadioStation(veh, 'OFF')
 	Citizen.Wait(500)
-	SetVehRadioStation(veh, "OFF")
+	SetVehRadioStation(veh, 'OFF')
 end)
 
 
@@ -252,11 +252,11 @@ end)
 RegisterCommand('lvcdebug', function(source, args)
 	debug_mode = not debug_mode
 	if debug_mode then
-		HUD:ShowNotification("~y~~h~Info:~h~ ~s~debug mode enabled. See console.", true)
-		UTIL:Print("^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to 'refresh' to see fxmanifest changes.", true)
+		HUD:ShowNotification('~y~~h~Info:~h~ ~s~debug mode enabled. See console.', true)
+		UTIL:Print('^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to "refresh" to see fxmanifest changes.', true)
 	else
-		HUD:ShowNotification("~y~~h~Info:~h~ ~s~debug mode disabled. See console.", true)
-		UTIL:Print("^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to 'refresh' to see fxmanifest changes.", true)
+		HUD:ShowNotification('~y~~h~Info:~h~ ~s~debug mode disabled. See console.', true)
+		UTIL:Print('^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to "refresh" to see fxmanifest changes.', true)
 	end
 	TriggerEvent('lvc:onVehicleChange')
 end)
@@ -266,29 +266,29 @@ RegisterCommand('lvclock', function(source, args)
 	CopyVehicleDamages(veh, 1000)
 	if player_is_emerg_driver then	
 		key_lock = not key_lock
-		PlayAudio("Key_Lock", lock_volume, true) 
-		HUD:SetItemState("lock", key_lock) 
+		PlayAudio('Key_Lock', lock_volume, true) 
+		HUD:SetItemState('lock', key_lock) 
 		--if HUD is visible do not show notification
 		if not HUD:GetHudState() then
 			if key_lock then
-				HUD:ShowNotification("Siren Control Box: ~r~Locked", true)
+				HUD:ShowNotification('Siren Control Box: ~r~Locked', true)
 			else
-				HUD:ShowNotification("Siren Control Box: ~g~Unlocked", true)				
+				HUD:ShowNotification('Siren Control Box: ~g~Unlocked', true)				
 			end
 		end
 	end
 end)
 
-RegisterKeyMapping("lvclock", "LVC: Lock out controls", "keyboard", lockout_default_hotkey)
+RegisterKeyMapping('lvclock', 'LVC: Lock out controls', 'keyboard', lockout_default_hotkey)
 
 ------------------------------------------------
 --Dynamically Run RegisterCommand and KeyMapping functions for all 14 possible sirens
---Then at runtime "slide" all sirens down removing any restricted sirens.
+--Then at runtime 'slide' all sirens down removing any restricted sirens.
 function RegisterKeyMaps()
 	for i, _ in ipairs(SIRENS) do
 		if i ~= 1 then
-			local command = "_lvc_siren_" .. i-1
-			local description = "LVC Siren: " .. MakeOrdinal(i-1)
+			local command = '_lvc_siren_' .. i-1
+			local description = 'LVC Siren: ' .. MakeOrdinal(i-1)
 			
 			RegisterCommand(command, function(source, args)
 				if veh ~= nil and player_is_emerg_driver ~= nil then
@@ -299,22 +299,22 @@ function RegisterKeyMaps()
 							if tone_option ~= nil then
 								if tone_option == 1 or tone_option == 3 then
 									if ( state_lxsiren[veh] ~= proposed_tone or state_lxsiren[veh] == 0 ) then
-										HUD:SetItemState("siren", true)
-										PlayAudio("Upgrade", upgrade_volume)
+										HUD:SetItemState('siren', true)
+										PlayAudio('Upgrade', upgrade_volume)
 										SetLxSirenStateForVeh(veh, proposed_tone)
 										count_bcast_timer = delay_bcast_timer
 									else
 										if state_pwrcall[veh] == 0 then
-											HUD:SetItemState("siren", false)
+											HUD:SetItemState('siren', false)
 										end
-										PlayAudio("Downgrade", downgrade_volume)
+										PlayAudio('Downgrade', downgrade_volume)
 										SetLxSirenStateForVeh(veh, 0)
 										count_bcast_timer = delay_bcast_timer				
 									end
 								end
 							else
-								HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Nil value caught.\ndetails: (" .. i .. "," .. proposed_tone .. "," .. UTIL:GetVehicleProfileName() .. ")", true)
-								HUD:ShowNotification("~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Try switching vehicles and switching back OR loading profile settings (if save present).", true)
+								HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Nil value caught.\ndetails: (' .. i .. ',' .. proposed_tone .. ',' .. UTIL:GetVehicleProfileName() .. ')', true)
+								HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Try switching vehicles and switching back OR loading profile settings (if save present).', true)
 							end
 						end
 					end
@@ -323,11 +323,11 @@ function RegisterKeyMaps()
 			
 			--CHANGE BELOW if you'd like to change which keys are used for example NUMROW1 through 0
 			if i > 0 and i < 11 and main_siren_set_register_keys_set_defaults then
-				RegisterKeyMapping(command, description, "keyboard", i-1)
+				RegisterKeyMapping(command, description, 'keyboard', i-1)
 			elseif i == 11 and main_siren_set_register_keys_set_defaults then
-				RegisterKeyMapping(command, description, "keyboard", "0")		
+				RegisterKeyMapping(command, description, 'keyboard', '0')		
 			else
-				RegisterKeyMapping(command, description, "keyboard", '')				
+				RegisterKeyMapping(command, description, 'keyboard', '')				
 			end
 		end
 	end
@@ -343,7 +343,7 @@ Citizen.CreateThread(function()
 	RegisterKeyMaps()
 	Storage:SetBackupTable()
 	local resourceName = string.lower( GetCurrentResourceName() )
-	SendNUIMessage( { _type = "setResourceName", name = resourceName } )
+	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
 end)
 
 ------------------------------------------------
@@ -356,10 +356,10 @@ end
 ---------------------------------------------------------------------
 --Make number into ordinal number, used for FiveM RegisterKeys
 function MakeOrdinal(number)
-	local sufixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" }
+	local sufixes = { 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' }
 	local mod = (number % 100)
 	if mod == 11 or mod == 12 or mod == 13 then
-		return number .. "th"
+		return number .. 'th'
 	else
 		return number..sufixes[(number % 10) + 1]
 	end
@@ -369,7 +369,7 @@ end
 function PlayAudio(soundFile, soundVolume, schemeless)
 	local schemeless = schemeless or false
 	if not schemeless then
-		soundFile = button_sfx_scheme .. "/" .. soundFile;
+		soundFile = button_sfx_scheme .. '/' .. soundFile;
 	end
 	SendNUIMessage({
 	  _type  = 'audio',
@@ -655,10 +655,10 @@ Citizen.CreateThread(function()
 							------ TOG DFLT SRN LIGHTS ------
 							if IsDisabledControlJustReleased(0, 85) then
 								if IsVehicleSirenOn(veh) then
-									PlayAudio("Off", off_volume)
+									PlayAudio('Off', off_volume)
 									--	SET NUI IMAGES
-									HUD:SetItemState("switch", false) 
-									HUD:SetItemState("siren", false) 
+									HUD:SetItemState('switch', false) 
+									HUD:SetItemState('siren', false) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, false)
 									if trailer ~= nil and trailer ~= 0 then
@@ -666,9 +666,9 @@ Citizen.CreateThread(function()
 									end
 
 								else
-									PlayAudio("On", on_volume) -- On
+									PlayAudio('On', on_volume) -- On
 									--	SET NUI IMAGES
-									HUD:SetItemState("switch", true) 
+									HUD:SetItemState('switch', true) 
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, true)
 									if trailer ~= nil and trailer ~= 0 then
@@ -682,8 +682,8 @@ Citizen.CreateThread(function()
 								if state_lxsiren[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
 										local new_tone = nil
-										PlayAudio("Upgrade", upgrade_volume) 
-										HUD:SetItemState("siren", true) 
+										PlayAudio('Upgrade', upgrade_volume) 
+										HUD:SetItemState('siren', true) 
 										if not tone_main_reset_standby then
 											--	GET THE SAVED TONE VERIFY IT IS APPROVED, AND NOT DISABLED / BUTTON ONLY
 											local tone_mem_id = UTIL:GetToneID('MAIN_MEM')
@@ -708,10 +708,10 @@ Citizen.CreateThread(function()
 										end
 									end
 								else
-									PlayAudio("Downgrade", downgrade_volume) 
+									PlayAudio('Downgrade', downgrade_volume) 
 									-- ONLY CHANGE NUI STATE IF PWRCALL IS OFF AS WELL
 									if state_pwrcall[veh] == 0 then
-										HUD:SetItemState("siren", false) 
+										HUD:SetItemState('siren', false) 
 									end
 									if not tone_main_reset_standby then
 										UTIL:SetToneByID('MAIN_MEM', state_lxsiren[veh])
@@ -724,15 +724,15 @@ Citizen.CreateThread(function()
 							elseif IsDisabledControlJustReleased(0, 172) and not IsMenuOpen() then 
 								if state_pwrcall[veh] == 0 then
 									if IsVehicleSirenOn(veh) then
-										PlayAudio("Upgrade", upgrade_volume) 
-										HUD:SetItemState("siren", true) 
+										PlayAudio('Upgrade', upgrade_volume) 
+										HUD:SetItemState('siren', true) 
 										SetPowercallStateForVeh(veh, UTIL:GetToneID('AUX'))
 										count_bcast_timer = delay_bcast_timer
 									end
 								else
-									PlayAudio("Downgrade", downgrade_volume) 
+									PlayAudio('Downgrade', downgrade_volume) 
 									if state_lxsiren[veh] == 0 then
-										HUD:SetItemState("siren", false) 
+										HUD:SetItemState('siren', false) 
 									end 
 									SetPowercallStateForVeh(veh, 0)
 								end
@@ -742,12 +742,12 @@ Citizen.CreateThread(function()
 							-- BROWSE LX SRN TONES
 							if state_lxsiren[veh] > 0 then
 								if IsDisabledControlJustReleased(0, 80) then
-									PlayAudio("Upgrade", upgrade_volume)
-									HUD:SetItemState("horn", false) 
+									PlayAudio('Upgrade', upgrade_volume)
+									HUD:SetItemState('horn', false) 
 									SetLxSirenStateForVeh(veh, UTIL:GetNextSirenTone(state_lxsiren[veh], veh, true))
 									count_bcast_timer = delay_bcast_timer
 								elseif IsDisabledControlPressed(0, 80) then
-									HUD:SetItemState("horn", true) 
+									HUD:SetItemState('horn', true) 
 								end
 							end
 										
@@ -756,16 +756,16 @@ Citizen.CreateThread(function()
 								if IsDisabledControlPressed(0, 80) then
 									SetActivityTimer()
 									actv_manu = true
-									HUD:SetItemState("siren", true) 
+									HUD:SetItemState('siren', true) 
 								else
 									if actv_manu then
-										HUD:SetItemState("siren", false) 
+										HUD:SetItemState('siren', false) 
 									end	
 									actv_manu = false
 								end
 							else
 								if actv_manu then
-									HUD:SetItemState("siren", false) 
+									HUD:SetItemState('siren', false) 
 								end							
 								actv_manu = false
 							end
@@ -774,10 +774,10 @@ Citizen.CreateThread(function()
 							if IsDisabledControlPressed(0, 86) then
 								SetActivityTimer()
 								actv_horn = true
-								HUD:SetItemState("horn", true) 
+								HUD:SetItemState('horn', true) 
 							else
 								if actv_horn then
-									HUD:SetItemState("horn", false) 
+									HUD:SetItemState('horn', false) 
 								end
 								actv_horn = false
 							end
@@ -786,18 +786,18 @@ Citizen.CreateThread(function()
 							--AIRHORN AND MANU BUTTON SFX
 							if airhorn_button_SFX then
 								if IsDisabledControlJustPressed(0, 86) then
-									PlayAudio("Press", upgrade_volume)									
+									PlayAudio('Press', upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 86) then
-									PlayAudio("Release", upgrade_volume)									
+									PlayAudio('Release', upgrade_volume)									
 								end
 							end							
 							if manu_button_SFX and state_lxsiren[veh] == 0 then
 								if IsDisabledControlJustPressed(0, 80) then
-									PlayAudio("Press", upgrade_volume)									
+									PlayAudio('Press', upgrade_volume)									
 								end								
 								if IsDisabledControlJustReleased(0, 80) then
-									PlayAudio("Release", upgrade_volume)									
+									PlayAudio('Release', upgrade_volume)									
 								end
 							end
 						elseif not radio_wheel_active then
@@ -806,8 +806,8 @@ Citizen.CreateThread(function()
 								IsDisabledControlJustReleased(0, 19) or 
 								IsDisabledControlJustReleased(0, 85)) then
 									if locked_press_count % reminder_rate == 0 then
-										PlayAudio("Locked_Press", lock_reminder_volume, true) -- lock reminder
-										HUD:ShowNotification("~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.", true)
+										PlayAudio('Locked_Press', lock_reminder_volume, true) -- lock reminder
+										HUD:ShowNotification('~y~~h~Reminder:~h~ ~s~Your siren control box is ~r~locked~s~.', true)
 									end
 									locked_press_count = locked_press_count + 1
 							end								
@@ -886,10 +886,10 @@ Citizen.CreateThread(function()
 								local cstate = state_indic[veh]
 								if cstate == ind_state_h then
 									state_indic[veh] = ind_state_o
-									PlayAudio("Hazards_Off", hazards_volume, true) -- Hazards Off
+									PlayAudio('Hazards_Off', hazards_volume, true) -- Hazards Off
 								else
 									state_indic[veh] = ind_state_h
-									PlayAudio("Hazards_On", hazards_volume, true) -- Hazards On
+									PlayAudio('Hazards_On', hazards_volume, true) -- Hazards On
 								end
 								TogIndicStateForVeh(veh, state_indic[veh])
 								actv_ind_timer = false

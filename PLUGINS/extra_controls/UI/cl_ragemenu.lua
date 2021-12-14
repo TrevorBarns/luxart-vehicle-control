@@ -11,7 +11,7 @@ PURPOSE: Handle RageUI
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),"Luxart Vehicle Control", "Extra Controls Settings"))
+RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', 'Extra Controls Settings'))
 RMenu:Get('lvc', 'extracontrols'):DisplayGlare(false)
 RMenu:Get('lvc', 'extracontrols'):SetTotalItemsPerPage(13)
 
@@ -32,7 +32,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 		if player_is_emerg_driver and veh ~= nil then
 			if #EC.table > 0 then
 				for i, extra_shortcut in ipairs(EC.table) do
-					RMenu.Add('lvc', 'extracontrols'..'_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),"Luxart Vehicle Control", extra_shortcut.Name))
+					RMenu.Add('lvc', 'extracontrols'..'_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
 					RMenu:Get('lvc', 'extracontrols'..'_'..i):DisplayGlare(false)
 				end
 			end
@@ -70,7 +70,7 @@ Citizen.CreateThread(function()
 	local choice
     while true do
 			RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'), function()
-				RageUI.Checkbox('Enabled', "Toggle extra controls functionality.", EC.controls_enabled, {}, {
+				RageUI.Checkbox('Enabled', 'Toggle extra controls functionality.', EC.controls_enabled, {}, {
 				onChecked = function()
 					EC.controls_enabled = true
 				end,          
@@ -80,29 +80,29 @@ Citizen.CreateThread(function()
 				})
 				
 				if allow_custom_controls then
-					RageUI.Separator("Shortcuts")
+					RageUI.Separator('Shortcuts')
 					
 					if #EC.table > 0 then
 						for i, extra_shortcut in ipairs(EC.table) do
-							RageUI.Button(extra_shortcut.Name, "Change shortcut's settings.", {RightLabel = "→→→"}, true, {
+							RageUI.Button(extra_shortcut.Name, 'Change shortcut\'s settings.', {RightLabel = '→→→'}, true, {
 							  onSelected = function()
 							  end,
 							}, RMenu:Get('lvc', 'extracontrols'..'_'..i))					
 						end
-						RageUI.Separator("Storage Management")
-						RageUI.Button("Save Profile Controls", confirm_s_desc or "Store new controls to client-side storage (KVP).", {RightLabel = confirm_s_msg or "(".. EC.profile_name .. ")", RightLabelOpacity = profile_s_op}, true, {
+						RageUI.Separator('Storage Management')
+						RageUI.Button('Save Profile Controls', confirm_s_desc or 'Store new controls to client-side storage (KVP).', {RightLabel = confirm_s_msg or '('.. EC.profile_name .. ')', RightLabelOpacity = profile_s_op}, true, {
 						  onSelected = function()
-							if confirm_s_msg == "Are you sure?" then
+							if confirm_s_msg == 'Are you sure?' then
 								EC:SaveSettings()
-								HUD:ShowNotification("~g~Success~s~: Your settings have been saved.", true)
+								HUD:ShowNotification('~g~Success~s~: Your settings have been saved.', true)
 								confirm_s_msg = nil
 								confirm_s_desc = nil
 								profile_s_op = 75
 							else 
 								RageUI.Settings.Controls.Back.Enabled = false 
 								profile_s_op = 255
-								confirm_s_msg = "Are you sure?" 
-								confirm_s_desc = "~r~This will override any existing extra controls data for this vehicle profile ("..EC.profile_name..")."
+								confirm_s_msg = 'Are you sure?' 
+								confirm_s_desc = '~r~This will override any existing extra controls data for this vehicle profile ('..EC.profile_name..').'
 								confirm_l_msg = nil
 								profile_l_op = 75
 								confirm_r_msg = nil
@@ -110,19 +110,19 @@ Citizen.CreateThread(function()
 							end
 						  end,
 						})								
-						RageUI.Button("Load Profile Controls", confirm_l_desc or "Load saved controls from client-side storage (KVP).", {RightLabel = confirm_l_msg or "(".. EC.profile_name .. ")", RightLabelOpacity = profile_l_op}, true, {
+						RageUI.Button('Load Profile Controls', confirm_l_desc or 'Load saved controls from client-side storage (KVP).', {RightLabel = confirm_l_msg or '('.. EC.profile_name .. ')', RightLabelOpacity = profile_l_op}, true, {
 						  onSelected = function()
-							if confirm_l_msg == "Are you sure?" then
+							if confirm_l_msg == 'Are you sure?' then
 								EC:LoadSettings()
-								HUD:ShowNotification("~g~Success~s~: Your settings have been loaded.", true)
+								HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
 								confirm_l_msg = nil
 								confirm_l_desc = nil
 								profile_l_op = 75
 							else 
 								RageUI.Settings.Controls.Back.Enabled = false 
 								profile_l_op = 255
-								confirm_l_msg = "Are you sure?" 
-								confirm_l_desc = "~r~This will override any unsaved settings."
+								confirm_l_msg = 'Are you sure?' 
+								confirm_l_desc = '~r~This will override any unsaved settings.'
 								confirm_s_msg = nil
 								profile_s_op = 75
 								confirm_r_msg = nil
@@ -130,15 +130,15 @@ Citizen.CreateThread(function()
 							end						  
 						  end,
 						})			
-						RageUI.Button("Reset Profile Controls", "~r~Reset this profiles controls to default, preserves existing saves. Will override any unsaved settings.", {RightLabel = confirm_r_msg}, true, {
+						RageUI.Button('Reset Profile Controls', '~r~Reset this profiles controls to default, preserves existing saves. Will override any unsaved settings.', {RightLabel = confirm_r_msg}, true, {
 						  onSelected = function()
-							if confirm_r_msg == "Are you sure?" then
+							if confirm_r_msg == 'Are you sure?' then
 								EC:LoadBackupTable()
-								HUD:ShowNotification("~g~Success~s~: Settings have been reset.", true)
+								HUD:ShowNotification('~g~Success~s~: Settings have been reset.', true)
 								confirm_r_msg = nil
 							else 
 								RageUI.Settings.Controls.Back.Enabled = false 
-								confirm_r_msg = "Are you sure?" 
+								confirm_r_msg = 'Are you sure?' 
 								confirm_l_msg = nil
 								profile_l_op = 75
 								confirm_s_msg = nil
@@ -147,16 +147,16 @@ Citizen.CreateThread(function()
 							end
 						  end,
 						})						
-						RageUI.Button("Delete All Profile Controls", "~r~Delete all Extra Controls saved data from client-side storage (KVP).", {RightLabel = confirm_d_msg}, true, {
+						RageUI.Button('Delete All Profile Controls', '~r~Delete all Extra Controls saved data from client-side storage (KVP).', {RightLabel = confirm_d_msg}, true, {
 						  onSelected = function()
-							if confirm_d_msg == "Are you sure?" then
+							if confirm_d_msg == 'Are you sure?' then
 								EC:DeleteProfiles()
-								UTIL:Print("Success: cleared all extra controls data.", true)
-								HUD:ShowNotification("~g~Success~s~: You have deleted all extra controls data and reset extra controls plugin.", true)
+								UTIL:Print('Success: cleared all extra controls data.', true)
+								HUD:ShowNotification('~g~Success~s~: You have deleted all extra controls data and reset extra controls plugin.', true)
 								confirm_d_msg = nil
 							else 
 								RageUI.Settings.Controls.Back.Enabled = false 
-								confirm_d_msg = "Are you sure?" 
+								confirm_d_msg = 'Are you sure?' 
 								confirm_l_msg = nil
 								profile_l_op = 75
 								confirm_s_msg = nil
@@ -166,7 +166,7 @@ Citizen.CreateThread(function()
 						  end,
 						})	
 					else
-						RageUI.Button("(None)", "No shortcuts found.", {RightLabel = "→→→"}, false, {
+						RageUI.Button('(None)', 'No shortcuts found.', {RightLabel = '→→→'}, false, {
 						  onSelected = function()
 						  end,
 						})					
@@ -176,7 +176,7 @@ Citizen.CreateThread(function()
 			if allow_custom_controls then
 				for i, extra_shortcut in ipairs(EC.table) do
 					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'..'_'..i), function()
-						RageUI.List('Combo', EC.approved_combo_strings, EC.combo_id[i], "Key that needs to be pressed in addition to 'Key' to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)", {}, true, {
+						RageUI.List('Combo', EC.approved_combo_strings, EC.combo_id[i], 'Control that needs to be pressed in addition to "Key" to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, true, {
 						  onListChange = function(Index, Item)
 							EC.combo_id[i] = Index
 							if Index > 1 then
@@ -186,7 +186,7 @@ Citizen.CreateThread(function()
 							end
 						  end,
 						})					
-						RageUI.List('Key', EC.approved_key_strings, EC.key_id[i], "Key that needs to be pressed in addition to 'Combo' to toggle extras.", {}, true, {
+						RageUI.List('Key', EC.approved_key_strings, EC.key_id[i], 'Control that needs to be pressed in addition to "Combo" to toggle extras.', {}, true, {
 						  onListChange = function(Index, Item)
 							EC.key_id[i] = Index
 							if Index > 1 then

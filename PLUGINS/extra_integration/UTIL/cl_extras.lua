@@ -31,7 +31,7 @@ Citizen.CreateThread( function()
 					   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
 					   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
 					   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
-					   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == "-0.0")) then						-- Is vehicle not reversing or at max reverse speed
+					   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == '-0.0')) then						-- Is vehicle not reversing or at max reverse speed
 						UTIL:TogVehicleExtras(veh, extras.Brake, true)
 					else
 						UTIL:TogVehicleExtras(veh, extras.Brake, false)				
@@ -43,7 +43,7 @@ Citizen.CreateThread( function()
 				--REVERSE LIGHTS
 				if player_is_emerg_driver and reverse_ei_enabled and extras.Reverse ~= nil then
 					accel_pedal = GetVehicleThrottleOffset(veh)
-					if accel_pedal < 0 or tostring(accel_pedal) == "-0.0" then
+					if accel_pedal < 0 or tostring(accel_pedal) == '-0.0' then
 						UTIL:TogVehicleExtras(veh, extras.Reverse, true)
 					else
 						UTIL:TogVehicleExtras(veh, extras.Reverse, false)
@@ -76,7 +76,7 @@ Citizen.CreateThread( function()
 				if door_ei_enabled then
 					if extras.DDoor ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
-							UTIL:Print("EI: Drivers door open, calling EI function.", false)
+							UTIL:Print('EI: Drivers door open, calling EI function.', false)
 							UTIL:TogVehicleExtras(veh, extras.DDoor, true)
 						else
 							UTIL:TogVehicleExtras(veh, extras.DDoor, false)
@@ -199,8 +199,8 @@ Citizen.CreateThread(function()
 						end
 					else
 						if park_hud_x ~= 0.0 or park_hud_y ~= 0.0 then
-							HUD:ShowText(park_hud_x, park_hud_y, 1, "~r~P", 0.5)
-							HUD:ShowText(park_hud_x + 0.003, park_hud_y + 0.019, 1, "~r~ARK", 0.15)
+							HUD:ShowText(park_hud_x, park_hud_y, 1, '~r~P', 0.5)
+							HUD:ShowText(park_hud_x + 0.003, park_hud_y + 0.019, 1, '~r~ARK', 0.15)
 						end
 						if IsControlJustPressed(0, 76) then
 							PlayAudio('Shift', 0.02, true)
@@ -242,20 +242,20 @@ end)
 --[[Sets extras table a copy of EXTRA_ASSIGNMENTS for this vehicle]]
 function EI:UpdateExtrasTable(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+	local veh_name_wildcard = string.gsub(veh_name, '%d+', '#')
 
 	if EXTRA_ASSIGNMENTS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		extras = EXTRA_ASSIGNMENTS[veh_name]
-		UTIL:Print("EI: Profile found for "..veh_name, false)
+		UTIL:Print('EI: Profile found for '..veh_name, false)
 	elseif EXTRA_ASSIGNMENTS[veh_name_wildcard] ~= nil then				
 		extras = EXTRA_ASSIGNMENTS[veh_name_wildcard]
-		UTIL:Print("EI: Wildcard profile found for "..veh_name, false)
+		UTIL:Print('EI: Wildcard profile found for '..veh_name, false)
 	else
 		if EXTRA_ASSIGNMENTS['DEFAULT'] ~= nil then
 			extras = EXTRA_ASSIGNMENTS['DEFAULT']
-			UTIL:Print("EI: using default profile for "..veh_name, false)
+			UTIL:Print('EI: using default profile for '..veh_name, false)
 		else
 			extras = { }
-			UTIL:Print("^3LVC WARNING: (EXTRA_INTEGRATION) 'DEFAULT' table missing from EXTRA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+			UTIL:Print('^3LVC WARNING: (EXTRA_INTEGRATION) "DEFAULT" table missing from EXTRA_ASSIGNMENTS table. Using empty table for '..veh_name, false)
 		end	end
 end

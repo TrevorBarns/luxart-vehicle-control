@@ -11,10 +11,10 @@ PURPOSE: Handle plugin version checking.
 ---------------------------------------------------
 ]]
 
-local plugin_name = "takedowns"
-local plugin_version = "1.0.0"
+local plugin_name = 'takedowns'
+local plugin_version = '1.0.0'
 
-RegisterServerEvent("lvc:plugins_getVersions") 
-AddEventHandler("lvc:plugins_getVersions", function()
-	TriggerEvent("lvc:plugins_storePluginVersion", plugin_name, plugin_version)
+RegisterServerEvent('lvc:plugins_getVersions') 
+AddEventHandler('lvc:plugins_getVersions', function()
+	TriggerEvent('lvc:plugins_storePluginVersion', plugin_name, plugin_version)
 end)

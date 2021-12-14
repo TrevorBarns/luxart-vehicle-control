@@ -13,7 +13,7 @@ PURPOSE: Handle save/load functions and version
 ]]
 Storage = { }
 
-local save_prefix = "lvc_"..community_id.."_"
+local save_prefix = 'lvc_'..community_id..'_'
 local repo_version = nil
 local backup_tone_table = {}
 local custom_tone_names = false
@@ -24,12 +24,12 @@ local profiles = { }
 --Deletes all saved KVPs for that vehicle profile
 --	This should never be removed. It is the only easy way for end users to delete LVC data.
 RegisterCommand('lvcfactoryreset', function(source, args)
-	local choice = HUD:FrontEndAlert("Warning", "Are you sure you want to delete all saved LVC data and Factory Reset?")
+	local choice = HUD:FrontEndAlert('Warning', 'Are you sure you want to delete all saved LVC data and Factory Reset?')
 	if choice then
 		Storage:DeleteKVPs(save_prefix)
 		Storage:ResetSettings()
-		UTIL:Print("Success: cleared all save data.", true)
-		HUD:ShowNotification("~g~Success~s~: You have deleted all save data and reset LVC.", true)
+		UTIL:Print('Success: cleared all save data.', true)
+		HUD:ShowNotification('~g~Success~s~: You have deleted all save data and reset LVC.', true)
 	end
 end)
 
@@ -40,11 +40,11 @@ if debug_mode or override then
 		local key = FindKvp(handle)
 		while key ~= nil do
 			if GetResourceKvpString(key) ~= nil then
-				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpString(key).."', STRING", true)
+				UTIL:Print('Found: "'..key..'" "'..GetResourceKvpString(key)..'", STRING', true)
 			elseif GetResourceKvpInt(key) ~= nil then
-				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpInt(key).."', INT", true)
+				UTIL:Print('Found: "'..key..'" "'..GetResourceKvpInt(key)..'", INT', true)
 			elseif GetResourceKvpFloat(key) ~= nil then
-				UTIL:Print("Found: '"..key.."' '"..GetResourceKvpFloat(key).."', FLOAT", true)
+				UTIL:Print('Found: "'..key..'" "'..GetResourceKvpFloat(key)..'", FLOAT', true)
 			end
 			key = FindKvp(handle)
 			Citizen.Wait(0)
@@ -64,7 +64,7 @@ function Storage:DeleteKVPs(prefix)
 	local key = FindKvp(handle)
 	while key ~= nil do
 		DeleteResourceKvp(key)
-		UTIL:Print("LVC Info: Deleting Key \"" .. key .. "\"", true)
+		UTIL:Print('LVC Info: Deleting Key \'' .. key .. '\'', true)
 		key = FindKvp(handle)
 		Citizen.Wait(0)
 	end
@@ -76,7 +76,7 @@ function Storage:GetCurrentVersion()
 	if curr_version ~= nil then
 		return curr_version
 	else
-		return "unknown"
+		return 'unknown'
 	end
 end
 
@@ -97,14 +97,14 @@ function Storage:SaveHUDSettings()
 							HUD_pos = HUD:GetHudPosition(),
 							HUD_backlight_mode = HUD:GetHudBacklightMode(),
 						  }
-	SetResourceKvp(save_prefix .. "hud_data",  json.encode(hud_save_data))
+	SetResourceKvp(save_prefix .. 'hud_data',  json.encode(hud_save_data))
 end
 
 
 --[[Saves all KVP values.]]
 function Storage:SaveSettings()
 	local settings_string = nil
-	SetResourceKvp(save_prefix.."save_version", Storage:GetCurrentVersion())
+	SetResourceKvp(save_prefix..'save_version', Storage:GetCurrentVersion())
 
 	--HUD Settings
 	Storage:SaveHUDSettings()
@@ -115,13 +115,13 @@ function Storage:SaveSettings()
 		for i, siren_pkg in pairs(SIRENS) do
 			table.insert(tone_names, siren_pkg.Name)
 		end
-		SetResourceKvp(save_prefix .. "tone_names", json.encode(tone_names))
-		UTIL:Print("LVC:STORAGE: saving "..save_prefix.."tone_names...")		
+		SetResourceKvp(save_prefix .. 'tone_names', json.encode(tone_names))
+		UTIL:Print('LVC:STORAGE: saving '..save_prefix..'tone_names...')		
 	end
 	
 	--Profile Specific Settings
 	if UTIL:GetVehicleProfileName() ~= nil then
-		local profile_name = string.gsub(UTIL:GetVehicleProfileName(), " ", "_")
+		local profile_name = string.gsub(UTIL:GetVehicleProfileName(), ' ', '_')
 		if profile_name ~= nil then
 			local tone_options_encoded = json.encode(UTIL:GetToneOptionsTable())
 			local profile_save_data = {  PMANU 				= UTIL:GetToneID('PMANU'), 
@@ -133,8 +133,8 @@ function Storage:SaveSettings()
 										 tone_options 		= tone_options_encoded,															  
 									   }
 							
-			SetResourceKvp(save_prefix .. "profile_"..profile_name.."!",  json.encode(profile_save_data))
-			UTIL:Print("LVC:STORAGE: saving "..save_prefix .. "profile_"..profile_name.."!")
+			SetResourceKvp(save_prefix .. 'profile_'..profile_name..'!',  json.encode(profile_save_data))
+			UTIL:Print('LVC:STORAGE: saving '..save_prefix .. 'profile_'..profile_name..'!')
 
 			--Audio Settings
 			local audio_save_data = {	
@@ -152,13 +152,13 @@ function Storage:SaveSettings()
 										manu_button_SFX 			= manu_button_SFX,
 										activity_reminder_index 	= activity_reminder_index,	
 									}						
-			SetResourceKvp(save_prefix.."profile_"..profile_name.."_audio_data",  json.encode(audio_save_data))
-			UTIL:Print("LVC:STORAGE: saving profile_"..profile_name.."_audio_data")
+			SetResourceKvp(save_prefix..'profile_'..profile_name..'_audio_data',  json.encode(audio_save_data))
+			UTIL:Print('LVC:STORAGE: saving profile_'..profile_name..'_audio_data')
 		else
-			HUD:ShowNotification("~b~LVC: ~r~SAVE ERROR~s~: profile_name after gsub is nil.", true)
+			HUD:ShowNotification('~b~LVC: ~r~SAVE ERROR~s~: profile_name after gsub is nil.', true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC: ~r~SAVE ERROR~s~: UTIL:GetVehicleProfileName() returned nil.", true)
+		HUD:ShowNotification('~b~LVC: ~r~SAVE ERROR~s~: UTIL:GetVehicleProfileName() returned nil.', true)
 	end
 end
 
@@ -166,31 +166,31 @@ end
 --[[Loads all KVP values.]]
 function Storage:LoadSettings(profile_name)	
 	local comp_version = GetResourceMetadata(GetCurrentResourceName(), 'compatible', 0)
-	local save_version = GetResourceKvpString(save_prefix .. "save_version")
+	local save_version = GetResourceKvpString(save_prefix .. 'save_version')
 	local incompatible = IsNewerVersion(comp_version, save_version) == 'older'
 
 	--Is save present if so what version
 	if incompatible then
-		AddTextEntry("lvc_mismatch_version","~y~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: " .. comp_version .. "\n~o~Save Version: " .. save_version .. "~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.")
-		SetNotificationTextEntry("lvc_mismatch_version")
+		AddTextEntry('lvc_mismatch_version','~y~~h~Warning:~h~ ~s~Luxart Vehicle Control Save Version Mismatch.\n~b~Compatible Version: ' .. comp_version .. '\n~o~Save Version: ' .. save_version .. '~s~\nYou may experience issues, to prevent this message from appearing verify settings and resave.')
+		SetNotificationTextEntry('lvc_mismatch_version')
 		DrawNotification(false, true)
 	end
 	
 	if save_version ~= nil then
 		--HUD Settings	
-		local hud_save_data = GetResourceKvpString(save_prefix.."hud_data")
+		local hud_save_data = GetResourceKvpString(save_prefix..'hud_data')
 		if hud_save_data ~= nil then
 			hud_save_data = json.decode(hud_save_data)
 			HUD:SetHudState(hud_save_data.Show_HUD)
 			HUD:SetHudScale(hud_save_data.HUD_Scale)
 			HUD:SetHudPosition(hud_save_data.HUD_pos)
 			HUD:SetHudBacklightMode(hud_save_data.HUD_backlight_mode)
-			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
+			UTIL:Print('LVC:STORAGE: loaded HUD data.')		
 		end
 		
 		--Tone Names
 		if main_siren_settings_masterswitch then
-			local tone_names = GetResourceKvpString(save_prefix.."tone_names")
+			local tone_names = GetResourceKvpString(save_prefix..'tone_names')
 			if tone_names ~= nil then
 				tone_names = json.decode(tone_names)
 				for i, name in pairs(tone_names) do
@@ -199,14 +199,14 @@ function Storage:LoadSettings(profile_name)
 					end
 				end
 			end
-			UTIL:Print("LVC:STORAGE: loaded custom tone names.")
+			UTIL:Print('LVC:STORAGE: loaded custom tone names.')
 		end
 		
 		--Profile Specific Settings
 		if UTIL:GetVehicleProfileName() ~= nil then
-			local profile_name = profile_name or string.gsub(UTIL:GetVehicleProfileName(), " ", "_")	
+			local profile_name = profile_name or string.gsub(UTIL:GetVehicleProfileName(), ' ', '_')	
 			if profile_name ~= nil then
-				local profile_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."!")
+				local profile_save_data = GetResourceKvpString(save_prefix..'profile_'..profile_name..'!')
 				if profile_save_data ~= nil then
 					profile_save_data = json.decode(profile_save_data)
 					UTIL:SetToneByID('PMANU', profile_save_data.PMANU)
@@ -226,11 +226,11 @@ function Storage:LoadSettings(profile_name)
 								end
 							end
 					end
-					UTIL:Print("LVC:STORAGE: loaded "..profile_name..".")
+					UTIL:Print('LVC:STORAGE: loaded '..profile_name..'.')
 				end
 				
 				--Audio Settings 
-				local audio_save_data = GetResourceKvpString(save_prefix.."profile_"..profile_name.."_audio_data")
+				local audio_save_data = GetResourceKvpString(save_prefix..'profile_'..profile_name..'_audio_data')
 				if audio_save_data ~= nil then
 					audio_save_data = json.decode(audio_save_data)
 					if audio_save_data.radio_masterswitch ~= nil then
@@ -248,21 +248,21 @@ function Storage:LoadSettings(profile_name)
 					airhorn_button_SFX 			= audio_save_data.airhorn_button_SFX
 					manu_button_SFX 			= audio_save_data.manu_button_SFX
 					activity_reminder_index 	= audio_save_data.activity_reminder_index
-					UTIL:Print("LVC:STORAGE: loaded audio data.")
+					UTIL:Print('LVC:STORAGE: loaded audio data.')
 				end
 			else
-				HUD:ShowNotification("~b~LVC:~r~ LOADING ERROR~s~: profile_name after gsub is nil.", true)
+				HUD:ShowNotification('~b~LVC:~r~ LOADING ERROR~s~: profile_name after gsub is nil.', true)
 			end
 		end
 	else
-		local hud_save_data = GetResourceKvpString(save_prefix.."hud_data")
+		local hud_save_data = GetResourceKvpString(save_prefix..'hud_data')
 		if hud_save_data ~= nil then
 			hud_save_data = json.decode(hud_save_data)
 			HUD:SetHudState(hud_save_data.Show_HUD)
 			HUD:SetHudScale(hud_save_data.HUD_Scale)
 			HUD:SetHudPosition(hud_save_data.HUD_pos)
 			HUD:SetHudBacklightMode(hud_save_data.HUD_backlight_mode)
-			UTIL:Print("LVC:STORAGE: loaded HUD data.")		
+			UTIL:Print('LVC:STORAGE: loaded HUD data.')		
 		end
 	end
 end
@@ -314,7 +314,7 @@ end
 ------------------------------------------------
 --[[Find all profile names of all saved KVP.]]
 function Storage:FindSavedProfiles()
-	local handle = StartFindKvp(save_prefix.."profile_");
+	local handle = StartFindKvp(save_prefix..'profile_');
 	local key = FindKvp(handle)
 	while key ~= nil do
 		if string.match(key, '(.*)!$') then
@@ -364,8 +364,8 @@ function IsNewerVersion(version, test_version)
 		return false
 	end
 	
-	_, _, s1, s2, s3 = string.find( version, "(%d+)%.(%d+)%.(%d+)" )
-	_, _, c1, c2, c3 = string.find( test_version, "(%d+)%.(%d+)%.(%d+)" )
+	_, _, s1, s2, s3 = string.find( version, '(%d+)%.(%d+)%.(%d+)' )
+	_, _, c1, c2, c3 = string.find( test_version, '(%d+)%.(%d+)%.(%d+)' )
 	
 	if s1 > c1 then				-- s1.0.0 Vs c1.0.0
 		return 'older'

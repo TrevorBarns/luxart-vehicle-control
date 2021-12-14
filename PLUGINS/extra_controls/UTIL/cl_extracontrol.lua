@@ -12,7 +12,7 @@ extras based on vehicle states / inputs.
 ---------------------------------------------------
 ]]
 --Read controls from controls.json file
-local CONTROLS_RAW = LoadResourceFile(GetCurrentResourceName(), "PLUGINS/extra_controls/controls.json")
+local CONTROLS_RAW = LoadResourceFile(GetCurrentResourceName(), 'PLUGINS/extra_controls/controls.json')
 local CONTROLS_LOOKUP = json.decode(CONTROLS_RAW)
 
 EC = { }
@@ -53,9 +53,9 @@ Citizen.CreateThread(function()
 							tog_table.State = not tog_table.State
 							if tog_table.Audio ~= nil and tog_table.Audio then
 								if tog_table.State then
-									PlayAudio("Downgrade", downgrade_volume)
+									PlayAudio('Downgrade', downgrade_volume)
 								else
-									PlayAudio("Upgrade", upgrade_volume)
+									PlayAudio('Upgrade', upgrade_volume)
 								end
 							end
 						end
@@ -88,24 +88,24 @@ end)
 --[[Sets extras table a copy of EXTRA_CONTROLS for this vehicle]]
 function EC:UpdateExtrasTable(veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+	local veh_name_wildcard = string.gsub(veh_name, '%d+', '#')
 
 	if EXTRA_CONTROLS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		EC.table = EXTRA_CONTROLS[veh_name]
 		EC.profile_name = veh_name
-		UTIL:Print("EC: Profile found for "..veh_name, false)
+		UTIL:Print('EC: Profile found for '..veh_name, false)
 	elseif EXTRA_CONTROLS[veh_name_wildcard] ~= nil then
 		EC.table = EXTRA_CONTROLS[veh_name_wildcard]
 		EC.profile_name = veh_name_wildcard
-		UTIL:Print("EC: Wildcard profile found for "..veh_name..".", false)
+		UTIL:Print('EC: Wildcard profile found for '..veh_name..'.', false)
 	else
 		if EXTRA_CONTROLS['DEFAULT'] ~= nil then
 			EC.table = EXTRA_CONTROLS['DEFAULT']
 			EC.profile_name = 'DEFAULT'
-			UTIL:Print("EC: using default profile for "..veh_name, false)
+			UTIL:Print('EC: using default profile for '..veh_name, false)
 		else
 			EC.table = { }
-			UTIL:Print("^3LVC WARNING: (EXTRA_CONTROLS) 'DEFAULT' table missing from EXTRA_CONTROLS table. Using empty table for "..veh_name, false)
+			UTIL:Print('^3LVC WARNING: (EXTRA_CONTROLS) "DEFAULT" table missing from EXTRA_CONTROLS table. Using empty table for '..veh_name, false)
 		end
 	end
 end

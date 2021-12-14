@@ -25,14 +25,14 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver then
 			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
 				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
-					HUD:SetItemState("ta", false)
+					HUD:SetItemState('ta', false)
 					temp_hud_disable = true
 					if not TA.preserve_ta_state then
 						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						state_ta[veh] = 0
 					end
 				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
-					HUD:SetItemState("ta", state_ta[veh])
+					HUD:SetItemState('ta', state_ta[veh])
 					temp_hud_disable = false
 				end
 			else
@@ -50,14 +50,14 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver then
 			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
 				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
-					HUD:SetItemState("ta", false)
+					HUD:SetItemState('ta', false)
 					temp_hud_disable = true
 					if not TA.preserve_ta_state then
 						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
 						state_ta[veh] = 0
 					end
 				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
-					HUD:SetItemState("ta", state_ta[veh])
+					HUD:SetItemState('ta', state_ta[veh])
 					temp_hud_disable = false
 				end
 			else
@@ -77,14 +77,14 @@ if ta_masterswitch then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 1 then
 						UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
-						PlayAudio("Downgrade", downgrade_volume)
+						PlayAudio('Downgrade', downgrade_volume)
 						state_ta[veh] = 0
 					else
 						UTIL:TogVehicleExtras(veh, taExtras.left.on, true)
-						PlayAudio("Upgrade", upgrade_volume)
+						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 1
 					end
-					HUD:SetItemState("ta", state_ta[veh]) 					
+					HUD:SetItemState('ta', state_ta[veh]) 					
 				end
 			end
 		end
@@ -96,14 +96,14 @@ if ta_masterswitch then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 2 then
 						UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
-						PlayAudio("Downgrade", downgrade_volume)
+						PlayAudio('Downgrade', downgrade_volume)
 						state_ta[veh] = 0
 					else
 						UTIL:TogVehicleExtras(veh, taExtras.right.on, true)
-						PlayAudio("Upgrade", upgrade_volume)
+						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 2
 					end
-					HUD:SetItemState("ta", state_ta[veh]) 
+					HUD:SetItemState('ta', state_ta[veh]) 
 				end
 			end
 		end
@@ -115,14 +115,14 @@ if ta_masterswitch then
 				if ( IsVehicleExtraTurnedOn(veh, taExtras.lightbar) or taExtras.lightbar == -1 ) and IsVehicleSirenOn(veh) then
 					if state_ta[veh] == 3 then
 						UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
-						PlayAudio("Downgrade", downgrade_volume)
+						PlayAudio('Downgrade', downgrade_volume)
 						state_ta[veh] = 0
 					else
 						UTIL:TogVehicleExtras(veh, taExtras.middle.on, true)
-						PlayAudio("Upgrade", upgrade_volume)
+						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 3
 					end
-					HUD:SetItemState("ta", state_ta[veh]) 					
+					HUD:SetItemState('ta', state_ta[veh]) 					
 				end
 			end
 		end
@@ -148,7 +148,7 @@ end)
 
 function TA:UpdateExtrasTable(veh)
   local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-  local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
+  local veh_name_wildcard = string.gsub(veh_name, '%d+', '#')
 
   if TA_ASSIGNMENTS[veh_name] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name]
@@ -159,15 +159,15 @@ function TA:UpdateExtrasTable(veh)
 	else
 		if TA_ASSIGNMENTS['DEFAULT'] ~= nil then
 			taExtras = TA_ASSIGNMENTS['DEFAULT']
-			UTIL:Print("TA: using default profile for "..veh_name, false)
+			UTIL:Print('TA: using default profile for '..veh_name, false)
 		else
 			taExtras = { }
-			UTIL:Print("^3LVC WARNING: (TRAFFIC_ADVISOR) 'DEFAULT' table missing from TA_ASSIGNMENTS table. Using empty table for "..veh_name, false)
+			UTIL:Print('^3LVC WARNING: (TRAFFIC_ADVISOR) "DEFAULT" table missing from TA_ASSIGNMENTS table. Using empty table for '..veh_name, false)
 		end
 	end
   
   hud_pattern = taExtras.hud_pattern or 1
-  HUD:SetItemState("ta_pattern", hud_pattern)
+  HUD:SetItemState('ta_pattern', hud_pattern)
 end
 
 function TA:SetTAStateForVeh(veh, newstate)
@@ -178,8 +178,8 @@ function TA:SetTAStateForVeh(veh, newstate)
   end
 end
 
-RegisterNetEvent("lvc:SetTAState_c")
-AddEventHandler("lvc:SetTAState_c", function(sender, newstate)
+RegisterNetEvent('lvc:SetTAState_c')
+AddEventHandler('lvc:SetTAState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
 	local ped_s = GetPlayerPed(player_s)
 	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then

@@ -25,7 +25,7 @@ local HUD_backlight_state = false
 Citizen.CreateThread(function()
 	Citizen.Wait(1000)
 	SendNUIMessage({
-	  _type = "hud:getHudScale",
+	  _type = 'hud:getHudScale',
 	})
 end)
 
@@ -60,14 +60,14 @@ function HUD:SetHudState(state, temporary)
 	if not temporary then
 		show_HUD = state
 	end
-	HUD:SetItemState("hud", state)
+	HUD:SetItemState('hud', state)
 end
 
 ------------------------------------------------
 --[[Getter for HUD scale. Updates local save from JS and returns.]]
 function HUD:GetHudScale()
 	SendNUIMessage({
-	  _type = "hud:getHudScale"
+	  _type = 'hud:getHudScale'
 	})
 	HUD_scale = HUD_scale or 0.6
 	return HUD_scale
@@ -77,14 +77,14 @@ end
 function HUD:SetHudScale(scale)
 	if scale ~= nil then
 		SendNUIMessage({
-		  _type = "hud:setHudScale",
+		  _type = 'hud:setHudScale',
 		  scale = scale,
 		})
 	end
 end
 
 --[[Callback for JS -> LUA to set HUD_scale with current CSS]]
-RegisterNUICallback( "hud:sendHudScale", function(scale, cb)
+RegisterNUICallback( 'hud:sendHudScale', function(scale, cb)
 	HUD_scale = scale
 end )
 
@@ -92,7 +92,7 @@ end )
 --[[Toggles HUD images based on their state on/off]]
 function HUD:SetItemState(item, state)
 	SendNUIMessage({
-	  _type = "hud:setItemState",
+	  _type = 'hud:setItemState',
 	  item  = item,
 	  state = state
 	})
@@ -124,9 +124,9 @@ function HUD:SetHudBacklightState(state)
 	if state ~= nil then
 		HUD_backlight_state = state
 		if state then
-			HUD:SetItemState("time", "night")
+			HUD:SetItemState('time', 'night')
 		else
-			HUD:SetItemState("time", "day")
+			HUD:SetItemState('time', 'day')
 		end
 		
 		HUD:RefreshHudItemStates()
@@ -137,40 +137,40 @@ end
 --[[Verifies HUD item states are correct]]
 function HUD:RefreshHudItemStates()
 	if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
-		HUD:SetItemState("siren", true)
+		HUD:SetItemState('siren', true)
 	else
-		HUD:SetItemState("siren", false)
+		HUD:SetItemState('siren', false)
 	end
 	
 	if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
-		HUD:SetItemState("siren", true)
+		HUD:SetItemState('siren', true)
 	end
 	
 	if state_airmanu[veh] ~= nil and state_airmanu[veh] > 0 then
-		HUD:SetItemState("horn", true)
+		HUD:SetItemState('horn', true)
 	else
-		HUD:SetItemState("horn", false)
+		HUD:SetItemState('horn', false)
 	end
 	
 	if state_tkd ~= nil and state_tkd[veh] ~= nil and state_tkd[veh] then
-		HUD:SetItemState("tkd", true)
+		HUD:SetItemState('tkd', true)
 	else
-		HUD:SetItemState("tkd", false)
+		HUD:SetItemState('tkd', false)
 	end
 	
 	if key_lock then
-		HUD:SetItemState("lock", true)
+		HUD:SetItemState('lock', true)
 	else
-		HUD:SetItemState("lock", false)
+		HUD:SetItemState('lock', false)
 	end
 	
 	if state_ta ~= nil and state_ta[veh] ~= nil then
-		HUD:SetItemState("ta", state_ta[veh])
+		HUD:SetItemState('ta', state_ta[veh])
 	else
-		HUD:SetItemState("ta", 0)
+		HUD:SetItemState('ta', 0)
 	end	
 	
-	HUD:SetItemState("switch", IsVehicleSirenOn(veh))
+	HUD:SetItemState('switch', IsVehicleSirenOn(veh))
 end
 
 ------------------------------------------------
@@ -178,7 +178,7 @@ end
 function HUD:SetHudPosition(data)
 	HUD_pos = data
 	SendNUIMessage({
-	  _type = "hud:setHudPosition",
+	  _type = 'hud:setHudPosition',
 	  pos = HUD_pos,
 	})	
 end
@@ -191,12 +191,12 @@ end
 --[[Sets HUD position based off backup stored in JS, in case HUD is off screen.]]
 function HUD:ResetPosition()
 	SendNUIMessage({
-	  _type = "hud:resetPosition",
+	  _type = 'hud:resetPosition',
 	})
 end
 
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
-RegisterNUICallback( "hud:setHudPositon", function(data, cb)
+RegisterNUICallback( 'hud:setHudPositon', function(data, cb)
 	HUD_pos = data
 	Storage:SaveDefaultHUDSettings()
 end )
@@ -208,7 +208,7 @@ function HUD:SetMoveMode(state)
 end
 
 --[[Sets NUI focus to false when right-click, esc, etc. are clicked.]]
-RegisterNUICallback( "hud:setMoveState", function(state, cb)
+RegisterNUICallback( 'hud:setMoveState', function(state, cb)
 	SetNuiFocus(state, state)
 end )
 
@@ -217,7 +217,7 @@ end )
 function HUD:ShowNotification(text, override)
 	override = override or false
 	if debug_mode or override then
-		SetNotificationTextEntry("STRING")
+		SetNotificationTextEntry('STRING')
 		AddTextComponentString(text)
 		DrawNotification(false, true)
 	end
@@ -237,7 +237,7 @@ function HUD:ShowText(x, y, align, text, scale, label)
 	SetTextDropShadow()
 	SetTextOutline()
 	if text ~= nil then
-		SetTextEntry("STRING")
+		SetTextEntry('STRING')
 		AddTextComponentString(text)
 	else
 		SetTextEntry(label)
@@ -249,12 +249,12 @@ end
 ------------------------------------------------
 --Full screen Confirmation Message
 function HUD:FrontEndAlert(title, subtitle)
-	AddTextEntry("FACES_WARNH2", "Warning")
-	AddTextEntry("QM_NO_0", "Are you sure you want to delete all saved LVC data and Factory Reset?")
+	AddTextEntry('FACES_WARNH2', 'Warning')
+	AddTextEntry('QM_NO_0', 'Are you sure you want to delete all saved LVC data and Factory Reset?')
 	local result = -1
 	while result == -1 do
-		DrawFrontendAlert("FACES_WARNH2", "QM_NO_0", 0, 0, "", 0, -1, 0, "", "", false, 0)
-		HUD:ShowText(0.5, 0.75, 0, "~g~No: Escape \t ~r~Yes: Enter", 0.75)
+		DrawFrontendAlert('FACES_WARNH2', 'QM_NO_0', 0, 0, '', 0, -1, 0, '', '', false, 0)
+		HUD:ShowText(0.5, 0.75, 0, '~g~No: Escape \t ~r~Yes: Enter', 0.75)
 		if IsDisabledControlJustReleased(2, 202) then
 			return false
 		end		
@@ -269,7 +269,7 @@ end
 --Get User Input from Keyboard
 function HUD:KeyboardInput(input_title, existing_text, max_length)
 	AddTextEntry('Custom_Keyboard_Title', input_title)
-	DisplayOnscreenKeyboard(1, "Custom_Keyboard_Title", "", existing_text, "", "", "", max_length) 
+	DisplayOnscreenKeyboard(1, 'Custom_Keyboard_Title', '', existing_text, '', '', '', max_length) 
 
 	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
 		Citizen.Wait(0)
@@ -278,7 +278,7 @@ function HUD:KeyboardInput(input_title, existing_text, max_length)
 	if UpdateOnscreenKeyboard() ~= 2 then
 		local result = GetOnscreenKeyboardResult() 
 		Citizen.Wait(500) 
-		if result ~= "" then
+		if result ~= '' then
 			return result 
 		else 
 			return nil
