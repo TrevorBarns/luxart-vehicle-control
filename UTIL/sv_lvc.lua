@@ -81,75 +81,95 @@ Citizen.CreateThread( function()
 			end
 		end)
 	end
-	if GetCurrentResourceName() == 'lvc' then
-		if community_id ~= nil and community_id ~= '' then
-			Citizen.Wait(1000)
-			print('\n\t^7 ________________________________________________________')
-			print('\t|\t^8      __                       ^9___               ^7|')
-			print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
-			print('\t|\t^8    / /        ^7\\ \\ / /       ^9/ /                 ^7|')
-			print('\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|')
-			print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
-			print('\t|\t                                                 |')
-			print(('\t|\t            COMMUNITY ID: %-23s|'):format(community_id))
-			print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
-			print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
-			--	UPDATE DETECTED
-			if curr_version < repo_version then
-				print('\t|\t             ^8UPDATE REQUIRED                     ^7|')
-				print('\t|^8                      DOWNLOAD AT:                      ^7|')
-				print('\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|')
-			--	EXPERMENTAL VERSION
-			elseif curr_version  > repo_version then
-				print('\t|\t           ^3EXPERIMENTAL VERSION                  ^7|')
-				-- IS THE USER AWARE THEY DOWNLOADED EXPERMENTAL CHECK CONVARS
-				if not experimental then
-					print('\t|^3 THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED  ^7|')
-					print('\t|^3 FOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE ^7|')
-					print('\t|^3 LATEST STABLE RELEASE AT:                              ^7|')
+	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
+		if GetCurrentResourceName() == 'lvc' then
+			if community_id ~= nil and community_id ~= '' then
+				Citizen.Wait(1000)
+				print('\n\t^7 ________________________________________________________')
+				print('\t|\t^8      __                       ^9___               ^7|')
+				print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
+				print('\t|\t^8    / /        ^7\\ \\ / /       ^9/ /                 ^7|')
+				print('\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|')
+				print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
+				print('\t|\t                                                 |')
+				print(('\t|\t            COMMUNITY ID: %-23s|'):format(community_id))
+				print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
+				print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
+				--	UPDATE DETECTED
+				if curr_version < repo_version then
+					print('\t|\t             ^8UPDATE REQUIRED                     ^7|')
+					print('\t|^8                      DOWNLOAD AT:                      ^7|')
 					print('\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|')
-					print('\t|^3 TO MUTE THIS: SET CONVAR \'experimental\' to \'true\'      ^7|')
-				end
-			end
-
-			--	IF PLUGINS ARE INSTALLED
-			if plugin_count > 0 then
-				print('\t^7|________________________________________________________|')
-				print('\t^7|INSTALLED PLUGINS               | INSTALLED |  LATEST   |')
-				for name, version in pairs(plugins_cv) do
-					local plugin_string
-					if plugins_rv[name] ~= 'UNKWN' and plugins_cv[name] < plugins_rv[name]  then
-						plugin_string = ('\t|^8  %-30s^7|^8   %s   ^7|^8   %s   ^7|^8 UPDATE REQUIRED    ^7'):format(name, plugins_cv[name], plugins_rv[name])
-					elseif plugins_cv[name] > plugins_rv[name] or plugins_rv[name] == 'UNKWN' then
-						plugin_string = ('\t|^3  %-30s^7|^3   %s   ^7|^3   %s   ^7|^3 EXPERIMENTAL VERSION ^7'):format(name, plugins_cv[name], plugins_rv[name])
-					else
-						plugin_string = ('\t|  %-30s|   %s   |   %s   |'):format(name, plugins_cv[name], plugins_rv[name])
+				--	EXPERMENTAL VERSION
+				elseif curr_version  > repo_version then
+					print('\t|\t           ^3EXPERIMENTAL VERSION                  ^7|')
+					-- IS THE USER AWARE THEY DOWNLOADED EXPERMENTAL CHECK CONVARS
+					if not experimental then
+						print('\t|^3 THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED  ^7|')
+						print('\t|^3 FOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE ^7|')
+						print('\t|^3 LATEST STABLE RELEASE AT:                              ^7|')
+						print('\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|')
+						print('\t|^3 TO MUTE THIS: SET CONVAR \'experimental\' to \'true\'      ^7|')
 					end
-					print(plugin_string)
 				end
+
+				--	IF PLUGINS ARE INSTALLED
+				if plugin_count > 0 then
+					print('\t^7|________________________________________________________|')
+					print('\t^7|INSTALLED PLUGINS               | INSTALLED |  LATEST   |')
+					for name, version in pairs(plugins_cv) do
+						local plugin_string
+						if plugins_rv[name] ~= 'UNKWN' and plugins_cv[name] < plugins_rv[name]  then
+							plugin_string = ('\t|^8  %-30s^7|^8   %s   ^7|^8   %s   ^7|^8 UPDATE REQUIRED    ^7'):format(name, plugins_cv[name], plugins_rv[name])
+						elseif plugins_cv[name] > plugins_rv[name] or plugins_rv[name] == 'UNKWN' then
+							plugin_string = ('\t|^3  %-30s^7|^3   %s   ^7|^3   %s   ^7|^3 EXPERIMENTAL VERSION ^7'):format(name, plugins_cv[name], plugins_rv[name])
+						else
+							plugin_string = ('\t|  %-30s|   %s   |   %s   |'):format(name, plugins_cv[name], plugins_rv[name])
+						end
+						print(plugin_string)
+					end
+				end
+				print('\t^7|________________________________________________________|')
+				print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
+				print('\t^7|________________________________________________________|\n\n')
+			else	-- NO COMMUNITY ID SET
+				print('\n\t^7 ________________________________________________________')
+				print('\t|\t^8      __                       ^9___               ^7|')
+				print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
+				print('\t|\t^8    / /        ^7\\ \\ / /       ^9/ /                 ^7|')
+				print('\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|')
+				print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
+				print('\t|\t                                                 |')
+				print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
+				print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
+				print('\t|\t^8             CONFIGURATION ERROR                 ^7|')
+				print('\t|^8 COMMUNITY ID MISSING, THIS IS REQUIRED TO PREVENT      ^7|')
+				print('\t|^8 CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS     ^7|')
+				print('\t|^8 WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.             ^7|')
+				print('\t^7|________________________________________________________|')
+				print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
+				print('\t^7|________________________________________________________|\n\n')
 			end
-			print('\t^7|________________________________________________________|')
-			print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
-			print('\t^7|________________________________________________________|\n\n')
-		else	-- NO COMMUNITY ID SET
-			print('\n\t^7 ________________________________________________________')
-			print('\t|\t^8      __                       ^9___               ^7|')
-			print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
-			print('\t|\t^8    / /        ^7\\ \\ / /       ^9/ /                 ^7|')
-			print('\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|')
-			print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
-			print('\t|\t                                                 |')
-			print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
-			print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
-			print('\t|\t^8             CONFIGURATION ERROR                 ^7|')
-			print('\t|^8 COMMUNITY ID MISSING, THIS IS REQUIRED TO PREVENT      ^7|')
-			print('\t|^8 CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS     ^7|')
-			print('\t|^8 WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.             ^7|')
-			print('\t^7|________________________________________________________|')
-			print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
-			print('\t^7|________________________________________________________|\n\n')
+		else	-- INCORRECT RESOURCE NAME
+				print('\n\t^7 ________________________________________________________')
+				print('\t|\t^8      __                       ^9___               ^7|')
+				print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
+				print('\t|\t^8    / /        ^7\\ \\ / /       ^9/ /                 ^7|')
+				print('\t|\t^8   / /___       ^7\\ V /       ^9/ /___               ^7|')
+				print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
+				print('\t|\t                                                 |')
+				print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
+				print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
+				print('\t|\t^8             CONFIGURATION ERROR                 ^7|')
+				print('\t|^8 INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER   ^7|')
+				print('\t|^8 NAME READS \'^3lvc^8\' (CASE-SENSITIVE). THIS IS REQUIRED    ^7|')
+				print('\t|^8 FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME,   ^7|')
+				print('\t|^8 REFRESH, AND ENSURE.                                   ^7|')
+				print('\t^7|________________________________________________________|')
+				print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
+				print('\t^7|________________________________________________________|\n\n')
 		end
-	else	-- INCORRECT RESOURCE NAME
+	else	-- RESOURCE CONFLICT
 			print('\n\t^7 ________________________________________________________')
 			print('\t|\t^8      __                       ^9___               ^7|')
 			print('\t|\t^8     / /      ^7 /\\   /\\        ^9/ __\\              ^7|')
@@ -159,11 +179,9 @@ Citizen.CreateThread( function()
 			print('\t|\t                                                 |')
 			print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
 			print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
-			print('\t|\t^8             CONFIGURATION ERROR                 ^7|')
-			print('\t|^8 INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER   ^7|')
-			print('\t|^8 NAME READS \'^3lvc^8\' (CASE-SENSITIVE). THIS IS REQUIRED    ^7|')
-			print('\t|^8 FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME,   ^7|')
-			print('\t|^8 REFRESH, AND ENSURE.                                   ^7|')
+			print('\t|\t^8        RESOURCE CONFLICT DETECTED               ^7|')
+			print('\t|^8 DETECTED "lux_vehcontrol" RUNNING, THIS CONFLICTS WITH ^7|')
+			print('\t|^8 LVC. PLEASE STOP "lux_vehcontrol" AND RESTART LVC.     ^7|')
 			print('\t^7|________________________________________________________|')
 			print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
 			print('\t^7|________________________________________________________|\n\n')
