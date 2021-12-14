@@ -7,7 +7,7 @@ ELS Clicks by Faction
 Additional Modification by TrevorBarns
 ---------------------------------------------------
 FILE: cl_utils.lua
-PURPOSE: Utilities for siren assignments and tables 
+PURPOSE: Utilities for siren assignments and tables
 		 and other common functions.
 ---------------------------------------------------
 ]]
@@ -24,7 +24,7 @@ local tone_AUX_id = nil
 local tone_ARHRN_id = nil
 
 ---------------------------------------------------------------------
---[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA). 
+--[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA).
     GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
 function UTIL:FixOversizeKeys(TABLE)
 	for i, tbl in pairs(TABLE) do
@@ -45,15 +45,18 @@ function UTIL:UpdateApprovedTones(veh)
 	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
 		approved_tones = SIREN_ASSIGNMENTS[veh_name]
 		profile = veh_name
+		UTIL:Print(('SIRENS: profile found for %s.'):format(veh_name))
 	elseif SIREN_ASSIGNMENTS[veh_name_wildcard] ~= nil then				--Does profile exist using # as wildcard for any digits.
 		approved_tones = SIREN_ASSIGNMENTS[veh_name_wildcard]
 		profile = veh_name_wildcard
-	else 
+		UTIL:Print(('SIRENS: wildcard profile %s found for %s.'):format(veh_name_wildcard, veh_name))
+	else
 		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
 		profile = 'DEFAULT'
-		HUD:ShowNotification('~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \'~o~'..veh_name..'~s~\'.', false)
+		HUD:ShowNotification(('~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \'~o~ %s ~s~\'.'):format(veh_name))
+		UTIL:Print(('SIRENS: using default profile for %s.'):format(veh_name))
 	end
-	
+
 	if not UTIL:IsApprovedTone('MAIN_MEM') then
 		UTIL:SetToneByPos('MAIN_MEM', 2)
 	end
@@ -62,10 +65,10 @@ function UTIL:UpdateApprovedTones(veh)
 	end
 	if not UTIL:IsApprovedTone('SMANU') then
 		UTIL:SetToneByPos('SMANU', 3)
-	end	
+	end
 	if not UTIL:IsApprovedTone('AUX') then
 		UTIL:SetToneByPos('AUX', 2)
-	end	
+	end
 	if not UTIL:IsApprovedTone('ARHRN') then
 		UTIL:SetToneByPos('ARHRN', 1)
 	end
@@ -83,7 +86,7 @@ function UTIL:GetApprovedTonesTable()
 	return approved_tones
 end
 ---------------------------------------------------------------------
---[[Builds a table that we store tone_options in (disabled, button & cycle, cycle only, button only). 
+--[[Builds a table that we store tone_options in (disabled, button & cycle, cycle only, button only).
     Users can set default option of siren by using optional index .Option in SIREN_ASSIGNMENTS table in SIRENS.LUA]]
 function UTIL:BuildToneOptions()
 	local temp_array = { }
@@ -94,7 +97,7 @@ function UTIL:BuildToneOptions()
 			temp_array[id] = option
 		else
 			HUD:ShowNotification('~b~LVC ~r~Error 204:~s~ tone does not exist. See console.', false)
-			UTIL:Print(string.format('^1LVC Error: approved tone '%d' does not exist. Verify all approved tones exist in SIRENS table.', id))
+			UTIL:Print(('^1LVC Error: approved tone "%d" does not exist. Verify all approved tones exist in SIRENS table.'):format(id))
 			break;
 		end
 	end
@@ -159,12 +162,12 @@ function UTIL:SetToneByPos(tone_string, pos)
 				tone_ARHRN_id = approved_tones[pos]
 			end
 		else
-			HUD:ShowNotification('~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.', false)
-			UTIL:Print('^3LVC Warning 403: Too little sirens assigned. (UTIL:SetToneByPos('..tone_string..', '..pos..')', true)
+			HUD:ShowNotification('~b~LVC ~y~Warning 403:~s~ too little sirens assigned.', false)
+			UTIL:Print(('^3LVC Warning 403: too little sirens assigned. Minimum 3 tones required. (UTIL:SetToneByPos(%s, %s)'):format(tone_string, pos), true)
 		end
 	else
-		HUD:ShowNotification('~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to locate approved_tones. See console.', false)
-		UTIL:Print('^3LVC Warning 404: Attempted to set tone '..tone_string..' but, was unable to locate approved_tones table. (UTIL:SetToneByPos('..tone_string..', '..pos..')', true)
+		HUD:ShowNotification('~b~LVC ~y~Warning 404:~s~ attempted to set tone but, was unable to locate approved_tones. See console.', false)
+		UTIL:Print(('^3LVC Warning 404: attempted to set tone "%s" but, was unable to locate approved_tones table. (UTIL:SetToneByPos(%s, %s)'):format(tone_string, tone_string, pos), true)
 	end
 end
 
@@ -180,7 +183,7 @@ function UTIL:GetTonePos(tone_string)
 end
 
 --[[Getter for Tone ID at index/pos in approved_tones]]
-function UTIL:GetToneAtPos(pos) 	
+function UTIL:GetToneAtPos(pos)
 	if approved_tones[pos] ~= nil then
 		return approved_tones[pos]
 	end
@@ -203,14 +206,14 @@ function UTIL:SetToneByID(tone, tone_id)
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification('~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to locate in approved_tones. See console.', false)
-		UTIL:Print('^3LVC Warning 504: Attempted to set tone '..tone..' but, was unable to located pos: '..tone_id..' in approved_tones. (UTIL:SetToneByPos('..tone..', '..tone_id..')', true)
+		HUD:ShowNotification('~b~LVC ~y~Warning 504:~s~ attempted to set tone but, was unable to locate in approved_tones. See console.', false)
+		UTIL:Print(('^3LVC Warning 504: attempted to set tone %s but, was unable to located pos: %s in approved_tones. (UTIL:SetToneByPos(%s, %s)'):format(tone, tone_id, tone, tone_id), true)
 	end
 end
 
 ---------------------------------------------------------------------
 --[[Gets next tone based off vehicle profile and current tone.]]
-function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos) 
+function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 	local main_tone = main_tone or false
 	local last_pos = last_pos or nil
 	local result
@@ -225,7 +228,7 @@ function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 	else
 		temp_pos = last_pos
 	end
-	
+
 	if temp_pos < #approved_tones then
 		temp_pos = temp_pos+1
 		result = approved_tones[temp_pos]
@@ -240,7 +243,7 @@ function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 			result = UTIL:GetNextSirenTone(result, veh, main_tone, temp_pos)
 		end
 	end
-	
+
 	return result
 end
 
@@ -252,7 +255,7 @@ end
 
 ---------------------------------------------------------------------
 --[[Ensure not all sirens are disabled / button only]]
-function UTIL:IsOkayToDisable() 
+function UTIL:IsOkayToDisable()
 	local count = 0
 	for i, option in pairs(tone_options) do
 		if i ~= 1 then
@@ -275,8 +278,8 @@ function UTIL:ChangeToneString(tone_id, new_name)
 end
 
 ------------------------------------------------
---[[Used to verify tone is allowed before playing.]] 
-function UTIL:IsApprovedTone(tone) 
+--[[Used to verify tone is allowed before playing.]]
+function UTIL:IsApprovedTone(tone)
 	for i, approved_tone in ipairs(approved_tones) do
 		if approved_tone == tone then
 			return true
@@ -312,11 +315,11 @@ function UTIL:IndexOf(tbl, tgt)
 end
 
 ---------------------------------------------------------------------
---[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
-	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
+--[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness),
+	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while
 	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
 	which can add and remove multiple different extras at once and adds flag to repair the vehicle
-	for extras that are too large and require the vehicle to be reloaded. Once it figures out the 
+	for extras that are too large and require the vehicle to be reloaded. Once it figures out the
 	users config layout it calls itself again (recursive) with the id we actually need toggled right now.]]
 function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 	local repair = repair or false
@@ -360,7 +363,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 				end
 				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print('UTIL: Toggling extra '..extra_id..' on', false)
+				UTIL:Print(('UTIL: Toggling %s on'):format(extra_id), false)
 				SetVehicleAutoRepairDisabled(veh, false)
 				if repair then
 					for i = 0,6 do
@@ -373,8 +376,8 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 		else
 			if IsVehicleExtraTurnedOn(veh, extra_id) then
 				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print('UTIL: Toggling extra '..extra_id..' off', false)
-			end	
+				UTIL:Print(('UTIL: Toggling extra %s off'):format(extra_id), false)
+			end
 		end
 	end
 	SetVehicleAutoRepairDisabled(veh, false)

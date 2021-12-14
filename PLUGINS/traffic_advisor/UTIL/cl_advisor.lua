@@ -8,7 +8,7 @@ Additional Modification by TrevorBarns
 Traffic Advisor Plugin by Dawson
 ---------------------------------------------------
 FILE: cl_advisor.lua
-PURPOSE: Contains threads, functions to 
+PURPOSE: Contains threads, functions to
 change traffic advisor state through extras.
 ---------------------------------------------------
 ]]
@@ -21,7 +21,7 @@ TA.block_incorrect_combo = false
 state_ta = {}
 
 Citizen.CreateThread(function()
-	while ta_masterswitch do 
+	while ta_masterswitch do
 		if player_is_emerg_driver then
 			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
 				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
@@ -43,10 +43,10 @@ Citizen.CreateThread(function()
 		end
 		Citizen.Wait(0)
 	end
-end) 
+end)
 
 Citizen.CreateThread(function()
-	while ta_masterswitch do 
+	while ta_masterswitch do
 		if player_is_emerg_driver then
 			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
 				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
@@ -68,7 +68,7 @@ Citizen.CreateThread(function()
 		end
 		Citizen.Wait(0)
 	end
-end) 
+end)
 
 if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
@@ -84,12 +84,12 @@ if ta_masterswitch then
 						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 1
 					end
-					HUD:SetItemState('ta', state_ta[veh]) 					
+					HUD:SetItemState('ta', state_ta[veh])
 				end
 			end
 		end
 	end)
-	
+
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
@@ -103,12 +103,12 @@ if ta_masterswitch then
 						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 2
 					end
-					HUD:SetItemState('ta', state_ta[veh]) 
+					HUD:SetItemState('ta', state_ta[veh])
 				end
 			end
 		end
 	end)
-	
+
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
@@ -122,7 +122,7 @@ if ta_masterswitch then
 						PlayAudio('Upgrade', upgrade_volume)
 						state_ta[veh] = 3
 					end
-					HUD:SetItemState('ta', state_ta[veh]) 					
+					HUD:SetItemState('ta', state_ta[veh])
 				end
 			end
 		end
@@ -136,7 +136,7 @@ end
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
 	UTIL:FixOversizeKeys(TA_ASSIGNMENTS)
-end) 
+end)
 
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
@@ -152,20 +152,20 @@ function TA:UpdateExtrasTable(veh)
 
   if TA_ASSIGNMENTS[veh_name] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name]
-    UTIL:Print('TA: Profile found for ' .. veh_name, false)
+    UTIL:Print(('TA: profile found for %s.'):format(veh_name))
   elseif TA_ASSIGNMENTS[veh_name_wildcard] ~= nil then
     taExtras = TA_ASSIGNMENTS[veh_name_wildcard]
-    UTIL:Print('TA: Wildcard profile found for ' .. veh_name, false)
+    UTIL:Print(('TA: wildcard profile %s found for %s.'):format(veh_name_wildcard, veh_name))
 	else
 		if TA_ASSIGNMENTS['DEFAULT'] ~= nil then
 			taExtras = TA_ASSIGNMENTS['DEFAULT']
-			UTIL:Print('TA: using default profile for '..veh_name, false)
+			UTIL:Print(('TA: using default profile for %s.'):format(veh_name))
 		else
 			taExtras = { }
-			UTIL:Print('^3LVC WARNING: (TRAFFIC_ADVISOR) "DEFAULT" table missing from TA_ASSIGNMENTS table. Using empty table for '..veh_name, false)
+			UTIL:Print(('^3LVC WARNING: (TRAFFIC_ADVISOR) "DEFAULT" table missing from TA_ASSIGNMENTS table. Using empty table for %s.'):format(veh_name))
 		end
 	end
-  
+
   hud_pattern = taExtras.hud_pattern or 1
   HUD:SetItemState('ta_pattern', hud_pattern)
 end

@@ -8,7 +8,7 @@ Additional Modification by TrevorBarns
 Traffic Advisor Plugin by Dawson
 ---------------------------------------------------
 FILE: cl_trailer.lua
-PURPOSE: Contains threads, functions for trailer 
+PURPOSE: Contains threads, functions for trailer
 support.
 ---------------------------------------------------
 ]]
@@ -18,7 +18,7 @@ TRAIL.custom_toggles_set = false
 Citizen.CreateThread(function()
 	Citizen.Wait(500)
 	UTIL:FixOversizeKeys(TRAILERS)
-end) 
+end)
 
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
@@ -27,10 +27,10 @@ AddEventHandler('lvc:onVehicleChange', function()
 
 		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil then
 			TRAIL.custom_toggles_set = true
-			UTIL:Print('TS: Profile found for ' .. TRAIL:GetCabDisplayName(), false)
+			UTIL:Print(('TS: profile found for %s.'):format(TRAIL:GetCabDisplayName()))
 		elseif TRAILERS[veh_name_wildcard] ~= nil then
 			TRAIL.custom_toggles_set = true
-			UTIL:Print('TS: Wildcard profile found for ' .. TRAIL:GetCabDisplayName(), false)
+			UTIL:Print(('TS: wildcard profile %s found for %s.'):format(veh_name_wildcard, TRAIL:GetCabDisplayName()))
 		else
 			TRAIL.custom_toggles_set = false
 		end
@@ -54,7 +54,7 @@ function TRAIL:SetExtraState(is_trailer, extra_id, state)
 		if DoesExtraExist(trailer, extra_id) then
 			SetVehicleExtra(trailer, extra_id, not state)
 		end
-	else 
+	else
 		if DoesExtraExist(veh, extra_id) then
 			SetVehicleExtra(veh, extra_id, not state)
 		end

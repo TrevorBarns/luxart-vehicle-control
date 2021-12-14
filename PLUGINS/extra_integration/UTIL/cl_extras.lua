@@ -7,7 +7,7 @@ ELS Clicks by Faction
 Additional Modification by TrevorBarns
 ---------------------------------------------------
 FILE: cl_extras.lua
-PURPOSE: Contains threads, functions to toggle 
+PURPOSE: Contains threads, functions to toggle
 extras based on vehicle states / inputs.
 ---------------------------------------------------
 ]]
@@ -24,22 +24,22 @@ auto_park_time_index = 2
 Citizen.CreateThread( function()
     while true do
         while ei_masterswitch do
-            if veh ~= nil then	
+            if veh ~= nil then
 				--BRAKE LIGHTS
 				if player_is_emerg_driver and brakes_ei_enabled and extras.Brake ~= nil then
 					if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
 					   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
 					   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
-					   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
+					   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped
 					   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == '-0.0')) then						-- Is vehicle not reversing or at max reverse speed
 						UTIL:TogVehicleExtras(veh, extras.Brake, true)
 					else
-						UTIL:TogVehicleExtras(veh, extras.Brake, false)				
+						UTIL:TogVehicleExtras(veh, extras.Brake, false)
 					end
 				elseif extras.Brake ~= nil then
 					UTIL:TogVehicleExtras(veh, extras.Brake, false)
 				end
-				
+
 				--REVERSE LIGHTS
 				if player_is_emerg_driver and reverse_ei_enabled and extras.Reverse ~= nil then
 					accel_pedal = GetVehicleThrottleOffset(veh)
@@ -48,35 +48,35 @@ Citizen.CreateThread( function()
 					else
 						UTIL:TogVehicleExtras(veh, extras.Reverse, false)
 					end
-				end					
-				
+				end
+
 				--INDICATORS
 				if player_is_emerg_driver and indicators_ei_enabled and extras.LIndicator ~= nil and extras.RIndicator ~= nil then
 					if state_indic[veh] == 1 then
 						UTIL:TogVehicleExtras(veh, extras.LIndicator, true)
 					elseif state_indic[veh] == 2 then
-						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)				
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)
 					elseif state_indic[veh] == 3 then
 						UTIL:TogVehicleExtras(veh, extras.LIndicator, true)
-						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)								
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, true)
 					else
 						UTIL:TogVehicleExtras(veh, extras.LIndicator, false)
-						UTIL:TogVehicleExtras(veh, extras.RIndicator, false)												
+						UTIL:TogVehicleExtras(veh, extras.RIndicator, false)
 					end
 				end
-				
+
 				--TAKEDOWNS
 				if player_is_emerg_driver and takedown_ei_enabled and tkd_masterswitch and extras.Takedowns ~= nil then
 					if state_tkd[veh] ~= nil then
 						UTIL:TogVehicleExtras(veh, extras.Takedowns, state_tkd[veh])
 					end
 				end
-				
+
 				--DRIVERS DOOR
 				if door_ei_enabled then
 					if extras.DDoor ~= nil then
 						if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
-							UTIL:Print('EI: Drivers door open, calling EI function.', false)
+							UTIL:Print('EI: Drivers door open, calling EI function.')
 							UTIL:TogVehicleExtras(veh, extras.DDoor, true)
 						else
 							UTIL:TogVehicleExtras(veh, extras.DDoor, false)
@@ -97,30 +97,30 @@ Citizen.CreateThread( function()
 						end
 					end
 				end
-				
+
 				--SIREN CONTROLLER STATES
-				if player_is_emerg_driver and siren_controller_ei_enabled then 
+				if player_is_emerg_driver and siren_controller_ei_enabled then
 					if extras.MainSiren ~= nil then
 						if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
 							UTIL:TogVehicleExtras(veh, extras.MainSiren, true)
 						else
 							UTIL:TogVehicleExtras(veh, extras.MainSiren, false)
 						end
-					end					
+					end
 					if extras.AuxSiren ~= nil then
 						if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
 							UTIL:TogVehicleExtras(veh, extras.AuxSiren, true)
 						else
 							UTIL:TogVehicleExtras(veh, extras.AuxSiren, false)
 						end
-					end					
+					end
 					if extras.AirHorn ~= nil then
 						if actv_horn ~= nil and actv_horn and not actv_manu then
 							UTIL:TogVehicleExtras(veh, extras.AirHorn, true)
 						else
 							UTIL:TogVehicleExtras(veh, extras.AirHorn, false)
 						end
-					end					
+					end
 					if extras.Manu ~= nil then
 						if actv_manu ~= nil and actv_manu then
 							UTIL:TogVehicleExtras(veh, extras.Manu, true)
@@ -148,7 +148,7 @@ Citizen.CreateThread(function()
 				Citizen.Wait(500)
 			end
 		else
-			Citizen.Wait(500)			
+			Citizen.Wait(500)
 		end
 		Citizen.Wait(0)
 	end
@@ -161,7 +161,7 @@ Citizen.CreateThread(function()
 				while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
 					if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
 						Citizen.Wait(1000)
-						stopped_timer = stopped_timer + 1000						
+						stopped_timer = stopped_timer + 1000
 					end
 					Citizen.Wait(0)
 				end
@@ -228,7 +228,7 @@ end)
  Citizen.CreateThread(function()
 	Citizen.Wait(500)
 	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
-end) 
+end)
 
 ---------------------------------------------------------------------
 --Triggered when vehicle changes (cl_lvc.lua)
@@ -246,16 +246,17 @@ function EI:UpdateExtrasTable(veh)
 
 	if EXTRA_ASSIGNMENTS[veh_name] ~= nil then				--Does profile exist as outlined in vehicle.meta
 		extras = EXTRA_ASSIGNMENTS[veh_name]
-		UTIL:Print('EI: Profile found for '..veh_name, false)
-	elseif EXTRA_ASSIGNMENTS[veh_name_wildcard] ~= nil then				
+		UTIL:Print(('EI: profile found for %s.'):format(veh_name))
+	elseif EXTRA_ASSIGNMENTS[veh_name_wildcard] ~= nil then
 		extras = EXTRA_ASSIGNMENTS[veh_name_wildcard]
-		UTIL:Print('EI: Wildcard profile found for '..veh_name, false)
+		UTIL:Print(('EI: wildcard profile %s found for %s.'):format(veh_name))
 	else
 		if EXTRA_ASSIGNMENTS['DEFAULT'] ~= nil then
 			extras = EXTRA_ASSIGNMENTS['DEFAULT']
-			UTIL:Print('EI: using default profile for '..veh_name, false)
+			UTIL:Print(('EI: using default profile for %s.'):format(veh_name))
 		else
 			extras = { }
-			UTIL:Print('^3LVC WARNING: (EXTRA_INTEGRATION) "DEFAULT" table missing from EXTRA_ASSIGNMENTS table. Using empty table for '..veh_name, false)
-		end	end
+			UTIL:Print(('^3LVC WARNING: (EXTRA_INTEGRATION) "DEFAULT" table missing from EXTRA_ASSIGNMENTS table. Using empty table for %s.'):format(veh_name))
+		end
+	end
 end
