@@ -254,11 +254,11 @@ RegisterCommand('lvcdebug', function(source, args)
 	if debug_mode then
 		HUD:ShowNotification('~y~~h~Info:~h~ ~s~debug mode enabled. See console.', true)
 		UTIL:Print('^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to "refresh" to see fxmanifest changes.', true)
+		TriggerEvent('lvc:onVehicleChange')
 	else
 		HUD:ShowNotification('~y~~h~Info:~h~ ~s~debug mode disabled. See console.', true)
-		UTIL:Print('^3LVC Info: debug mode enabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to "refresh" to see fxmanifest changes.', true)
+		UTIL:Print('^3LVC Info: debug mode disabled temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to "refresh" to see fxmanifest changes.', true)
 	end
-	TriggerEvent('lvc:onVehicleChange')
 end)
 
 --Toggle LUX lock command
