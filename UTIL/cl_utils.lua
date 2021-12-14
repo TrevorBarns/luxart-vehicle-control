@@ -365,7 +365,7 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 				if repair then
 					for i = 0,6 do
 						if doors[i] > 0.0 then
-							SetVehicleDoorOpen(veh, i, false, false)
+							SetVehicleDoorOpen(veh, i, true, false)
 						end
 					end
 				end
