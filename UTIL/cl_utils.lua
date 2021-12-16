@@ -24,6 +24,54 @@ local tone_AUX_id = nil
 local tone_ARHRN_id = nil
 
 ---------------------------------------------------------------------
+--[[Return sub-table for sirens or plugin settings tables, given veh, and name of whatever setting.]]
+function UTIL:GetProfileFromTable(print_name, tbl, veh)
+	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local lead_and_trail_wildcard = veh_name:gsub('%d+', '#')
+	local lead = veh_name:match('%d*%a+%d*')
+	local trail = veh_name:gsub(lead, ''):gsub('%d+', '#')
+	local trailing_wildcard = string.format('%s%s', lead, trail)
+	
+	local profile_table, profile
+	
+	if tbl ~= nil then
+		if tbl[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
+			profile_table = tbl[veh_name]
+			profile = veh_name
+			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
+		elseif tbl[lead_and_trail_wildcard] ~= nil then			--Does profile exist using # as wildcard for any digits.
+			profile_table = tbl[lead_and_trail_wildcard]
+			profile = lead_and_trail_wildcard
+			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
+		elseif tbl[trail_only_wildcard] ~= nil then				--Does profile exist using # as wildcard for any trailing digits.
+			profile_table = tbl[trail_only_wildcard]
+			profile = trail_only_wildcard
+			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
+		else
+			if tbl['DEFAULT'] ~= nil then
+				profile_table = tbl['DEFAULT']
+				profile = 'DEFAULT'
+				UTIL:Print(('%s: using default profile for %s.'):format(print_name, veh_name))
+				if print_name == 'SIRENS' then
+					HUD:ShowNotification(('~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \'~o~ %s ~s~\'.'):format(veh_name))
+				end
+ 			else
+				profile_table = { }
+				profile = false
+				UTIL:Print(('^3LVC WARNING: "DEFAULT" table missing from %s table. Using empty table for %s.'):format(print_name, veh_name), true)
+			end
+		end
+	else
+		profile_table = { }
+		profile = false
+		HUD:ShowNotification(('~b~~h~LVC~h~ ~r~ERROR: %s attempted to get profile from nil table. See console.'):format(print_name), true)
+		UTIL:Print(UTIL:Print(('^1LVC ERROR: %s attempted to get profile from nil table. This is typically caused by an invalid character or missing { } brace. (https://git.io/JDVhK)'):format(print_name)), true)
+	end
+		
+	return profile_table, profile
+end
+
+---------------------------------------------------------------------
 --[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA).
     GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
 function UTIL:FixOversizeKeys(TABLE)
@@ -39,23 +87,7 @@ end
 ---------------------------------------------------------------------
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
-	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	local veh_name_wildcard = string.gsub(veh_name, '%d+', '#')
-
-	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
-		approved_tones = SIREN_ASSIGNMENTS[veh_name]
-		profile = veh_name
-		UTIL:Print(('SIRENS: profile found for %s.'):format(veh_name))
-	elseif SIREN_ASSIGNMENTS[veh_name_wildcard] ~= nil then				--Does profile exist using # as wildcard for any digits.
-		approved_tones = SIREN_ASSIGNMENTS[veh_name_wildcard]
-		profile = veh_name_wildcard
-		UTIL:Print(('SIRENS: wildcard profile %s found for %s.'):format(veh_name_wildcard, veh_name))
-	else
-		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
-		profile = 'DEFAULT'
-		HUD:ShowNotification(('~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \'~o~ %s ~s~\'.'):format(veh_name))
-		UTIL:Print(('SIRENS: using default profile for %s.'):format(veh_name))
-	end
+	approved_tones, profile = UTIL:GetProfileFromTable('SIRENS', SIREN_ASSIGNMENTS, veh)
 
 	if not UTIL:IsApprovedTone('MAIN_MEM') then
 		UTIL:SetToneByPos('MAIN_MEM', 2)
