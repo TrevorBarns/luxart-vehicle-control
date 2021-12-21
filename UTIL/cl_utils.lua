@@ -28,9 +28,9 @@ local tone_ARHRN_id = nil
 function UTIL:GetProfileFromTable(print_name, tbl, veh)
 	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 	local lead_and_trail_wildcard = veh_name:gsub('%d+', '#')
-	local lead = veh_name:match('%d*%a+%d*')
+	local lead = veh_name:match('%d*%a+')
 	local trail = veh_name:gsub(lead, ''):gsub('%d+', '#')
-	local trailing_wildcard = string.format('%s%s', lead, trail)
+	local trail_only_wildcard = string.format('%s%s', lead, trail)
 	
 	local profile_table, profile
 	
@@ -39,13 +39,13 @@ function UTIL:GetProfileFromTable(print_name, tbl, veh)
 			profile_table = tbl[veh_name]
 			profile = veh_name
 			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
-		elseif tbl[lead_and_trail_wildcard] ~= nil then			--Does profile exist using # as wildcard for any digits.
-			profile_table = tbl[lead_and_trail_wildcard]
-			profile = lead_and_trail_wildcard
-			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
 		elseif tbl[trail_only_wildcard] ~= nil then				--Does profile exist using # as wildcard for any trailing digits.
 			profile_table = tbl[trail_only_wildcard]
 			profile = trail_only_wildcard
+			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))			
+		elseif tbl[lead_and_trail_wildcard] ~= nil then			--Does profile exist using # as wildcard for any digits.
+			profile_table = tbl[lead_and_trail_wildcard]
+			profile = lead_and_trail_wildcard
 			UTIL:Print(('%s: profile %s found for %s.'):format(print_name, profile, veh_name))
 		else
 			if tbl['DEFAULT'] ~= nil then
