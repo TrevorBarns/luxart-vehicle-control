@@ -15,16 +15,18 @@ RMenu.Add('lvc', 'main', RageUI.CreateMenu('Luxart Vehicle Control', 'Main Menu'
 RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Main Siren Settings'))
 RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'HUD Settings'))
 RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Audio Settings'))
+RMenu.Add('lvc', 'volumesettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'audiosettings'),'Luxart Vehicle Control', 'Audio Settings'))
 RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Plugins'))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Storage Management'))
-RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Copy Profile Settings'))
-RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'About Luxart Vehicle Control'))
+RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'saveload'),'Luxart Vehicle Control', 'Copy Profile Settings'))
+RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'About'))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
-RMenu:Get('lvc', 'audiosettings'):SetTotalItemsPerPage(12)
+RMenu:Get('lvc', 'volumesettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
 RMenu:Get('lvc', 'maintone'):DisplayGlare(false)
 RMenu:Get('lvc', 'hudsettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'audiosettings'):DisplayGlare(false)
+RMenu:Get('lvc', 'volumesettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'plugins'):DisplayGlare(false)
 RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'copyprofile'):DisplayGlare(false)
@@ -64,7 +66,7 @@ Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
 			sl_btn_debug_msg = ''
 		end
 		TonesTable = UTIL:GetApprovedTonesTableNameAndID()
-		profiles = Storage:GetSavedProfiles()
+		profiles = STORAGE:GetSavedProfiles()
 		RageUI.Visible(RMenu:Get('lvc', 'main'), not RageUI.Visible(RMenu:Get('lvc', 'main')))
 	end
 end)
@@ -75,7 +77,7 @@ RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	Citizen.CreateThread(function()
 		Citizen.Wait(500)
-		button_sfx_scheme_id = UTIL:IndexOf(button_sfx_scheme_choices, button_sfx_scheme) or 1
+		button_sfx_scheme_id = UTIL:IndexOf(AUDIO.button_sfx_scheme_choices, AUDIO.button_sfx_scheme) or 1
 	end)
 end)
 
@@ -85,6 +87,7 @@ function IsMenuOpen()
 			RageUI.Visible(RMenu:Get('lvc', 'maintone')) or
 			RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or
+			RageUI.Visible(RMenu:Get('lvc', 'volumesettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'saveload')) or
 			RageUI.Visible(RMenu:Get('lvc', 'copyprofile')) or
 			RageUI.Visible(RMenu:Get('lvc', 'about')) or
@@ -173,55 +176,61 @@ Citizen.CreateThread(function()
 
 			if custom_manual_tones_master_switch then
 				--PRIMARY MANUAL TONE List
-				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
+				--Get Current Tone ID and index ToneTable offset by 1 to correct airhorn missing
 				PMANU = UTIL:GetTonePos('PMANU')
-				RageUI.List('Primary Manual Tone', TonesTable, PMANU-1, 'Change your primary manual tone.', {}, true, {
-				  onListChange = function(Index, Item)
-					UTIL:SetToneByID('PMANU', Item.Value)
-				  end,
-				  onSelected = function()
-					proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[PMANU].String .. ':', SIRENS[PMANU].Name, 15)
-					if proposed_name ~= nil then
-						UTIL:ChangeToneString(PMANU, proposed_name)
-						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
-					end
-				  end,
-				})
-
+				if PMANU ~= -1 then
+					RageUI.List('Primary Manual Tone', TonesTable, PMANU-1, 'Change your primary manual tone.', {}, true, {
+					  onListChange = function(Index, Item)
+						UTIL:SetToneByID('PMANU', Item.Value)
+					  end,
+					  onSelected = function()
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[PMANU].String .. ':', SIRENS[PMANU].Name, 15)
+						if proposed_name ~= nil then
+							UTIL:ChangeToneString(PMANU, proposed_name)
+							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+						end
+					  end,
+					})
+				end				
+				
 				--SECONDARY MANUAL TONE List
-				--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
+				--Get Current Tone ID and index ToneTable offset by 1 to correct airhorn missing
 				SMANU = UTIL:GetTonePos('SMANU')
-				RageUI.List('Secondary Manual Tone', TonesTable, SMANU-1, 'Change your secondary manual tone.', {}, true, {
-				  onListChange = function(Index, Item)
-					UTIL:SetToneByID('SMANU', Item.Value)
-				  end,
-				  onSelected = function()
-					proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[SMANU].String .. ':', SIRENS[SMANU].Name, 15)
-					if proposed_name ~= nil then
-						UTIL:ChangeToneString(SMANU, proposed_name)
-						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
-					end
-				  end,
-				})
+				if SMANU ~= -1 then
+					RageUI.List('Secondary Manual Tone', TonesTable, SMANU-1, 'Change your secondary manual tone.', {}, SMANU ~= -1, {
+					  onListChange = function(Index, Item)
+						UTIL:SetToneByID('SMANU', Item.Value)
+					  end,
+					  onSelected = function()
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[SMANU].String .. ':', SIRENS[SMANU].Name, 15)
+						if proposed_name ~= nil then
+							UTIL:ChangeToneString(SMANU, proposed_name)
+							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+						end
+					  end,
+					})
+				end
 			end
 
 			--AUXILARY MANUAL TONE List
-			--Get Current Tone ID and index ToneTable offset by 1 to correct air horn missing
+			--Get Current Tone ID and index ToneTable offset by 1 to correct airhorn missing
 			if custom_aux_tones_master_switch then
 				--AST List
 				AUX = UTIL:GetTonePos('AUX')
-				RageUI.List('Auxiliary Siren Tone', TonesTable, AUX-1, 'Change your auxiliary/dual siren tone.', {}, true, {
-				  onListChange = function(Index, Item)
-					UTIL:SetToneByID('AUX', Item.Value)
-				  end,
-				  onSelected = function()
-					proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[AUX].String .. ':', SIRENS[AUX].Name, 15)
-					if proposed_name ~= nil then
-						UTIL:ChangeToneString(AUX, proposed_name)
-						TonesTable = UTIL:GetApprovedTonesTableNameAndID()
-					end
-				  end,
-				})
+				if AUX ~= -1 then
+					RageUI.List('Auxiliary Siren Tone', TonesTable, AUX-1, 'Change your auxiliary/dual siren tone.', {}, AUX ~= -1, {
+					  onListChange = function(Index, Item)
+						UTIL:SetToneByID('AUX', Item.Value)
+					  end,
+					  onSelected = function()
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[AUX].String .. ':', SIRENS[AUX].Name, 15)
+						if proposed_name ~= nil then
+							UTIL:ChangeToneString(AUX, proposed_name)
+							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+						end
+					  end,
+					})
+				end
 			end
 
 			--SIREN PARK KILL
@@ -264,7 +273,7 @@ Citizen.CreateThread(function()
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			local approved_tones = UTIL:GetApprovedTonesTable()
 			if airhorn_interrupt_masterswitch then
-				RageUI.Checkbox('Airhorn Interrupt Mode', 'Toggles whether the air horn interrupts main siren.', tone_airhorn_intrp, {}, {
+				RageUI.Checkbox('Airhorn Interrupt Mode', 'Toggles whether the airhorn interrupts main siren.', tone_airhorn_intrp, {}, {
 				  onChecked = function()
 					tone_airhorn_intrp = true
 				  end,
@@ -347,109 +356,125 @@ Citizen.CreateThread(function()
 		end)
 		--AUDIO SETTINGS MENU
 		RageUI.IsVisible(RMenu:Get('lvc', 'audiosettings'), function()
-			RageUI.Checkbox('Radio Controls', 'When enabled, the tilde key will act as a radio wheel key.', radio_masterswitch, {}, {
+			RageUI.Checkbox('Radio Controls', 'When enabled, the tilde key will act as a radio wheel key.', AUDIO.radio_masterswitch, {}, {
 			  onChecked = function()
-				  radio_masterswitch = true
+				  AUDIO.radio_masterswitch = true
 			  end,
 			  onUnChecked = function()
-				  radio_masterswitch = false
+				  AUDIO.radio_masterswitch = false
 			  end,
             })
-			RageUI.List('Siren Box SFX Scheme', button_sfx_scheme_choices, button_sfx_scheme_id, 'Change what SFX to use for siren box clicks.', {}, true, {
+			RageUI.Checkbox('Horn on Cycle', 'When enabled, your default horn will sound when cycling siren tones.', AUDIO.horn_on_cycle, {}, {
+			  onChecked = function()
+				  AUDIO.horn_on_cycle = true
+			  end,
+			  onUnChecked = function()
+				  AUDIO.horn_on_cycle = false
+			  end,
+            })
+			RageUI.Separator('SoundFX Settings')
+			RageUI.List('Siren Box Scheme', AUDIO.button_sfx_scheme_choices, button_sfx_scheme_id, 'Change what SFX to use for siren box clicks.', {}, true, {
 			  onListChange = function(Index, Item)
 				button_sfx_scheme_id = Index
-				button_sfx_scheme = button_sfx_scheme_choices[button_sfx_scheme_id]
+				AUDIO.button_sfx_scheme = AUDIO.button_sfx_scheme_choices[button_sfx_scheme_id]
 			  end,
 			})
-			RageUI.Checkbox('Manual Button Clicks', 'When enabled, your manual tone button will activate the upgrade SFX.', manu_button_SFX, {}, {
+			RageUI.Checkbox('Manual Button Clicks', 'When enabled, your manual tone button will activate the upgrade SFX.', AUDIO.manu_button_SFX, {}, {
 			  onChecked = function()
-				  manu_button_SFX = true
+				  AUDIO.manu_button_SFX = true
 			  end,
 			  onUnChecked = function()
-				  manu_button_SFX = false
+				  AUDIO.manu_button_SFX = false
 			  end,
             })
-			RageUI.Checkbox('Air Horn Button Clicks', 'When enabled, your air horn button will activate the upgrade SFX.', airhorn_button_SFX, {}, {
+			RageUI.Checkbox('Airhorn Button Clicks', 'When enabled, your airhorn button will activate the upgrade SFX.', AUDIO.airhorn_button_SFX, {}, {
 			  onChecked = function()
-				  airhorn_button_SFX = true
+				  AUDIO.airhorn_button_SFX = true
 			  end,
 			  onUnChecked = function()
-				  airhorn_button_SFX = false
+				  AUDIO.airhorn_button_SFX = false
 			  end,
             })
-			RageUI.List('Activity Reminder', {'Off', '1/2', '1', '2', '5', '10'}, activity_reminder_index, ('Receive reminder tone that your lights are on. Options are in minutes. Timer (sec): %1.0f'):format((last_activity_timer / 1000) or 0), {}, true, {
+			RageUI.List('Activity Reminder', {'Off', '1/2', '1', '2', '5', '10'}, AUDIO:GetActivityReminderIndex(), ('Receive reminder tone that your lights are on. Options are in minutes. Timer (sec): %1.0f'):format((AUDIO:GetActivityTimer() / 1000) or 0), {}, true, {
 			  onListChange = function(Index, Item)
-				activity_reminder_index = Index
-				SetActivityTimer()
+				AUDIO:SetActivityReminderIndex(Index)
+				AUDIO:ResetActivityTimer()
 			  end,
 			})
-			RageUI.Slider('On Volume', (on_volume*100), 100, 2, 'Set volume of light slider / button. Plays when lights are turned ~g~on~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Button('Adjust Volumes', 'Open volume settings menu.', {RightLabel = '→→→'}, true, {
+			  onSelected = function()
+			  end,
+			}, RMenu:Get('lvc', 'volumesettings'))
+        end)		
+		--VOLUME SETTINGS MENU
+		RageUI.IsVisible(RMenu:Get('lvc', 'volumesettings'), function()
+			RageUI.Slider('On Volume', (AUDIO.on_volume*100), 100, 2, 'Set volume of light slider / button. Plays when lights are turned ~g~on~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				on_volume = (Index / 100)
+				AUDIO.on_volume = (Index / 100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('On', on_volume)
+				AUDIO:Play('On', AUDIO.on_volume)
 			  end,
 			})
-			RageUI.Slider('Off Volume', (off_volume*100), 100, 2, 'Set volume of light slider / button. Plays when lights are turned ~r~off~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Slider('Off Volume', (AUDIO.off_volume*100), 100, 2, 'Set volume of light slider / button. Plays when lights are turned ~r~off~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				off_volume = (Index/100)
+				AUDIO.off_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Off', off_volume)
+				AUDIO:Play('Off', AUDIO.off_volume)
 			  end,
 			})
-			RageUI.Slider('Upgrade Volume', (upgrade_volume*100), 100, 2, 'Set volume of siren button. Plays when siren is turned ~g~on~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Slider('Upgrade Volume', (AUDIO.upgrade_volume*100), 100, 2, 'Set volume of siren button. Plays when siren is turned ~g~on~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				upgrade_volume = (Index/100)
+				AUDIO.upgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Upgrade', upgrade_volume)
+				AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
 			  end,
 			})
-			RageUI.Slider('Downgrade Volume', (downgrade_volume*100), 100, 2, 'Set volume of siren button. Plays when siren is turned ~r~off~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Slider('Downgrade Volume', (AUDIO.downgrade_volume*100), 100, 2, 'Set volume of siren button. Plays when siren is turned ~r~off~s~. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				downgrade_volume = (Index/100)
+				AUDIO.downgrade_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Downgrade', downgrade_volume)
+				AUDIO:Play('Downgrade', AUDIO.downgrade_volume)
 			  end,
 			})
-			RageUI.Slider('Activity Reminder Volume', (activity_reminder_volume*500), 100, 2, 'Set volume of activity reminder tone. Plays when lights are ~g~on~s~, siren is ~r~off~s~, and timer is has finished. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Slider('Activity Reminder Volume', (AUDIO.activity_reminder_volume*500), 100, 2, 'Set volume of activity reminder tone. Plays when lights are ~g~on~s~, siren is ~r~off~s~, and timer is has finished. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				activity_reminder_volume = (Index/500)
+				AUDIO.activity_reminder_volume = (Index/500)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Reminder', activity_reminder_volume)
+				AUDIO:Play('Reminder', AUDIO.activity_reminder_volume)
 			  end,
 			})
-			RageUI.Slider('Hazards Volume', (hazards_volume*100), 100, 2, 'Set volume of hazards button. Plays when hazards are toggled. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
+			RageUI.Slider('Hazards Volume', (AUDIO.hazards_volume*100), 100, 2, 'Set volume of hazards button. Plays when hazards are toggled. Press Enter to play the sound.', true, {MuteOnSelected = true}, true, {
 			  onSliderChange = function(Index)
-				hazards_volume = (Index/100)
+				AUDIO.hazards_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
 				if hazard_state then
-					PlayAudio('Hazards_On', hazards_volume, true)
+					AUDIO:Play('Hazards_On', AUDIO.hazards_volume, true)
 				else
-					PlayAudio('Hazards_Off', hazards_volume, true)
+					AUDIO:Play('Hazards_Off', AUDIO.hazards_volume, true)
 				end
 				hazard_state = not hazard_state
 			  end,
 			})
-			RageUI.Slider('Lock Volume', (lock_volume*100), 100, 2, 'Set volume of lock notification sound. Plays when siren box lockout is toggled. Press Enter to play the sound.', true, {}, true, {
+			RageUI.Slider('Lock Volume', (AUDIO.lock_volume*100), 100, 2, 'Set volume of lock notification sound. Plays when siren box lockout is toggled. Press Enter to play the sound.', true, {}, true, {
 			  onSliderChange = function(Index)
-				lock_volume = (Index/100)
+				AUDIO.lock_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Key_Lock', lock_volume, true)
+				AUDIO:Play('Key_Lock', AUDIO.lock_volume, true)
 			  end,
 			})
-			RageUI.Slider('Lock Reminder Volume', (lock_reminder_volume*100), 100, 2, 'Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.', true, {}, true, {
+			RageUI.Slider('Lock Reminder Volume', (AUDIO.lock_reminder_volume*100), 100, 2, 'Set volume of lock reminder sound. Plays when locked out keys are pressed repeatedly. Press Enter to play the sound.', true, {}, true, {
 			  onSliderChange = function(Index)
-				lock_reminder_volume = (Index/100)
+				AUDIO.lock_reminder_volume = (Index/100)
 			  end,
 			  onSelected = function(Index, Item)
-				PlayAudio('Locked_Press', lock_reminder_volume, true)
+				AUDIO:Play('Locked_Press', AUDIO.lock_reminder_volume, true)
 			  end,
 			})
         end)
@@ -460,7 +485,7 @@ Citizen.CreateThread(function()
 			RageUI.Button('Save Settings', confirm_s_desc or 'Save LVC settings.' .. sl_btn_debug_msg, {RightLabel = confirm_s_msg or '('.. UTIL:GetVehicleProfileName() .. ')', RightLabelOpacity = profile_s_op}, true, {
 				onSelected = function()
 					if confirm_s_msg == 'Are you sure?' then
-						Storage:SaveSettings()
+						STORAGE:SaveSettings()
 						HUD:ShowNotification('~g~Success~s~: Your settings have been saved.', true)
 						confirm_s_msg = nil
 						confirm_s_desc = nil
@@ -480,7 +505,7 @@ Citizen.CreateThread(function()
 			RageUI.Button('Load Settings', confirm_l_desc or 'Load LVC settings.' .. sl_btn_debug_msg, {RightLabel = confirm_l_msg or '('.. UTIL:GetVehicleProfileName() .. ')', RightLabelOpacity = profile_l_op}, true, {
 			  onSelected = function()
 				if confirm_l_msg == 'Are you sure?' then
-					Storage:LoadSettings()
+					STORAGE:LoadSettings()
 					TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 					HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
 					confirm_l_msg = nil
@@ -504,7 +529,7 @@ Citizen.CreateThread(function()
 			RageUI.Button('Reset Settings', '~r~Reset LVC to it\'s default state, preserves existing saves. Will override any unsaved settings.', {RightLabel = confirm_r_msg}, true, {
 			  onSelected = function()
 				if confirm_r_msg == 'Are you sure?' then
-					Storage:ResetSettings()
+					STORAGE:ResetSettings()
 					HUD:ShowNotification('~g~Success~s~: Settings have been reset.', true)
 					confirm_r_msg = nil
 				else
@@ -546,7 +571,7 @@ Citizen.CreateThread(function()
 					RageUI.Button(profile_name, confirm_c_desc[i] or 'Attempt to load settings from profile \'~b~'..profile_name..'~s~\'.', {RightLabel = confirm_c_msg[i] or 'Load', RightLabelOpacity = profile_c_op[i]}, true, {
 					  onSelected = function()
 						if confirm_c_msg[i] == 'Are you sure?' then
-							Storage:LoadSettings(profile_name)
+							STORAGE:LoadSettings(profile_name)
 							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
 							HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
 							confirm_c_msg[i] = nil
@@ -574,10 +599,10 @@ Citizen.CreateThread(function()
 		------------------------------ABOUT MENU-----------------------------
 		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'about'), function()
-			local curr_version = Storage:GetCurrentVersion()
-			local repo_version = Storage:GetRepoVersion()
+			local curr_version = STORAGE:GetCurrentVersion()
+			local repo_version = STORAGE:GetRepoVersion()
 			if curr_version ~= nil then
-				if Storage:GetIsNewerVersion() == 'older' then
+				if STORAGE:GetIsNewerVersion() == 'older' then
 					RageUI.Button('Current Version', 'This server is running ' .. curr_version ..', an old version.', { RightLabel = '~o~~h~' .. curr_version or 'unknown' }, true, {
 					  onSelected = function()
 					  end,
@@ -586,12 +611,12 @@ Citizen.CreateThread(function()
 						onSelected = function()
 					end,
 					});
-				elseif Storage:GetIsNewerVersion() == 'equal' then
+				elseif STORAGE:GetIsNewerVersion() == 'equal' then
 					RageUI.Button('Current Version', 'This server is running ' .. curr_version .. ', the latest version.', { RightLabel = curr_version or 'unknown' }, true, {
 					  onSelected = function()
 					  end,
 					  });
-				elseif Storage:GetIsNewerVersion() == 'newer' then
+				elseif STORAGE:GetIsNewerVersion() == 'newer' then
 					RageUI.Button('Current Version', 'This server is running ' .. curr_version .. ', an ~y~experimental~s~ version.', { RightLabel = curr_version or 'unknown' }, true, {
 					  onSelected = function()
 					  end,
