@@ -68,13 +68,13 @@ Citizen.CreateThread(function()
 										SetVehicleFullbeam(veh, false)
 									end
 									TKDS:TogTkdStateForVeh(veh, false)										
-									PlayAudio('Downgrade', downgrade_volume) 
+									AUDIO:Play('Downgrade', AUDIO.downgrade_volume) 
 								else
 									if tkd_mode == 2 then
 										SetVehicleFullbeam(veh, true)
 									end
 									TKDS:TogTkdStateForVeh(veh, true)
-									PlayAudio('Upgrade', upgrade_volume) 										
+									AUDIO:Play('Upgrade', AUDIO.upgrade_volume) 										
 								end
 								HUD:SetItemState('tkd', state_tkd[veh]) 
 								count_bcast_timer = delay_bcast_timer
