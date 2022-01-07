@@ -32,8 +32,8 @@ AddEventHandler('lvc:onVehicleChange', function()
 		if player_is_emerg_driver and veh ~= nil then
 			if #EC.table > 0 then
 				for i, extra_shortcut in ipairs(EC.table) do
-					RMenu.Add('lvc', 'extracontrols'..'_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
-					RMenu:Get('lvc', 'extracontrols'..'_'..i):DisplayGlare(false)
+					RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
+					RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
 				end
 			end
 		end
@@ -68,6 +68,13 @@ end)
 Citizen.CreateThread(function()
 	Citizen.Wait(1000)
 	local choice
+	local shortcut_prefix
+	if allow_custom_controls then
+		shortcut_prefix = "Change"
+	else
+		shortcut_prefix = "View"
+	end
+	
     while true do
 			RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'), function()
 				RageUI.Checkbox('Enabled', 'Toggle extra controls functionality.', EC.controls_enabled, {}, {
@@ -79,18 +86,17 @@ Citizen.CreateThread(function()
 				end
 				})
 				
-				if allow_custom_controls then
 					RageUI.Separator('Shortcuts')
-					
 					if #EC.table > 0 then
 						for i, extra_shortcut in ipairs(EC.table) do
-							RageUI.Button(extra_shortcut.Name, 'Change shortcut\'s settings.', {RightLabel = '→→→'}, true, {
+							RageUI.Button(extra_shortcut.Name, shortcut_prefix..' shortcut settings.', {RightLabel = '→→→'}, true, {
 							  onSelected = function()
 							  end,
 							}, RMenu:Get('lvc', 'extracontrols'..'_'..i))					
 						end
+					if allow_custom_controls then
 						RageUI.Separator('Storage Management')
-						RageUI.Button('Save Profile Controls', confirm_s_desc or 'Store new controls to client-side storage (KVP).', {RightLabel = confirm_s_msg or '('.. EC.profile_name .. ')', RightLabelOpacity = profile_s_op}, true, {
+						RageUI.Button('Save Profile Controls', confirm_s_desc or 'Store new controls to client-side storage (KVP).', {RightLabel = confirm_s_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_s_op}, true, {
 						  onSelected = function()
 							if confirm_s_msg == 'Are you sure?' then
 								EC:SaveSettings()
@@ -102,7 +108,7 @@ Citizen.CreateThread(function()
 								RageUI.Settings.Controls.Back.Enabled = false 
 								profile_s_op = 255
 								confirm_s_msg = 'Are you sure?' 
-								confirm_s_desc = '~r~This will override any existing extra controls data for this vehicle profile ('..EC.profile_name..').'
+								confirm_s_desc = '~r~This will override any existing extra controls data for this vehicle profile ('..EC.profile..').'
 								confirm_l_msg = nil
 								profile_l_op = 75
 								confirm_r_msg = nil
@@ -110,7 +116,7 @@ Citizen.CreateThread(function()
 							end
 						  end,
 						})								
-						RageUI.Button('Load Profile Controls', confirm_l_desc or 'Load saved controls from client-side storage (KVP).', {RightLabel = confirm_l_msg or '('.. EC.profile_name .. ')', RightLabelOpacity = profile_l_op}, true, {
+						RageUI.Button('Load Profile Controls', confirm_l_desc or 'Load saved controls from client-side storage (KVP).', {RightLabel = confirm_l_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_l_op}, true, {
 						  onSelected = function()
 							if confirm_l_msg == 'Are you sure?' then
 								EC:LoadSettings()
@@ -152,7 +158,7 @@ Citizen.CreateThread(function()
 							if confirm_d_msg == 'Are you sure?' then
 								EC:DeleteProfiles()
 								UTIL:Print('Success: cleared all extra controls data.', true)
-								HUD:ShowNotification('~g~Success~s~: You have deleted all extra controls data and reset extra controls plugin.', true)
+								HUD:ShowNotification('~g~Success~s~: You have deleted all extra controls data and reset the plugin.', true)
 								confirm_d_msg = nil
 							else 
 								RageUI.Settings.Controls.Back.Enabled = false 
@@ -165,37 +171,37 @@ Citizen.CreateThread(function()
 							end
 						  end,
 						})	
-					else
-						RageUI.Button('(None)', 'No shortcuts found.', {RightLabel = '→→→'}, false, {
-						  onSelected = function()
-						  end,
-						})					
 					end
+				else
+					RageUI.Button('(None)', 'No shortcuts found.', {RightLabel = '→→→'}, false, {
+					  onSelected = function()
+					  end,
+					})					
 				end
 			end)
 			if allow_custom_controls then
 				for i, extra_shortcut in ipairs(EC.table) do
-					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'..'_'..i), function()
-						RageUI.List('Combo', EC.approved_combo_strings, EC.combo_id[i], 'Control that needs to be pressed in addition to "Key" to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, true, {
+					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
+						--DisableControls()
+						RageUI.List('Combo', EC.approved_combo_strings, EC.combo_id[i], 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, EC.combo_id[i] ~= nil, {
 						  onListChange = function(Index, Item)
 							EC.combo_id[i] = Index
-							if Index > 1 then
 								extra_shortcut.Combo = CONTROLS.COMBOS[Index]
-							else
-								extra_shortcut.Combo = false
-							end
 						  end,
 						})					
-						RageUI.List('Key', EC.approved_key_strings, EC.key_id[i], 'Control that needs to be pressed in addition to "Combo" to toggle extras.', {}, true, {
+						RageUI.List('Key', EC.approved_key_strings, EC.key_id[i], 'Control that needs to be pressed in addition to combo-key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, true, {
 						  onListChange = function(Index, Item)
 							EC.key_id[i] = Index
-							if Index > 1 then
 								extra_shortcut.Key = CONTROLS.KEYS[Index]
-							else
-								extra_shortcut.Key = false
-							end
 						  end,
 						})	
+					end)
+				end
+			else
+				for i, extra_shortcut in ipairs(EC.table) do
+					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
+						RageUI.Button('Combo', 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {RightLabel = EC.approved_combo_strings[EC.combo_id[i]]}, true, {})							
+						RageUI.Button('Key', 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {RightLabel = EC.approved_key_strings[EC.key_id[i]]}, true, {})	
 					end)
 				end
 			end

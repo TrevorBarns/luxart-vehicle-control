@@ -23,11 +23,11 @@ function EC:SaveSettings()
 		save_paragram.Key = shortcut.Key
 		table.insert(save_paragrams, save_paragram)
 	end
-	SetResourceKvp(save_prefix..EC.profile_name, json.encode(save_paragrams))
+	SetResourceKvp(save_prefix..EC.profile, json.encode(save_paragrams))
 end
 
 function EC:LoadSettings()
-	local save_paragrams = GetResourceKvpString(save_prefix..EC.profile_name)
+	local save_paragrams = GetResourceKvpString(save_prefix..EC.profile)
 	if save_paragrams ~= nil then
 		save_paragrams = json.decode(save_paragrams)
 		--Iterate through all EC tables in save_paragrams (KVP table)
@@ -39,21 +39,23 @@ function EC:LoadSettings()
 					if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
 						shortcut.Combo = save_data.Combo
 					else
-						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for "%s". See console.'):format(shortcut.Name), true)
-						UTIL:Print(('^3LVC Warning:  The saved control for "%s" is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Combo), true)
+						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for \'%s\'. See console.'):format(shortcut.Name), true)
+						UTIL:Print(('^3LVC Warning:  The saved control for \'%s\' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Combo), true)		
 					end
 					if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
 						shortcut.Key = save_data.Key
 					else
-						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for "%s". See console.'):format(shortcut.Name), true)
-						UTIL:Print(('^3LVC Warning:  The saved control for "%s" is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Key), true)
+						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for \'%s\'. See console.'):format(shortcut.Name), true)
+						UTIL:Print(('^3LVC Warning:  The saved control for \'%s\' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Key), true)		
 					end
 					save_data.used = true
 				end
 			end
-
+		end
+		
+		for i, save_data in pairs(save_paragrams) do		
 			if not save_data.used then
-				UTIL:Print('~b~LVC ~y~Info: found save data that did not align with current Extra Controls configuration. Likely old data that has since been changed by a server developer. You can delete this by re-saving.', true)
+				UTIL:Print('^3LVC Info: found save data that did not align with current Extra Controls configuration. Likely old data that has since been changed by a server developer. You can delete this by re-saving.', true)
 			end
 		end
 		EC:RefreshRageIndexs()
@@ -61,7 +63,7 @@ function EC:LoadSettings()
 end
 
 function EC:DeleteProfiles()
-	Storage:DeleteKVPs(save_prefix)
+	STORAGE:DeleteKVPs(save_prefix)
 end
 
 function EC:RefreshRageIndexs()
