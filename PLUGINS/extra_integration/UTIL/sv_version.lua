@@ -12,7 +12,7 @@ PURPOSE: Handle plugin version checking.
 ]]
 
 local plugin_name = 'extra_integration'
-local plugin_version = '1.0.2'
+local plugin_version = '1.1.0'
 
 RegisterServerEvent('lvc:plugins_getVersions') 
 AddEventHandler('lvc:plugins_getVersions', function()

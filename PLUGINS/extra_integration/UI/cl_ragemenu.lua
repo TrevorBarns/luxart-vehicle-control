@@ -19,25 +19,23 @@ Citizen.CreateThread(function()
     while true do
 		--TKD SETTINGS
 		RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
-			RageUI.Checkbox('Blackout', 'Disabled auto brake lights on stop.', not auto_brake_lights, {}, {
+			RageUI.Checkbox('Blackout', 'Disabled auto brake lights on stop.', not EI:GetAutoBrakeLightsState(), {}, {
             onChecked = function()
-				auto_brake_lights = false
-				brakes_ei_enabled = false
+				EI:Blackout(true)
             end,          
 			onUnChecked = function()
-				auto_brake_lights = true
-				brakes_ei_enabled = true
+				EI:Blackout(false)
             end
             })
 
-			RageUI.List('Auto Park Mode', {'Off', '1/2', '1', '5'}, auto_park_time_index, ('How long after being stopped to disable auto brake lights and put vehicle in "park". Options are in minutes. Timer (sec): %1.0f'):format((stopped_timer / 1000) or 0), {}, true, {
+			RageUI.List('Auto Park Mode', {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), ('How long after being stopped to disable auto brake lights and put vehicle in "park". Options are in minutes. Timer (sec): %1.0f'):format((stopped_timer / 1000) or 0), {}, true, {
 			  onListChange = function(Index, Item)
 				if Index > 1 then
-					auto_park_time_index = Index
-					auto_park = true
+					EI:SetParkTimeIndex(Index)
+					EI:SetAutoPark(true)
 				else
-					auto_park = false
-					auto_park_time_index = Index
+					EI:SetParkTimeIndex(Index)
+					EI:SetAutoPark(false) 
 				end
 			  end,
 			})		
