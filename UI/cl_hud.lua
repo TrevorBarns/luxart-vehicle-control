@@ -30,6 +30,28 @@ Citizen.CreateThread(function()
 end)
 
 ---------------------------------------------------------------------
+--[[Handles HUD back light control.]]
+Citizen.CreateThread(function()
+	local current_backlight_state
+	while true do
+		if player_is_emerg_driver then
+			while HUD:GetHudBacklightMode() == 1 do
+				local _, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
+				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) and HUD:GetHudBacklightState() == false then
+					HUD:SetHudBacklightState(true)
+				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
+					HUD:SetHudBacklightState(false)
+				end
+				Citizen.Wait(500)
+			end
+		end
+		Citizen.Wait(1000)
+	end
+end)
+
+---------------------------------------------------------------------
 --[[Handles hiding hud when hud is hidden or game is paused.]]
 Citizen.CreateThread(function()
 	while true do
@@ -136,7 +158,7 @@ end
 ------------------------------------------------
 --[[Verifies HUD item states are correct]]
 function HUD:RefreshHudItemStates()
-	if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
+	if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 or actv_lxsrnmute_temp then
 		HUD:SetItemState('siren', true)
 	else
 		HUD:SetItemState('siren', false)
@@ -198,7 +220,7 @@ end
 --[[Callback for JS -> LUA to set HUD_pos with current position to save.]]
 RegisterNUICallback( 'hud:setHudPositon', function(data, cb)
 	HUD_pos = data
-	Storage:SaveDefaultHUDSettings()
+	STORAGE:SaveHUDSettings()
 end )
 
 ------------------------------------------------
