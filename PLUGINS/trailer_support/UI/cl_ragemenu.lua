@@ -109,7 +109,7 @@ Citizen.CreateThread(function()
 							if GetVehicleDoorAngleRatio(veh, door_num) > 0 then
 								SetVehicleDoorShut(veh, door_num, true)
 							else
-								SetVehicleDoorOpen(veh, door_num, false, false)
+								SetVehicleDoorOpen(veh, door_num, true, false)
 							end
 						end,
 						})
@@ -125,7 +125,7 @@ Citizen.CreateThread(function()
 							if GetVehicleDoorAngleRatio(trailer, door_num) > 0 then
 								SetVehicleDoorShut(trailer, door_num, true)
 							else
-								SetVehicleDoorOpen(trailer, door_num, false, false)
+								SetVehicleDoorOpen(trailer, door_num, true, false)
 							end
 						end,
 						})
