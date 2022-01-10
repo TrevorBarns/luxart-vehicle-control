@@ -364,12 +364,18 @@ Citizen.CreateThread(function()
 				  AUDIO.radio_masterswitch = false
 			  end,
             })
-			RageUI.Checkbox('Horn on Cycle', 'When enabled, your default horn will sound when cycling siren tones.', AUDIO.horn_on_cycle, {}, {
+			RageUI.Separator('Horn Settings')
+			RageUI.Checkbox('Horn on Cycle', 'When enabled, your vehicle horn will sound when cycling siren tones.', AUDIO.horn_on_cycle, {}, {
 			  onChecked = function()
 				  AUDIO.horn_on_cycle = true
 			  end,
 			  onUnChecked = function()
 				  AUDIO.horn_on_cycle = false
+			  end,
+            })
+			RageUI.List('Airhorn Behaviour', { 'Off', 'Lights', 'Siren', 'Always' }, AUDIO.airhorn_behavior, 'Determines when the airhorn/vehicle horn should be used.', {}, true, {
+			  onListChange = function(Index, Item)
+				  AUDIO.airhorn_behavior = Index
 			  end,
             })
 			RageUI.Separator('SoundFX Settings')

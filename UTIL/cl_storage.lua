@@ -154,6 +154,7 @@ function STORAGE:SaveSettings()
 										airhorn_button_SFX 			= AUDIO.airhorn_button_SFX,
 										manu_button_SFX 			= AUDIO.manu_button_SFX,
 										horn_on_cycle				= AUDIO.horn_on_cycle,
+										airhorn_behavior			= AUDIO.airhorn_behavior,
 										activity_reminder_index 	= AUDIO:GetActivityReminderIndex(),	
 									}						
 			SetResourceKvp(save_prefix..'profile_'..profile_name..'_audio_data',  json.encode(audio_save_data))
@@ -253,6 +254,7 @@ function STORAGE:LoadSettings(profile_name)
 					AUDIO.airhorn_button_SFX 		= audio_save_data.airhorn_button_SFX
 					AUDIO.manu_button_SFX 			= audio_save_data.manu_button_SFX
 					AUDIO.horn_on_cycle				= audio_save_data.horn_on_cycle
+					AUDIO.airhorn_behavior			= audio_save_data.airhorn_behavior
 					AUDIO:SetActivityReminderIndex(audio_save_data.activity_reminder_index)
 					UTIL:Print('^4LVC ^5STORAGE: ^7loaded audio data.')
 				end
@@ -302,6 +304,7 @@ function STORAGE:ResetSettings()
 	AUDIO.airhorn_button_SFX 		= false
 	AUDIO.manu_button_SFX 			= false
 	AUDIO.horn_on_cycle				= false
+	AUDIO.airhorn_behavior			= 4
 	AUDIO:SetActivityReminderIndex(1)
 
 	AUDIO.button_sfx_scheme 		= default_sfx_scheme_name

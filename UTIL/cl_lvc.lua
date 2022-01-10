@@ -123,13 +123,13 @@ Citizen.CreateThread(function()
 		if player_is_emerg_driver then
 			-- HORN ON CYCLE
 			if IsDisabledControlPressed(0, 80) and AUDIO.horn_on_cycle then
-				if state_lxsiren[veh] ~= nil and state_lxsiren ~= 0 then
-					while IsDisabledControlPressed(0, 80) and state_lxsiren ~= 0  and not actv_manu do
+				if state_lxsiren[veh] ~= nil and state_lxsiren[veh] ~= 0 and not actv_manu then
+					while IsDisabledControlPressed(0, 80) and state_lxsiren ~= 0 and not actv_manu do
 						StartVehicleHorn(veh, 1, 0 , false)
 						Citizen.Wait(0)
 					end
 				end
-			end
+			end	
 			
 			-- RADIO WHEEL
 			if IsControlPressed(0, 243) and AUDIO.radio_masterswitch then
@@ -679,11 +679,13 @@ Citizen.CreateThread(function()
 								AUDIO:ResetActivityTimer()
 								count_bcast_timer = delay_bcast_timer
 							end
-							-- BROWSE LX SRN TONES
+							-- CYCLE LX SRN TONES
 							if state_lxsiren[veh] > 0 then
 								if IsDisabledControlJustReleased(0, 80) then
-									AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
-										HUD:SetItemState('horn', false)
+									if not AUDIO.horn_on_cycle then
+										AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
+									end
+									HUD:SetItemState('horn', false)
 									SetLxSirenStateForVeh(veh, UTIL:GetNextSirenTone(state_lxsiren[veh], veh, true))
 									count_bcast_timer = delay_bcast_timer
 								elseif IsDisabledControlPressed(0, 80) then
@@ -712,8 +714,12 @@ Citizen.CreateThread(function()
 
 							-- HORN
 							if IsDisabledControlPressed(0, 86) then
+								if AUDIO.airhorn_behavior == 4 or (AUDIO.airhorn_behavior == 2 and IsVehicleSirenOn(veh)) or (AUDIO.airhorn_behavior == 3 and (state_lxsiren[veh] > 0 or state_pwrcall[veh] > 0)) then
+									actv_horn = true
+								elseif not actv_horn and not actv_manu then
+									StartVehicleHorn(veh, 1, 0 , false)
+								end
 								AUDIO:ResetActivityTimer()
-								actv_horn = true
 								HUD:SetItemState('horn', true)
 							else
 								if actv_horn then
@@ -724,7 +730,7 @@ Citizen.CreateThread(function()
 
 
 							--AIRHORN AND MANU BUTTON SFX
-							if AUDIO.airhorn_button_SFX then
+							if AUDIO.airhorn_button_SFX and actv_horn or actv_manu then
 								if IsDisabledControlJustPressed(0, 86) then
 									AUDIO:Play('Press', AUDIO.upgrade_volume)
 								end
@@ -732,6 +738,7 @@ Citizen.CreateThread(function()
 									AUDIO:Play('Release', AUDIO.upgrade_volume)
 								end
 							end
+							
 							if AUDIO.manu_button_SFX and state_lxsiren[veh] == 0 then
 								if IsDisabledControlJustPressed(0, 80) then
 									AUDIO:Play('Press', AUDIO.upgrade_volume)
