@@ -139,7 +139,7 @@ $( document ).contextmenu( function() {
 
 // This function is used to send data back through to the LUA side 
 function sendData( name, data ) {
-	$.post( "http://"+ resourceName +"/" + name, JSON.stringify( data ), function( datab ) {
+	$.post( "https://"+ resourceName +"/" + name, JSON.stringify( data ), function( datab ) {
 		if ( datab != "ok" ) {
 			console.log( datab );
 		}            
