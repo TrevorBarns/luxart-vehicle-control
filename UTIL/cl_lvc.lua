@@ -142,7 +142,6 @@ Citizen.CreateThread(function()
 				radio_wheel_active = false
 			else
 				DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL
-				SetVehicleRadioEnabled(veh, false)
 			end
 		end
 		Citizen.Wait(0)
@@ -198,6 +197,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 	STORAGE:LoadSettings()
 	UTIL:BuildToneOptions()
 	HUD:RefreshHudItemStates()
+	SetVehicleRadioEnabled(veh, AUDIO.radio_masterswitch)
 	SetVehRadioStation(veh, 'OFF')
 	Citizen.Wait(500)
 	SetVehRadioStation(veh, 'OFF')
@@ -556,11 +556,6 @@ Citizen.CreateThread(function()
 
 			--- IS EMERG VEHICLE ---
 			if GetVehicleClass(veh) == 18 then
-				--  FORCE RADIO ENABLED PER FRAME
-				if radio_masterswitch then
-					SetVehicleRadioEnabled(veh, true)
-				end
-
 				if UpdateOnscreenKeyboard() ~= 0 and not IsEntityDead(veh) then
 					--- SET INIT TABLE VALUES ---
 					if state_lxsiren[veh] == nil then
