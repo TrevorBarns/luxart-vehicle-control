@@ -18,8 +18,6 @@ local activity_reminder_lookup = { [2] = 30000, [3] = 60000, [4] = 120000, [5] =
 AUDIO.radio_masterswitch 		= true
 AUDIO.airhorn_button_SFX 		= false
 AUDIO.manu_button_SFX 			= false
-AUDIO.horn_on_cycle				= false
-AUDIO.airhorn_behavior			= 4
 
 AUDIO.button_sfx_scheme_choices	= button_sfx_scheme_choices
 AUDIO.button_sfx_scheme			= default_sfx_scheme_name
