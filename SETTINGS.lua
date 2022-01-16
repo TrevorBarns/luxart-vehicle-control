@@ -39,6 +39,14 @@ reset_to_standby_masterswitch = true
 --	Enables ability to toggle reset to standby. Setting this to false will not allow users to change from default behaviour this. 
 reset_to_standby_default = true
 --	Default setting for Reset-To-Standby functionality. (default: true)
+horn_on_cycle_masterswitch = true
+--	Enables ability to toggle horn-on-cycle functionality. Setting this to false will not allow users to change from default behaviour this. 
+horn_on_cycle_default = false
+--	Default setting for horn-on-cycle functionality, when enabled your vehicles default horn is played when cycling sirens. (default: false)
+airhorn_behavior_masterswitch = true
+--	Enables ability to customize horn-on-cycle functionality. Setting this to false will not allow users to change from default behaviour this. 
+airhorn_behavior_default = 4
+--	Default setting for airhorn behavior: [1]-Disable Airhorn, [2]-Airhorn when lights are active, [3]-Airhorn when sirens active, [4]-Always use Airhorn. (default: 4) 
 
 --------------CUSTOM MANU/HORN/SIREN---------------
 custom_manual_tones_master_switch = true
