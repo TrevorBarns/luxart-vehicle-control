@@ -222,8 +222,12 @@ function STORAGE:LoadSettings(profile_name)
 						tone_airhorn_intrp 		= profile_save_data.airhorn_intrp
 						tone_main_reset_standby = profile_save_data.main_reset_standby
 						park_kill 				= profile_save_data.park_kill
-						horn_on_cycle			= profile_save_data.horn_on_cycle															   
-						airhorn_behavior		= profile_save_data.airhorn_behavior															   
+						if profile_save_data.horn_on_cycle ~= nil then
+							horn_on_cycle			= profile_save_data.horn_on_cycle		
+						end
+						if profile_save_data.airhorn_behavior ~= nil then
+							airhorn_behavior		= profile_save_data.airhorn_behavior		
+						end
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
@@ -235,7 +239,6 @@ function STORAGE:LoadSettings(profile_name)
 					end
 					UTIL:Print('^4LVC ^5STORAGE: ^7loaded '..profile_name..'.')
 				end
-				
 				--Audio Settings 
 				local audio_save_data = GetResourceKvpString(save_prefix..'profile_'..profile_name..'_audio_data')
 				if audio_save_data ~= nil then
