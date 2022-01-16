@@ -133,6 +133,8 @@ function STORAGE:SaveSettings()
 										 airhorn_intrp 		= tone_airhorn_intrp,
 										 main_reset_standby = tone_main_reset_standby,
 										 park_kill 			= park_kill,
+										 horn_on_cycle		= horn_on_cycle,
+										 airhorn_behavior	= airhorn_behavior,
 										 tone_options 		= tone_options_encoded,															  
 									   }
 							
@@ -153,8 +155,6 @@ function STORAGE:SaveSettings()
 										lock_reminder_volume 		= AUDIO.lock_reminder_volume,
 										airhorn_button_SFX 			= AUDIO.airhorn_button_SFX,
 										manu_button_SFX 			= AUDIO.manu_button_SFX,
-										horn_on_cycle				= AUDIO.horn_on_cycle,
-										airhorn_behavior			= AUDIO.airhorn_behavior,
 										activity_reminder_index 	= AUDIO:GetActivityReminderIndex(),	
 									}						
 			SetResourceKvp(save_prefix..'profile_'..profile_name..'_audio_data',  json.encode(audio_save_data))
@@ -222,7 +222,8 @@ function STORAGE:LoadSettings(profile_name)
 						tone_airhorn_intrp 		= profile_save_data.airhorn_intrp
 						tone_main_reset_standby = profile_save_data.main_reset_standby
 						park_kill 				= profile_save_data.park_kill
-															   
+						horn_on_cycle			= profile_save_data.horn_on_cycle															   
+						airhorn_behavior		= profile_save_data.airhorn_behavior															   
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
@@ -253,8 +254,6 @@ function STORAGE:LoadSettings(profile_name)
 					AUDIO.lock_reminder_volume 		= audio_save_data.lock_reminder_volume
 					AUDIO.airhorn_button_SFX 		= audio_save_data.airhorn_button_SFX
 					AUDIO.manu_button_SFX 			= audio_save_data.manu_button_SFX
-					AUDIO.horn_on_cycle				= audio_save_data.horn_on_cycle
-					AUDIO.airhorn_behavior			= audio_save_data.airhorn_behavior
 					AUDIO:SetActivityReminderIndex(audio_save_data.activity_reminder_index)
 					UTIL:Print('^4LVC ^5STORAGE: ^7loaded audio data.')
 				end
@@ -282,7 +281,9 @@ function STORAGE:ResetSettings()
 	tone_main_reset_standby = reset_to_standby_default
 	tone_airhorn_intrp 		= airhorn_interrupt_default
 	park_kill 				= park_kill_default
-	
+	horn_on_cycle			= horn_on_cycle_default or false
+	airhorn_behavior		= airhorn_behavior_default or 4
+
 	--HUD State
 	HUD:SetHudState(hud_first_default)
 	HUD:SetHudScale(0.7)
@@ -303,8 +304,6 @@ function STORAGE:ResetSettings()
 	AUDIO.radio_masterswitch 		= true
 	AUDIO.airhorn_button_SFX 		= false
 	AUDIO.manu_button_SFX 			= false
-	AUDIO.horn_on_cycle				= false
-	AUDIO.airhorn_behavior			= 4
 	AUDIO:SetActivityReminderIndex(1)
 
 	AUDIO.button_sfx_scheme 		= default_sfx_scheme_name
