@@ -272,6 +272,13 @@ Citizen.CreateThread(function()
 		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			local approved_tones = UTIL:GetApprovedTonesTable()
+			if airhorn_behavior_masterswitch then
+				RageUI.List('Airhorn Behavior', { 'Off', 'Lights', 'Siren', 'Always' }, airhorn_behavior, 'Determines when the airhorn/vehicle horn should be used.', {}, true, {
+				  onListChange = function(Index, Item)
+					  airhorn_behavior = Index
+				  end,
+				})	
+			end
 			if airhorn_interrupt_masterswitch then
 				RageUI.Checkbox('Airhorn Interrupt Mode', 'Toggles whether the airhorn interrupts main siren.', tone_airhorn_intrp, {}, {
 				  onChecked = function()
@@ -279,6 +286,16 @@ Citizen.CreateThread(function()
 				  end,
 				  onUnChecked = function()
 					tone_airhorn_intrp = false
+				  end,
+				})
+			end
+			if horn_on_cycle_masterswitch then
+				RageUI.Checkbox('Horn on Cycle', 'When enabled, your default horn will sound when cycling siren tones.', horn_on_cycle, {}, {
+				  onChecked = function()
+					  horn_on_cycle = true
+				  end,
+				  onUnChecked = function()
+					  horn_on_cycle = false
 				  end,
 				})
 			end
@@ -292,7 +309,9 @@ Citizen.CreateThread(function()
 				  end,
 				})
 			end
+
 			if main_siren_settings_masterswitch then
+				RageUI.Separator('Tone Options')
 				for i, tone in pairs(approved_tones) do
 					if i ~= 1 then
 						RageUI.List(SIRENS[tone].Name, { 'Cycle & Button', 'Cycle Only', 'Button Only', 'Disabled' }, UTIL:GetToneOption(tone), '~g~Cycle:~s~ play as you cycle through sirens.\n~g~Button:~s~ play when registered key is pressed.\n~b~Select to rename siren tones.', {}, true, {
@@ -362,20 +381,6 @@ Citizen.CreateThread(function()
 			  end,
 			  onUnChecked = function()
 				  AUDIO.radio_masterswitch = false
-			  end,
-            })
-			RageUI.Separator('Horn Settings')
-			RageUI.Checkbox('Horn on Cycle', 'When enabled, your vehicle horn will sound when cycling siren tones.', AUDIO.horn_on_cycle, {}, {
-			  onChecked = function()
-				  AUDIO.horn_on_cycle = true
-			  end,
-			  onUnChecked = function()
-				  AUDIO.horn_on_cycle = false
-			  end,
-            })
-			RageUI.List('Airhorn Behaviour', { 'Off', 'Lights', 'Siren', 'Always' }, AUDIO.airhorn_behavior, 'Determines when the airhorn/vehicle horn should be used.', {}, true, {
-			  onListChange = function(Index, Item)
-				  AUDIO.airhorn_behavior = Index
 			  end,
             })
 			RageUI.Separator('SoundFX Settings')
