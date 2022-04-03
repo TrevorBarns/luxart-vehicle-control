@@ -79,6 +79,16 @@ AddEventHandler('lvc:onVehicleChange', function()
 	end)
 end)
 
+--Trims front off tone-strings longer than 36 characters for front-end display
+function TrimToneString(tone_string)
+	if #tone_string > 36 then
+		local trim_amount = #tone_string - 33
+		tone_string = string.format("...%s", string.sub(tone_string, trim_amount, 37))
+	end
+	
+	return tone_string
+end
+
 --Returns true if any menu is open
 function IsMenuOpen()
 	return 	RageUI.Visible(RMenu:Get('lvc', 'main')) or
@@ -183,7 +193,7 @@ Citizen.CreateThread(function()
 						UTIL:SetToneByID('PMANU', Item.Value)
 					  end,
 					  onSelected = function()
-						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[PMANU_ID].String .. ':', SIRENS[PMANU_ID].Name, 15)
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[PMANU_ID].String) .. ':', SIRENS[PMANU_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(PMANU_POS, proposed_name)
 							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
@@ -202,7 +212,7 @@ Citizen.CreateThread(function()
 						UTIL:SetToneByID('SMANU', Item.Value)
 					  end,
 					  onSelected = function()
-						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[SMANU_ID].String .. ':', SIRENS[SMANU_ID].Name, 15)
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[SMANU_ID].String) .. ':', SIRENS[SMANU_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(SMANU_POS, proposed_name)
 							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
@@ -224,7 +234,7 @@ Citizen.CreateThread(function()
 						UTIL:SetToneByID('AUX', Item.Value)
 					  end,
 					  onSelected = function()
-						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[AUX_ID].String .. ':', SIRENS[AUX_ID].Name, 15)
+						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[AUX_ID].String) .. ':', SIRENS[AUX_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(AUX_POS, proposed_name)
 							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
@@ -324,7 +334,7 @@ Citizen.CreateThread(function()
 								end
 							end,
 							onSelected = function()
-								proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. SIRENS[tone].String .. ':', SIRENS[tone].Name, 15)
+								proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[tone].String) .. ':', SIRENS[tone].Name, 15)
 								if proposed_name ~= nil then
 									UTIL:ChangeToneString(tone, proposed_name)
 									TonesTable = UTIL:GetApprovedTonesTableNameAndID()
