@@ -221,7 +221,6 @@ end)
 
 --Toggle LUX lock command
 RegisterCommand('lvclock', function(source, args)
-	CopyVehicleDamages(veh, 1000)
 	if player_is_emerg_driver then
 		key_lock = not key_lock
 		AUDIO:Play('Key_Lock', AUDIO.lock_volume, true)
