@@ -231,6 +231,8 @@ function STORAGE:LoadSettings(profile_name)
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
+									tone_id = tonumber(tone_id)
+									option = tonumber(option)
 									if SIRENS[tone_id] ~= nil then
 										UTIL:SetToneOption(tone_id, option)
 									end
