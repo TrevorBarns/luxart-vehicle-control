@@ -367,7 +367,8 @@ Citizen.CreateThread(function()
 				});
 			RageUI.Slider('Scale', (HUD:GetHudScale()*4), 6, 0.2, 'Change opacity of of the HUD background rectangle.', false, {}, hud_state, {
 				onSliderChange = function(Index)
-				HUD:SetHudScale(Index/4)
+					HUD:SetHudScale(Index/4)
+					Citizen.SetTimeout(500, STORAGE.SaveHUDSettings)
 				end,
 			});
 			RageUI.List('Backlight', {'Auto', 'Off', 'On'}, hud_backlight_mode, 'Changes HUD backlight behavior. ~b~Auto~s~ is determined by headlight state.', {}, true, {
