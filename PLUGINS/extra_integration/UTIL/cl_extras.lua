@@ -43,7 +43,8 @@ local blackout = false
 ----------------REGISTERED COMMANDS---------------
 --Toggles blackout mode
 RegisterCommand('lvcblackout', function(source, args, rawCommand)
-	EI:Blackout()
+	blackout = not blackout
+	EI:Blackout(blackout)
 end)
 
 RegisterKeyMapping('lvcblackout', 'LVC Toggle Blackout', 'keyboard', default_blackout_control)
