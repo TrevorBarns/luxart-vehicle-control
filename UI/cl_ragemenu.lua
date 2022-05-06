@@ -49,14 +49,13 @@ local profile_l_op = 75
 local hazard_state = false
 local button_sfx_scheme_id = -1
 local sl_btn_debug_msg = ''
-local settings_init = false
 
 local profiles = { }
 local TonesTable = { }
 local PMANU_POS, PMANU_ID, SMANU_POS, SMANU_ID, AUX_POS, AUX_ID
 
 Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
-	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 and settings_init then
+	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
 		if UTIL:GetVehicleProfileName() == 'DEFAULT' then
 			local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
 			sl_btn_debug_msg = ' Using ~b~DEFAULT~s~ profile for \'~b~' .. veh_name .. '~s~\'.'
@@ -102,18 +101,6 @@ function IsMenuOpen()
 			RageUI.Visible(RMenu:Get('lvc', 'plugins')) or
 			IsPluginMenuOpen()
 end
-
-
---Loads settings and builds first table states, also updates tone_list every second for vehicle changes
-CreateThread(function()
-    while true do
-		if not settings_init and player_is_emerg_driver and veh ~= nil then
-			UTIL:UpdateApprovedTones(veh)
-			settings_init = true
-		end
-		Wait(1000)
-	end
-end)
 
 --Handle user input to cancel confirmation message for SAVE/LOAD
 CreateThread(function()
