@@ -73,8 +73,8 @@ end)
 --Triggered when vehicle changes (cl_lvc.lua)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
-	Citizen.CreateThread(function()
-		Citizen.Wait(500)
+	CreateThread(function()
+		Wait(500)
 		button_sfx_scheme_id = UTIL:IndexOf(AUDIO.button_sfx_scheme_choices, AUDIO.button_sfx_scheme) or 1
 	end)
 end)
@@ -105,18 +105,18 @@ end
 
 
 --Loads settings and builds first table states, also updates tone_list every second for vehicle changes
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		if not settings_init and player_is_emerg_driver and veh ~= nil then
 			UTIL:UpdateApprovedTones(veh)
 			settings_init = true
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 
 --Handle user input to cancel confirmation message for SAVE/LOAD
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		while not RageUI.Settings.Controls.Back.Enabled do
 			for Index = 1, #RageUI.Settings.Controls.Back.Keys do
@@ -134,20 +134,20 @@ Citizen.CreateThread(function()
 						confirm_c_msg[i] = nil
 						confirm_c_desc[i] = nil
 					end
-					Citizen.Wait(10)
+					Wait(10)
 					RageUI.Settings.Controls.Back.Enabled = true
 					break
 				end
 			end
-			Citizen.Wait(0)
+			Wait(0)
 		end
-		Citizen.Wait(100)
+		Wait(100)
 	end
 end)
 
 --Handle Disabling Controls while menu open
-Citizen.CreateThread(function()
-Citizen.Wait(1000)
+CreateThread(function()
+Wait(1000)
 	while true do
 		while IsMenuOpen() do
 			DisableControlAction(0, 27, true)
@@ -156,24 +156,24 @@ Citizen.Wait(1000)
 			DisableControlAction(0, 173, true)
 			DisableControlAction(0, 174, true)
 			DisableControlAction(0, 175, true)
-			Citizen.Wait(0)
+			Wait(0)
 		end
-		Citizen.Wait(100)
+		Wait(100)
 	end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if IsMenuOpen() then
 			if (not player_is_emerg_driver) then
 				RageUI.CloseAll()
 			end
 		end
-		Citizen.Wait(500)
+		Wait(500)
 	end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		--Main Menu Visible
 	    RageUI.IsVisible(RMenu:Get('lvc', 'main'), function()
@@ -570,7 +570,7 @@ Citizen.CreateThread(function()
 			  onSelected = function()
 				if confirm_fr_msg == 'Are you sure?' then
 					RageUI.CloseAll()
-					Citizen.Wait(100)
+					Wait(100)
 					ExecuteCommand('lvcfactoryreset')
 					confirm_fr_msg = nil
 				else
@@ -652,6 +652,6 @@ Citizen.CreateThread(function()
 			});
 
         end)
-        Citizen.Wait(0)
+        Wait(0)
 	end
 end)

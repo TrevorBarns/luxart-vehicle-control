@@ -15,7 +15,7 @@ RMenu.Add('lvc', 'extrasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins
 RMenu:Get('lvc', 'extrasettings'):DisplayGlare(false)
 
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
 			RageUI.Checkbox('Blackout', 'Disabled auto brake lights on stop.', not EI:GetAutoBrakeLightsState(), {}, {
@@ -40,6 +40,6 @@ Citizen.CreateThread(function()
 			})		
         end)
 		
-        Citizen.Wait(0)
+        Wait(0)
 	end
 end)

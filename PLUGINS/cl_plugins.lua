@@ -13,7 +13,7 @@ settings. Handles Plugin -> LVC event communication
 ]]
 -- RAGE UI
 --	Draws specific button with callback to plugins menu if the plugin is found and enabled. (controlled in plugins settings file)
-Citizen.CreateThread(function()
+CreateThread(function()
     while plugins_installed do
 	    RageUI.IsVisible(RMenu:Get('lvc', 'plugins'), function()
 			-----------------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ Citizen.CreateThread(function()
 			end		
 			-----------------------------------------------------------------------------------------------------------------
 		end)
-        Citizen.Wait(0)
+        Wait(0)
 	end
 end)
 

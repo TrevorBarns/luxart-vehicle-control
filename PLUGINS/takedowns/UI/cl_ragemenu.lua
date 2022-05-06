@@ -14,7 +14,7 @@ PURPOSE: Handle RageUI
 RMenu.Add('lvc', 'tkdsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', 'Takedown Settings'))
 RMenu:Get('lvc', 'tkdsettings'):DisplayGlare(false)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		--TKD SETTINGS
 		RageUI.IsVisible(RMenu:Get('lvc', 'tkdsettings'), function()			
@@ -49,6 +49,6 @@ Citizen.CreateThread(function()
 			  end,	  
 			})	
         end)
-        Citizen.Wait(0)
+        Wait(0)
 	end
 end)

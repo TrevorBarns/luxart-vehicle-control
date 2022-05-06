@@ -15,8 +15,8 @@ support.
 TRAIL = {}
 TRAIL.custom_toggles_set = false
 
-Citizen.CreateThread(function()
-	Citizen.Wait(500)
+CreateThread(function()
+	Wait(500)
 	UTIL:FixOversizeKeys(TRAILERS)
 end)
 

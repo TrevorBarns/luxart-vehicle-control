@@ -1,12 +1,12 @@
 -- THE 'I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000'
-Citizen.CreateThread(function()
+CreateThread(function()
 	local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
 	AddTextEntry('lvc_wrong_branch','~y~THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED\nFOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE\nLATEST STABLE RELEASE AT:\n~g~github.com/TrevorBarns/luxart-vehicle-control~p~~h~/releases~h~')
 	while not experimental do
 		HUD:ShowText(0.5, 0.0, 0, '~b~LVC~w~: ~o~Warning~w~: This is the development branch (master)', 0.5)
 		HUD:ShowText(0.5, 0.04, 0, nil, nil, 'lvc_wrong_branch')
 		HUD:ShowText(0.5, 0.15, 0, '~b~TO MUTE THIS~w~: Set CONVAR "~o~experimental~w~" to "~o~true~w~" in fxmanifest.', 0.3)
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 --[[
@@ -76,7 +76,7 @@ local snd_airmanu = {}
 ----------------THREADED FUNCTIONS----------------
 -- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
 -- Disables controls faster than previous thread.
-Citizen.CreateThread(function()
+CreateThread(function()
 	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
 		if GetCurrentResourceName() == 'lvc' then
 			if community_id ~= nil and community_id ~= '' then
@@ -98,20 +98,20 @@ Citizen.CreateThread(function()
 							end
 						end
 					end
-					Citizen.Wait(1)
+					Wait(1)
 				end
 			else
-				Citizen.Wait(1000)
+				Wait(1000)
 				HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.', true)
 				UTIL:Print('^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.', true)
 			end
 		else
-			Citizen.Wait(1000)
+			Wait(1000)
 			HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.', true)
 			UTIL:Print('^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS "^3lvc^1" (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.', true)
 		end
 	else
-		Citizen.Wait(1000)
+		Wait(1000)
 		HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFLICT ERROR~h~~s~: RESOURCE CONFLICT. SEE CONSOLE.', true)
 		UTIL:Print('^1LVC ERROR: DETECTED "lux_vehcontrol" RUNNING, THIS CONFLICTS WITH LVC. PLEASE STOP "lux_vehcontrol" AND RESTART LVC.', true)
 	end
@@ -120,14 +120,14 @@ end)
 
 -- Auxiliary Control Handling
 --	Handles radio wheel controls and default horn on siren change playback. 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if player_is_emerg_driver then
 			-- HORN ON CYCLE
 			if IsDisabledControlPressed(0, 80) and horn_on_cycle then
 				if state_lxsiren[veh] ~= nil and state_lxsiren ~= 0 and not actv_manu then
 					while IsDisabledControlPressed(0, 80) and state_lxsiren ~= 0 do
-						Citizen.Wait(10)
+						Wait(10)
 						if not actv_manu then
 							StartVehicleHorn(veh, 1, 0 , false)
 						end
@@ -140,22 +140,22 @@ Citizen.CreateThread(function()
 				while IsControlPressed(0, 243) do
 					radio_wheel_active = true
 					SetControlNormal(0, 85, 1.0)
-					Citizen.Wait(0)
+					Wait(0)
 				end
-				Citizen.Wait(100)
+				Wait(100)
 				radio_wheel_active = false
 			else
 				DisableControlAction(0, 85, true) -- INPUT_VEH_RADIO_WHEEL
 				SetVehicleRadioEnabled(veh, false)
 			end
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 
 ----------------PARK KILL THREADS----------------
 --Kill siren on Exit
-Citizen.CreateThread(function()
+CreateThread(function()
 	while park_kill or park_kill_masterswitch do
 		while park_kill and playerped ~= nil and veh ~= nil do
 			if GetIsTaskActive(playerped, 2) then
@@ -168,18 +168,18 @@ Citizen.CreateThread(function()
 				HUD:SetItemState('siren', false)
 				HUD:SetItemState('horn', false)
 				count_bcast_timer = delay_bcast_timer
-				Citizen.Wait(1000)
+				Wait(1000)
 			end
-			Citizen.Wait(0)
+			Wait(0)
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 
 
 ------VEHICLE CHANGE DETECTION AND TRIGGER------
-Citizen.CreateThread(function()
-	Citizen.Wait(1000)
+CreateThread(function()
+	Wait(1000)
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
 			if last_veh == nil then
@@ -190,7 +190,7 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 
@@ -203,7 +203,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 	STORAGE:LoadSettings()
 	HUD:RefreshHudItemStates()
 	SetVehRadioStation(veh, 'OFF')
-	Citizen.Wait(500)
+	Wait(500)
 	SetVehRadioStation(veh, 'OFF')
 end)
 
@@ -291,8 +291,8 @@ function RegisterKeyMaps()
 end
 
 --On resource start/restart
-Citizen.CreateThread(function()
-	Citizen.Wait(500)
+CreateThread(function()
+	Wait(500)
 	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
 	TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
 	SetNuiFocus( false )
@@ -527,7 +527,7 @@ end)
 
 
 ---------------------------------------------------------------------
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		CleanupSounds()
 		DistantCopCarSirens(false)
@@ -831,7 +831,7 @@ Citizen.CreateThread(function()
 					-- IND H
 					elseif IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
 						if GetLastInputMethod(0) then -- last input was with kb
-							Citizen.Wait(hazard_hold_duration)
+							Wait(hazard_hold_duration)
 							if IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
 								local cstate = state_indic[veh]
 								if cstate == ind_state_h then
@@ -845,7 +845,7 @@ Citizen.CreateThread(function()
 								actv_ind_timer = false
 								count_ind_timer = 0
 								count_bcast_timer = delay_bcast_timer
-								Citizen.Wait(300)
+								Wait(300)
 							end
 						end
 					end
@@ -869,6 +869,6 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)

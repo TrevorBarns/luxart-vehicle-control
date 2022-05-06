@@ -31,7 +31,7 @@ AUDIO.lock_reminder_volume		= default_lock_reminder_volume
 AUDIO.activity_reminder_volume 	= default_reminder_volume
 
 ------ACTIVITY REMINDER FUNCTIONALITY------
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		while activity_reminder_index > 1 and player_is_emerg_driver do
 			if IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 then
@@ -40,27 +40,27 @@ Citizen.CreateThread(function()
 					AUDIO:ResetActivityTimer()
 				end
 			end
-			Citizen.Wait(100)
+			Wait(100)
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 
 -- Activity Reminder Timer
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if veh ~= nil then
 			while activity_reminder_index > 1 and IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 do
 				if activity_timer > 1 then
-					Citizen.Wait(1000)
+					Wait(1000)
 					activity_timer = activity_timer - 1000
 				else
-					Citizen.Wait(100)
+					Wait(100)
 					AUDIO:ResetActivityTimer()
 				end
 			end
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 

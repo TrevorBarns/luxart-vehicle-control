@@ -52,35 +52,35 @@ TriggerEvent('chat:addSuggestion', '/lvcblackout', 'Toggle LVC Blackout Mode.')
 
 ----------------THREADED FUNCTIONS----------------
 --[[Startup Initialization]]
- Citizen.CreateThread(function()
-	Citizen.Wait(500)
+ CreateThread(function()
+	Wait(500)
 	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
 end) 
 
-Citizen.CreateThread( function()
+CreateThread( function()
 	while ei_masterswitch do
 		ei_active = player_is_emerg_driver
-		Citizen.Wait(2000)
+		Wait(2000)
 	end
 end)
 
 --[[Function caller for extra state checking.]]
 --	If driver then call RefreshExtras ever 50ms to toggle states.
-Citizen.CreateThread( function()
+CreateThread( function()
     while true do
         while ei_masterswitch do
 			if ei_active and veh ~= nil and extras ~= false then
 				EI:RefreshExtras() 
 			end
-			Citizen.Wait(50)
+			Wait(50)
         end
-		Citizen.Wait(500)
+		Wait(500)
     end
 end)
 
 --[[Extra State Trigger Control]]
 --	Determines vehicles state and sets Triggers
-Citizen.CreateThread( function()
+CreateThread( function()
     while true do
         while ei_masterswitch do
 			if ei_active and veh ~= nil and extras ~= false then
@@ -167,10 +167,10 @@ Citizen.CreateThread( function()
 							if enabled_triggers['DSeat'] then
 								if not IsVehicleSeatFree(veh, -1) then
 									EI:SetState('DSeat', true)			
-									Citizen.Wait(1750)
+									Wait(1750)
 								elseif trigger_table.active['DSeat'] == true then
 									EI:SetState('DSeat', false)
-									Citizen.Wait(1750)									
+									Wait(1750)									
 								end
 							end
 						end
@@ -213,15 +213,15 @@ Citizen.CreateThread( function()
 					end 
 				end
 			end
-			Citizen.Wait(50)
+			Wait(50)
         end
-		Citizen.Wait(1000)
+		Wait(1000)
     end
 end)
 
 --[[Auto Brake Light Control]]
 --	Automatically turns on vehicle brake lights and forces off when in blackout mode.
-Citizen.CreateThread(function()
+CreateThread(function()
 	while ei_masterswitch do
 		if auto_brake_lights then
 			if temp_blackout then
@@ -233,38 +233,38 @@ Citizen.CreateThread(function()
 					SetVehicleBrakeLights(veh, true)
 				end
 			else
-				Citizen.Wait(500)
+				Wait(500)
 			end
 		else
 			temp_blackout = true
 			SetVehicleLights(veh, 1)
 			SetVehicleBrakeLights(veh, false)
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 
 --[[Auto Park Control]]
 --	Turns off brakelights after being stopped for extended period of time
-Citizen.CreateThread(function()
+CreateThread(function()
 	while ei_masterswitch do
 		if auto_brake_lights and auto_park then
 			if player_is_emerg_driver and veh ~= nil then
 				while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
 					if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
-						Citizen.Wait(1000)
+						Wait(1000)
 						stopped_timer = stopped_timer + 1000	
 					end
-					Citizen.Wait(0)
+					Wait(0)
 				end
 				stopped_timer = 0
 			else
-				Citizen.Wait(500)
+				Wait(500)
 			end
 		else
-			Citizen.Wait(500)
+			Wait(500)
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 

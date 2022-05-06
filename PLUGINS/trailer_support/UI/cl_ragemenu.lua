@@ -21,7 +21,7 @@ RMenu:Get('lvc', 'trailerdoors'):DisplayGlare(false)
 local doors = {'Left Front Door', 'Right Front Door', 'Left Rear Door', 'Right Rear Door', 'Hood', 'Trunk', 'Extra #1', 'Extra #2', 'Bomb Bay'}
 local trailer_set = false
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		if trailer ~= nil and trailer ~= 0 then
 			trailer_set = true
@@ -132,6 +132,6 @@ Citizen.CreateThread(function()
 					end
 				end
 			end)
-	Citizen.Wait(0)
+	Wait(0)
 	end
 end)

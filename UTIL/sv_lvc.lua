@@ -59,7 +59,7 @@ AddEventHandler('lvc:plugins_storePluginVersion', function(name, version)
 end)
 
 
-Citizen.CreateThread( function()
+CreateThread( function()
 -- Get LVC repo version from github
 	PerformHttpRequest('https://raw.githubusercontent.com/TrevorBarns/luxart-vehicle-control/master/version', function(err, responseText, headers)
 		if responseText ~= nil and responseText ~= '' then
@@ -67,7 +67,7 @@ Citizen.CreateThread( function()
 		end
 	end)
 
-	Citizen.Wait(1000)
+	Wait(1000)
   -- Get currently installed plugin versions (plugins -> 'lvc:plugins_storePluginVersion')
 	TriggerEvent('lvc:plugins_getVersions')
 
@@ -94,7 +94,7 @@ Citizen.CreateThread( function()
 	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
 		if GetCurrentResourceName() == 'lvc' then
 			if community_id ~= nil and community_id ~= '' then
-				Citizen.Wait(1000)
+				Wait(1000)
 				--	UPDATE DETECTED
 				if curr_version < repo_version then
 					print('\t|\t             ^8UPDATE REQUIRED                     ^7|')

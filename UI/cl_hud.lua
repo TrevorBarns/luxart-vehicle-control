@@ -22,8 +22,8 @@ local HUD_backlight_state = false
 
 ---------------------------------------------------------------------
 --[[Gets initial HUD scale from JS]]
-Citizen.CreateThread(function()
-	Citizen.Wait(1000)
+CreateThread(function()
+	Wait(1000)
 	SendNUIMessage({
 	  _type = 'hud:getHudScale',
 	})
@@ -31,7 +31,7 @@ end)
 
 ---------------------------------------------------------------------
 --[[Handles HUD back light control.]]
-Citizen.CreateThread(function()
+CreateThread(function()
 	local current_backlight_state
 	while true do
 		if player_is_emerg_driver then
@@ -44,16 +44,16 @@ Citizen.CreateThread(function()
 				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
 					HUD:SetHudBacklightState(false)
 				end
-				Citizen.Wait(500)
+				Wait(500)
 			end
 		end
-		Citizen.Wait(1000)
+		Wait(1000)
 	end
 end)
 
 ---------------------------------------------------------------------
 --[[Handles hiding hud when hud is hidden or game is paused.]]
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if show_HUD or HUD_temp_hidden then
 			if (not player_is_emerg_driver) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) then
@@ -66,7 +66,7 @@ Citizen.CreateThread(function()
 				HUD_temp_hidden = false
 			end
 		end
-		Citizen.Wait(500)
+		Wait(500)
 	end
 end)
 
@@ -283,7 +283,7 @@ function HUD:FrontEndAlert(title, subtitle)
 		if IsDisabledControlJustReleased(2, 201) then
 			return true
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end
 
@@ -294,19 +294,19 @@ function HUD:KeyboardInput(input_title, existing_text, max_length)
 	DisplayOnscreenKeyboard(1, 'Custom_Keyboard_Title', '', existing_text, '', '', '', max_length) 
 
 	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
-		Citizen.Wait(0)
+		Wait(0)
 	end
 		
 	if UpdateOnscreenKeyboard() ~= 2 then
 		local result = GetOnscreenKeyboardResult() 
-		Citizen.Wait(500) 
+		Wait(500) 
 		if result ~= '' then
 			return result 
 		else 
 			return nil
 		end
 	else
-		Citizen.Wait(500)
+		Wait(500)
 		return nil 
 	end
 end

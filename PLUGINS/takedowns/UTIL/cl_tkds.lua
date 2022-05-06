@@ -39,7 +39,7 @@ local tkd_scheme_lookup = {
 }
 
 ------TAKE DOWN THREADS------
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			--CLEANUP DEAD TKDS
@@ -91,14 +91,14 @@ Citizen.CreateThread(function()
 				count_bcast_timer = count_bcast_timer + 1
 			end		
 		else
-			Citizen.Wait(500)	
+			Wait(500)	
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 -----------------------------
 -- TKDs: DrawTakeDowns Thread of vehicles within range
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			for veh,state in pairs(state_tkd) do
@@ -109,12 +109,12 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 
 -- Set vehicles distances in table for DrawTakeDowns Thread
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			for veh,_ in pairs(state_tkd) do
@@ -123,12 +123,12 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(500)
+		Wait(500)
 	end
 end)
 
 --Get Headlight State for TKD Trigger
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch and player_is_emerg_driver and tkd_mode == 3 then	
 			_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
@@ -137,9 +137,9 @@ Citizen.CreateThread(function()
 			else
 				TKDS:TogTkdStateForVeh(veh, false)
 			end
-			Citizen.Wait(50)
+			Wait(50)
 		else
-			Citizen.Wait(1000)
+			Wait(1000)
 		end
 	end
 end)

@@ -48,15 +48,15 @@ end)
 				UTIL:Print('^4LVC ^5STORAGE Found: ^7"'..key..'" "'..GetResourceKvpFloat(key)..'", FLOAT', true)
 			end
 			key = FindKvp(handle)
-			Citizen.Wait(0)
+			Wait(0)
 		end
 		UTIL:Print('^4LVC ^5STORAGE: ^7Finished Dumping KVPs...')
 	end)
 --end
 ------------------------------------------------
 -- Resource Start Initialization
-Citizen.CreateThread(function()
-	Citizen.Wait(500)
+CreateThread(function()
+	Wait(500)
 	TriggerServerEvent('lvc:GetRepoVersion_s')
 	STORAGE:FindSavedProfiles()
 end)
@@ -68,7 +68,7 @@ function STORAGE:DeleteKVPs(prefix)
 		DeleteResourceKvp(key)
 		UTIL:Print('^3LVC Info: Deleting Key \'' .. key .. '\'', true)
 		key = FindKvp(handle)
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end
 
@@ -345,7 +345,7 @@ function STORAGE:FindSavedProfiles()
 			end
 		end
 		key = FindKvp(handle)
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end
 

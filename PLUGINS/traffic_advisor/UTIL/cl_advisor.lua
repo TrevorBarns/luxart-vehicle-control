@@ -28,7 +28,7 @@ local delay_bcast_timer = 200
 ----------------THREADED FUNCTIONS----------------
 --[[TA State Syncing]]
 --Broadcasts TA states to other players and cleans up invalid entities. 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while ta_masterswitch and false do --Disabled until syncing implemented.
 		--CLEANUP DEAD TA States
 		if count_taclean_timer > delay_taclean_timer then
@@ -51,12 +51,12 @@ Citizen.CreateThread(function()
 		else
 			count_bcast_timer = count_bcast_timer + 1
 		end		
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 
 --[[Toggle TA when lights are turned on.]]
-Citizen.CreateThread(function()
+CreateThread(function()
 	while ta_masterswitch do 
 		if player_is_emerg_driver then
 			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
@@ -78,12 +78,12 @@ Citizen.CreateThread(function()
 					temp_hud_disable = false
 				end
 			else
-				Citizen.Wait(500)
+				Wait(500)
 			end
 		else
-			Citizen.Wait(500)
+			Wait(500)
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end) 
 
@@ -150,8 +150,8 @@ if ta_masterswitch then
 	RegisterKeyMapping('lvctogmidta', 'LVC Toggle Middle TA', 'keyboard', 'down')
 end
 
-Citizen.CreateThread(function()
-	Citizen.Wait(500)
+CreateThread(function()
+	Wait(500)
 	UTIL:FixOversizeKeys(TA_ASSIGNMENTS)
 end) 
 

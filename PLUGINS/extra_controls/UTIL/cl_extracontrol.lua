@@ -25,7 +25,7 @@ EC.combo_id = {}
 EC.key_id = {}
 
 --Generate required tables for control modification.
-Citizen.CreateThread(function()
+CreateThread(function()
 	table.insert(EC.approved_combo_strings, CONTROLS_LOOKUP[1])
 	for i, control_id in ipairs(CONTROLS.COMBOS) do
 		table.insert(EC.approved_combo_strings, CONTROLS_LOOKUP[control_id+2])
@@ -40,7 +40,7 @@ Citizen.CreateThread(function()
 end)
 
 --Control Handling
-Citizen.CreateThread(function()
+CreateThread(function()
 	while ec_masterswitch do
 	  if EC.controls_enabled and not IsMenuOpen() and not key_lock then
 		if player_is_emerg_driver and #EC.table > 0 then
@@ -64,12 +64,12 @@ Citizen.CreateThread(function()
 				end
 			end
 		else
-			Citizen.Wait(500)
+			Wait(500)
 		end
 	  else
-		Citizen.Wait(500)
+		Wait(500)
 	  end
-	  Citizen.Wait(0)
+	  Wait(0)
 	end
 end)
 

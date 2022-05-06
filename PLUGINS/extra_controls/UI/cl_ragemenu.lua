@@ -27,8 +27,8 @@ local profile_l_op = 75
 --Create Menus
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
-	Citizen.CreateThread(function()
-		Citizen.Wait(500)
+	CreateThread(function()
+		Wait(500)
 		if player_is_emerg_driver and veh ~= nil then
 			if #EC.table > 0 then
 				for i, extra_shortcut in ipairs(EC.table) do
@@ -41,7 +41,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 end)
 
 --Handle user input to cancel confirmation message for SAVE/LOAD
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do 
 		while not RageUI.Settings.Controls.Back.Enabled do
 			for Index = 1, #RageUI.Settings.Controls.Back.Keys do
@@ -54,19 +54,19 @@ Citizen.CreateThread(function()
 					profile_l_op = 75
 					confirm_r_msg = nil
 					confirm_d_msg = nil
-					Citizen.Wait(10)
+					Wait(10)
 					RageUI.Settings.Controls.Back.Enabled = true
 					break
 				end
 			end
-			Citizen.Wait(0)
+			Wait(0)
 		end
-		Citizen.Wait(100)
+		Wait(100)
 	end
 end)
 
-Citizen.CreateThread(function()
-	Citizen.Wait(1000)
+CreateThread(function()
+	Wait(1000)
 	local choice
 	local shortcut_prefix
 	if allow_custom_controls then
@@ -206,7 +206,7 @@ Citizen.CreateThread(function()
 				end
 			end
 
-        Citizen.Wait(0)
+        Wait(0)
 	end
 end)
 
