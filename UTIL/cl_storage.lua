@@ -276,7 +276,6 @@ function STORAGE:ResetSettings()
 	UTIL:Print('^4LVC ^5STORAGE: ^7Resetting Settings...')
 
 	--Storage State
-	settings_init 			= false
 	custom_tone_names 		= false
 	profiles = { }
 	STORAGE:FindSavedProfiles()
