@@ -10,6 +10,19 @@ FILE: cl_plugins.lua
 PURPOSE: Builds RageUI Plugin Menu based on plugins 
 settings. Handles Plugin -> LVC event communication
 ---------------------------------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+---------------------------------------------------
 ]]
 -- RAGE UI
 --	Draws specific button with callback to plugins menu if the plugin is found and enabled. (controlled in plugins settings file)
