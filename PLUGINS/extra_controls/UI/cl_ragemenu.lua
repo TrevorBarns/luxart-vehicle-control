@@ -78,6 +78,30 @@ CreateThread(function()
 	end
 end)
 
+local is_loop_on = false
+--[[Loop to be called when dynamically created menus are opened,
+	loop continues until closed updating the EC.is_menu_open var,
+	which is used in cl_plugins.lua for IsPluginsMenuOpen()]]
+function StartIsMenuOpenLoop()
+	if not is_loop_on then
+		is_loop_on = true
+		CreateThread(function()
+			while is_loop_on do
+				EC.is_menu_open = false
+				for i, extra_shortcut in ipairs(EC.table) do
+					if RageUI.Visible(RMenu:Get('lvc', 'extracontrols_'..i)) then
+						EC.is_menu_open = true
+					end
+				end
+				if not EC.is_menu_open then
+					is_loop_on = false
+				end
+				Wait(1)
+			end
+		end) 
+	end
+end
+
 CreateThread(function()
 	Wait(1000)
 	local choice
@@ -104,6 +128,7 @@ CreateThread(function()
 						for i, extra_shortcut in ipairs(EC.table) do
 							RageUI.Button(extra_shortcut.Name, shortcut_prefix..' shortcut settings.', {RightLabel = '→→→'}, true, {
 							  onSelected = function()
+								StartIsMenuOpenLoop()							
 							  end,
 							}, RMenu:Get('lvc', 'extracontrols'..'_'..i))					
 						end

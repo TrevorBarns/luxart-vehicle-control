@@ -72,7 +72,11 @@ end)
 
 -- FUNCTIONS
 --	IsPluginMenuOpen is called inside IsMenuOpen (LVC/UI/cl_ragemenu.lua) to separate them, this is useful for plugin updates separate of main LVC updates.
+local ec_shortcut_menu_visible = false
 function IsPluginMenuOpen()
+	if ec_masterswitch then
+		ec_shortcut_menu_visible = EC.is_menu_open
+	
 	return 	RageUI.Visible(RMenu:Get('lvc', 'smartsiren')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) or
@@ -80,5 +84,6 @@ function IsPluginMenuOpen()
 			RageUI.Visible(RMenu:Get('lvc', 'trailersettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'trailerextras')) or
 			RageUI.Visible(RMenu:Get('lvc', 'trailerdoors')) or
-			RageUI.Visible(RMenu:Get('lvc', 'extracontrols')) 
+			RageUI.Visible(RMenu:Get('lvc', 'extracontrols')) or
+			ec_shortcut_menu_visible
 end

@@ -36,6 +36,7 @@ EC.combo_override = false
 EC.controls_enabled = true
 EC.combo_id = {} 
 EC.key_id = {}
+EC.is_menu_open = false					   
 
 --Generate required tables for control modification.
 CreateThread(function()
