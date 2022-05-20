@@ -37,14 +37,18 @@ local profiles = { }
 --Deletes all saved KVPs for that vehicle profile
 --	This should never be removed. It is the only easy way for end users to delete LVC data.
 RegisterCommand('lvcfactoryreset', function(source, args)
-	local choice = HUD:FrontEndAlert('Warning', 'Are you sure you want to delete all saved LVC data and Factory Reset?')
+	local choice = HUD:FrontEndAlert('Warning', 'Are you sure you want to delete all saved LVC data and Factory Reset?', '~g~No: Escape \t ~r~Yes: Enter')
 	if choice then
-		STORAGE:DeleteKVPs(save_prefix)
-		STORAGE:ResetSettings()
-		UTIL:Print('Success: cleared all save data.', true)
-		HUD:ShowNotification('~g~Success~s~: You have deleted all save data and reset LVC.', true)
+		STORAGE:FactoryReset()
 	end
 end)
+
+function STORAGE:FactoryReset()
+	STORAGE:DeleteKVPs(save_prefix)
+	STORAGE:ResetSettings()
+	UTIL:Print('Success: cleared all save data.', true)
+	HUD:ShowNotification('~g~Success~s~: You have deleted all save data and reset LVC.', true)
+end
 
 --Prints all KVP keys and values to console
 --if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' then

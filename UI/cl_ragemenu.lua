@@ -571,7 +571,12 @@ CreateThread(function()
 				if confirm_fr_msg == 'Are you sure?' then
 					RageUI.CloseAll()
 					Wait(100)
-					ExecuteCommand('lvcfactoryreset')
+					local choice = HUD:FrontEndAlert('Warning', 'Are you sure you want to delete all saved LVC data and Factory Reset?', '~g~No: Escape \t ~r~Yes: Enter')
+					if choice then
+						STORAGE:FactoryReset()
+					else
+						RageUI.Visible(RMenu:Get('lvc', 'saveload'), true)
+					end
 					confirm_fr_msg = nil
 				else
 					RageUI.Settings.Controls.Back.Enabled = false

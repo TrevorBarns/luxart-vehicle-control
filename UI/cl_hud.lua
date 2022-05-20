@@ -283,13 +283,13 @@ end
 
 ------------------------------------------------
 --Full screen Confirmation Message
-function HUD:FrontEndAlert(title, subtitle)
-	AddTextEntry('FACES_WARNH2', 'Warning')
-	AddTextEntry('QM_NO_0', 'Are you sure you want to delete all saved LVC data and Factory Reset?')
+function HUD:FrontEndAlert(title, subtitle, options)
+	AddTextEntry('FACES_WARNH2', title)
+	AddTextEntry('QM_NO_0', subtitle)
 	local result = -1
 	while result == -1 do
 		DrawFrontendAlert('FACES_WARNH2', 'QM_NO_0', 0, 0, '', 0, -1, 0, '', '', false, 0)
-		HUD:ShowText(0.5, 0.75, 0, '~g~No: Escape \t ~r~Yes: Enter', 0.75)
+		HUD:ShowText(0.5, 0.75, 0, options, 0.75)
 		if IsDisabledControlJustReleased(2, 202) then
 			return false
 		end		
@@ -303,8 +303,8 @@ end
 ------------------------------------------------
 --Get User Input from Keyboard
 function HUD:KeyboardInput(input_title, existing_text, max_length)
-	AddTextEntry('Custom_Keyboard_Title', input_title)
-	DisplayOnscreenKeyboard(1, 'Custom_Keyboard_Title', '', existing_text, '', '', '', max_length) 
+	AddTextEntry('custom_keyboard_title', input_title)
+	DisplayOnscreenKeyboard(1, 'custom_keyboard_title', '', existing_text, '', '', '', max_length) 
 
 	while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
 		Wait(0)
