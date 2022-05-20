@@ -142,10 +142,6 @@ function UTIL:BuildToneOptions()
 		if SIRENS[id] ~= nil then
 			option = SIRENS[id].Option or 1
 			temp_array[id] = option
-		else
-			HUD:ShowNotification('~b~LVC ~r~Error 204:~s~ tone does not exist. See console.', false)
-			UTIL:Print(('^1LVC(%s) Error: approved tone "%d" does not exist. Verify all approved tones exist in SIRENS table.'):format(STORAGE:GetCurrentVersion(), id))
-			break;
 		end
 	end
 	tone_options = temp_array
