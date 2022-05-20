@@ -32,7 +32,7 @@ RMenu.Add('lvc', 'volumesettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'audios
 RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Plugins'))
 RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'Storage Management'))
 RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'saveload'),'Luxart Vehicle Control', 'Copy Profile Settings'))
-RMenu.Add('lvc', 'about', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'About'))
+RMenu.Add('lvc', 'info', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', 'More Information'))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
 RMenu:Get('lvc', 'volumesettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
@@ -43,7 +43,7 @@ RMenu:Get('lvc', 'volumesettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'plugins'):DisplayGlare(false)
 RMenu:Get('lvc', 'saveload'):DisplayGlare(false)
 RMenu:Get('lvc', 'copyprofile'):DisplayGlare(false)
-RMenu:Get('lvc', 'about'):DisplayGlare(false)
+RMenu:Get('lvc', 'info'):DisplayGlare(false)
 
 
 --Strings for Save/Load confirmation, not ideal but it works.
@@ -66,6 +66,12 @@ local button_sfx_scheme_id = -1
 local profiles = { }
 local tone_table = { }
 local PMANU_POS, PMANU_ID, SMANU_POS, SMANU_ID, AUX_POS, AUX_ID
+
+local curr_version
+local repo_version
+local newer_version
+local version_description
+local version_formatted
 
 Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
 	if not key_lock and player_is_emerg_driver and UpdateOnscreenKeyboard() ~= 0 then
@@ -170,6 +176,24 @@ CreateThread(function()
 			end
 		end
 		Wait(500)
+	end
+end)
+
+-- Resource start version handling
+CreateThread(function()
+	Wait(500)
+	curr_version = STORAGE:GetCurrentVersion()
+	repo_version = STORAGE:GetRepoVersion()
+	newer_version = STORAGE:GetIsNewerVersion()
+	version_description = ', the latest version.'
+	version_formatted = curr_version or 'unknown'
+	
+	if newer_version == 'older' then
+		version_description, version_formatted = ', an out-of-date version.', '~o~~h~'..curr_version		
+	elseif newer_version == 'newer' then
+		version_description = ', an ~y~experimental~s~ version.'
+	elseif newer_version == 'unknown' then
+		version_description = ', the latest version could not be determined.'
 	end
 end)
 
@@ -626,32 +650,18 @@ CreateThread(function()
 		---------------------------------------------------------------------
 		------------------------------ABOUT MENU-----------------------------
 		---------------------------------------------------------------------
-	    RageUI.IsVisible(RMenu:Get('lvc', 'about'), function()
-			local curr_version = STORAGE:GetCurrentVersion()
-			local repo_version = STORAGE:GetRepoVersion()
-			if curr_version ~= nil then
-				if STORAGE:GetIsNewerVersion() == 'older' then
-					RageUI.Button('Current Version', 'This server is running ' .. curr_version ..', an old version.', { RightLabel = '~o~~h~' .. curr_version or 'unknown' }, true, {
-					  onSelected = function()
-					  end,
-					  });
-					RageUI.Button('Latest Version', 'The latest update is ' .. repo_version .. '.', {RightLabel = repo_version or 'unknown'}, true, {
-						onSelected = function()
-					end,
-					});
-				elseif STORAGE:GetIsNewerVersion() == 'equal' then
-					RageUI.Button('Current Version', 'This server is running ' .. curr_version .. ', the latest version.', { RightLabel = curr_version or 'unknown' }, true, {
-					  onSelected = function()
-					  end,
-					  });
-				elseif STORAGE:GetIsNewerVersion() == 'newer' then
-					RageUI.Button('Current Version', 'This server is running ' .. curr_version .. ', an ~y~experimental~s~ version.', { RightLabel = curr_version or 'unknown' }, true, {
-					  onSelected = function()
-					  end,
-					  });
-				end
+	    RageUI.IsVisible(RMenu:Get('lvc', 'info'), function()
+			RageUI.Button('Current Version', ('This server is running %s %s'):format(version_formatted, version_description), { RightLabel = version_formatted }, true, {
+			  onSelected = function()
+			  end,
+			});
+			if newer_version == 'older' then
+				RageUI.Button(Lang:t('menu.latest_version'), ('The latest update is %s.'):format(repo_version), {RightLabel = repo_version or 'unknown'}, true, {
+					onSelected = function()
+				end,
+				});
 			end
-			RageUI.Button('About / Credits', 'Originally designed and created by ~b~Lt. Caine~s~. ELS SoundFX by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to Lt. Cornelius, bakerxgooty, MrLucky8, xotikorukx, the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!', {}, true, {
+			RageUI.Button('About / Credits', 'Originally designed and created by ~b~Lt. Caine~s~. ELS sound effects by ~b~Faction~s~. Version 3 expansion by ~b~Trevor Barns~s~.\n\nSpecial thanks to all contributors (see GitHub), the RageUI team, and everyone else who helped beta test, this would not have been possible without you all!', {}, true, {
 				onSelected = function()
 			end,
 			});
