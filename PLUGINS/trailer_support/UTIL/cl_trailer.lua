@@ -36,16 +36,12 @@ end)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
-		local veh_name_wildcard = string.gsub(TRAIL:GetCabDisplayName(), '%d+', '#')
+		TRAIL.TBL, profile = UTIL:GetProfileFromTable('TRAILERS', TRAILERS, veh, true)
 
-		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil then
-			TRAIL.custom_toggles_set = true
-			UTIL:Print(('TS: profile found for %s.'):format(TRAIL:GetCabDisplayName()))
-		elseif TRAILERS[veh_name_wildcard] ~= nil then
-			TRAIL.custom_toggles_set = true
-			UTIL:Print(('TS: wildcard profile %s found for %s.'):format(veh_name_wildcard, TRAIL:GetCabDisplayName()))
-		else
+		if not profile then
 			TRAIL.custom_toggles_set = false
+		else
+			TRAIL.custom_toggles_set = true
 		end
 	end
 end)

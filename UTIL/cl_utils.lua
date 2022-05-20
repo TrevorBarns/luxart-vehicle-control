@@ -70,7 +70,9 @@ function UTIL:GetProfileFromTable(print_name, tbl, veh)
  			else
 				profile_table = { }
 				profile = false
-				UTIL:Print(('^3LVC(%s) WARNING: "DEFAULT" table missing from %s table. Using empty table for %s.'):format(STORAGE:GetCurrentVersion(), print_name, veh_name), true)
+				if not ignore_missing_default then
+					UTIL:Print(('^3LVC(%s) WARNING: "DEFAULT" table missing from %s table. Using empty table for %s.'):format(STORAGE:GetCurrentVersion(), print_name, veh_name), true)
+				end
 			end
 		end
 	else
