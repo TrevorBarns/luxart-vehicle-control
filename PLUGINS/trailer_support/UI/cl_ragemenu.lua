@@ -24,14 +24,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'trailersettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', 'Trailer Options'))
-RMenu.Add('lvc', 'trailerextras', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', 'Trailer Extras'))
-RMenu.Add('lvc', 'trailerdoors', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', 'Trailer Extras'))
+RMenu.Add('lvc', 'trailersettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ts')))
+RMenu.Add('lvc', 'trailerextras', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', Lang:t('plugins.ts_menu_extras')))
+RMenu.Add('lvc', 'trailerdoors', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', Lang:t('plugins.ts_menu_doors')))
 RMenu:Get('lvc', 'trailersettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'trailerextras'):DisplayGlare(false)
 RMenu:Get('lvc', 'trailerdoors'):DisplayGlare(false)
 
-local doors = {'Left Front Door', 'Right Front Door', 'Left Rear Door', 'Right Rear Door', 'Hood', 'Trunk', 'Extra #1', 'Extra #2', 'Bomb Bay'}
+local doors = { Lang:t('plugins.ts_door_fl'), Lang:t('plugins.ts_door_fr'), Lang:t('plugins.ts_door_rl'), Lang:t('plugins.ts_door_rr'), Lang:t('plugins.ts_door_hood'), Lang:t('plugins.ts_door_trunk'), Lang:t('plugins.ts_door_extra1'), Lang:t('plugins.ts_door_extra2'), Lang:t('plugins.ts_door_bombbay') }
 local trailer_set = false
 
 CreateThread(function()
@@ -44,16 +44,16 @@ CreateThread(function()
 	
 		RageUI.IsVisible(RMenu:Get('lvc', 'trailersettings'), function()	
 			--Current Trailer Display
-			RageUI.Button('Current Trailer', 'Current detected trailer attached.', {RightLabel = TRAIL:GetTrailerDisplayName()}, true, {
+			RageUI.Button(Lang:t('plugins.ts_current'), Lang:t('plugins.ts_current_desc'), {RightLabel = TRAIL:GetTrailerDisplayName()}, true, {
 			  onSelected = function()
 			  end,
 			})	
 			
 			--Custom Toggle Buttons
 			if TRAIL.custom_toggles_set then
-				RageUI.Separator('Shortcuts')
-				for i, custom_tog_table in ipairs(TRAILERS[TRAIL:GetCabDisplayName()]) do
-					RageUI.Button(custom_tog_table[1], '', { }, trailer_set, {
+				RageUI.Separator(Lang:t('plugins.ts_shortcut_separator'))
+				for i, custom_tog_table in ipairs(TRAIL.TBL) do
+					RageUI.Button(custom_tog_table[1], Lang:t('plugins.ts_shortcut_desc', { shortcut = custom_tog_table[1] }), { }, trailer_set, {
 					  onSelected = function()
 						for i, custom_tog in pairs(custom_tog_table[2]) do
 							TRAIL:SetExtraState(custom_tog.Trailer, custom_tog.Extra, custom_tog.State)
@@ -63,14 +63,14 @@ CreateThread(function()
 				end
 			end
 			
-			RageUI.Separator('Submenus')
+			RageUI.Separator(Lang:t('plugins.ts_submenus_separator'))
 		
 			-- Sub Menu Buttons			
-			RageUI.Button('Extras Menu', 'Open menu to toggle trailer extra states.', {RightLabel = '→→→'}, trailer_set, {
+			RageUI.Button(Lang:t('plugins.ts_menu_extras_button'), Lang:t('plugins.ts_menu_extras_desc'), {RightLabel = '→→→'}, trailer_set, {
 			  onSelected = function()
 			  end,
 			}, RMenu:Get('lvc', 'trailerextras'))	
-			RageUI.Button('Doors Menu', 'Open menu to open / close doors.', {RightLabel = '→→→'}, trailer_set, {
+			RageUI.Button(Lang:t('plugins.ts_menu_doors_button'), Lang:t('plugins.ts_menu_doors_desc'), {RightLabel = '→→→'}, trailer_set, {
 			  onSelected = function()
 			  end,
 			}, RMenu:Get('lvc', 'trailerdoors'))	
@@ -79,11 +79,11 @@ CreateThread(function()
 		
 			--EXTRAS MENU
 			RageUI.IsVisible(RMenu:Get('lvc', 'trailerextras'), function()
-				RageUI.Separator('Cab/Truck')
+				RageUI.Separator(Lang:t('plugins.ts_truck_separator'))			
 				for extra_id=1,14 do
 					if DoesEntityExist(veh) then
 						if DoesExtraExist(veh, extra_id) then
-							RageUI.Checkbox('Extra #'..extra_id, 'Toggle extra #'..extra_id, IsVehicleExtraTurnedOn(veh, extra_id), {}, {
+							RageUI.Checkbox(Lang:t('plugins.ts_extra', { extra = extra_id }), Lang:t('plugins.ts_extra_desc', { extra = extra_id }), IsVehicleExtraTurnedOn(veh, extra_id), {}, {
 							  onChecked = function()
 								SetVehicleExtra(veh, extra_id, false)
 							  end,          
@@ -94,11 +94,11 @@ CreateThread(function()
 						end
 					end
 				end
-				RageUI.Separator('Trailer')
+				RageUI.Separator(Lang:t('plugins.ts_trailer_separator'))			
 				for extra_id=1,14 do
 					if DoesEntityExist(trailer) then
 						if DoesExtraExist(trailer, extra_id) then
-							RageUI.Checkbox('Extra #'..extra_id, 'Toggle extra #'..extra_id, IsVehicleExtraTurnedOn(trailer, extra_id), {}, {
+							RageUI.Checkbox(Lang:t('plugins.ts_extra', { extra = extra_id }), Lang:t('plugins.ts_extra_desc', { extra = extra_id }), IsVehicleExtraTurnedOn(trailer, extra_id), {}, {
 							  onChecked = function()
 								SetVehicleExtra(trailer, extra_id, false)
 							  end,          
@@ -113,11 +113,11 @@ CreateThread(function()
 			
 			--DOORS MENU
 			RageUI.IsVisible(RMenu:Get('lvc', 'trailerdoors'), function()
-				RageUI.Separator('Cab/Truck')			
+				RageUI.Separator(Lang:t('plugins.ts_truck_separator'))			
 				for door_num, door_name in ipairs(doors) do
 					door_num = door_num-1
 					if DoesVehicleHaveDoor(veh, door_num) then
-						RageUI.Button(door_name, 'Open / close '..string.lower(door_name)..'.', {}, true, {
+						RageUI.Button(door_name, Lang:t('plugins.ts_door_desc', { door = door_name }), {}, true, {
 						onSelected = function()
 							if GetVehicleDoorAngleRatio(veh, door_num) > 0 then
 								SetVehicleDoorShut(veh, door_num, true)
@@ -128,13 +128,12 @@ CreateThread(function()
 						})
 					end
 				end
-				RageUI.Separator('Trailer')			
+				RageUI.Separator(Lang:t('plugins.ts_trailer_separator'))			
 				for door_num, door_name in ipairs(doors) do
 					door_num = door_num-1
 					if DoesVehicleHaveDoor(trailer, door_num) then
-						RageUI.Button(door_name, 'Open / close '..string.lower(door_name)..'.', {}, true, {
+						RageUI.Button(door_name, Lang:t('plugins.ts_door_desc', { door = door_name }), {}, true, {
 						onSelected = function()
-							print(GetVehicleDoorAngleRatio(trailer, door_num))
 							if GetVehicleDoorAngleRatio(trailer, door_num) > 0 then
 								SetVehicleDoorShut(trailer, door_num, true)
 							else

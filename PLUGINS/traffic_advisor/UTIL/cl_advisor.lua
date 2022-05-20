@@ -158,9 +158,9 @@ if ta_masterswitch then
 		end
 	end)
 
-	RegisterKeyMapping('lvctogleftta', 'LVC Toggle Left TA', 'keyboard', 'left')
-	RegisterKeyMapping('lvctogrightta', 'LVC Toggle Right TA', 'keyboard', 'right')
-	RegisterKeyMapping('lvctogmidta', 'LVC Toggle Middle TA', 'keyboard', 'down')
+	RegisterKeyMapping('lvctogleftta', Lang:t('plugins.ta_control_desc_left'), 'keyboard', 'left')
+	RegisterKeyMapping('lvctogrightta', Lang:t('plugins.ta_control_desc_right'), 'keyboard', 'right')
+	RegisterKeyMapping('lvctogmidta', Lang:t('plugins.ta_control_desc_middle'), 'keyboard', 'down')
 end
 
 CreateThread(function()
@@ -171,7 +171,7 @@ end)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
-		taExtras, profile = UTIL:GetProfileFromTable('TA', TA_ASSIGNMENTS, veh)
+		taExtras, profile = UTIL:GetProfileFromTable('TA_ASSIGNMENTS', TA_ASSIGNMENTS, veh)
 		hud_pattern = taExtras.hud_pattern or 1
 		HUD:SetItemState('ta_pattern', hud_pattern)
 

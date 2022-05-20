@@ -37,7 +37,7 @@ local profiles = { }
 --Deletes all saved KVPs for that vehicle profile
 --	This should never be removed. It is the only easy way for end users to delete LVC data.
 RegisterCommand('lvcfactoryreset', function(source, args)
-	local choice = HUD:FrontEndAlert('Warning', 'Are you sure you want to delete all saved LVC data and Factory Reset?', '~g~No: Escape \t ~r~Yes: Enter')
+	local choice = HUD:FrontEndAlert(Lang:t('warning.warning'), Lang:t('warning.factory_reset'), Lang:t('warning.facory_reset_options'))
 	if choice then
 		STORAGE:FactoryReset()
 	end
@@ -46,8 +46,8 @@ end)
 function STORAGE:FactoryReset()
 	STORAGE:DeleteKVPs(save_prefix)
 	STORAGE:ResetSettings()
-	UTIL:Print('Success: cleared all save data.', true)
-	HUD:ShowNotification('~g~Success~s~: You have deleted all save data and reset LVC.', true)
+	UTIL:Print(Lang:t('info.factory_reset_success_console'), true)
+	HUD:ShowNotification(Lang:t('info.factory_reset_success_frontend'), true)
 end
 
 --Prints all KVP keys and values to console
@@ -76,6 +76,7 @@ CreateThread(function()
 	TriggerServerEvent('lvc:GetRepoVersion_s')
 	STORAGE:FindSavedProfiles()
 end)
+
 --[[Function for Deleting KVPs]]
 function STORAGE:DeleteKVPs(prefix)
 	local handle = StartFindKvp(prefix);
@@ -388,7 +389,7 @@ end
 --Compare Version Strings: Is version newer than test_version
 function IsNewerVersion(version, test_version)
 	if version == nil or test_version == nil then
-		return false
+		return 'unknown'
 	end
 	
 	_, _, s1, s2, s3 = string.find( version, '(%d+)%.(%d+)%.(%d+)' )

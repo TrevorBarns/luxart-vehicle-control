@@ -1,11 +1,11 @@
 -- THE 'I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000'
 CreateThread(function()
 	local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
-	AddTextEntry('lvc_wrong_branch','~y~THIS VERSION IS IN DEVELOPMENT AND IS NOT RECOMMENDED\nFOR PRODUCTION USE. IF THIS WAS A MISTAKE DOWNLOAD THE\nLATEST STABLE RELEASE AT:\n~g~github.com/TrevorBarns/luxart-vehicle-control~p~~h~/releases~h~')
+	AddTextEntry('lvc_wrong_branch', Lang:t('warning.wrong_branch_info'))
 	while not experimental do
-		HUD:ShowText(0.5, 0.0, 0, '~b~LVC~w~: ~o~Warning~w~: This is the development branch (master)', 0.5)
+		HUD:ShowText(0.5, 0.0, 0, Lang:t('warning.wrong_branch_warning'), 0.5)
 		HUD:ShowText(0.5, 0.04, 0, nil, nil, 'lvc_wrong_branch')
-		HUD:ShowText(0.5, 0.15, 0, '~b~TO MUTE THIS~w~: Set CONVAR "~o~experimental~w~" to "~o~true~w~" in fxmanifest.', 0.3)
+		HUD:ShowText(0.5, 0.15, 0, Lang:t('warning.wrong_branch_mute'), 0.3)
 		Wait(0)
 	end
 end)
@@ -115,27 +115,27 @@ CreateThread(function()
 				end
 			else
 				Wait(1000)
-				HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: COMMUNITY ID MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.', true)
-				UTIL:Print('^1CONFIG ERROR: COMMUNITY ID NOT SET, THIS IS REQUIRED TO PREVENT CONFLICTS FOR PLAYERS WHO PLAY ON MULTIPLE SERVERS WITH LVC. PLEASE SET THIS IN SETTINGS.LUA.', true)
+				HUD:ShowNotification(Lang:t('error.missing_community_id_frontend'), true)
+				UTIL:Print(Lang:t('error.missing_community_id_console'), true)
 			end
 		else
 			Wait(1000)
-			HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: INVALID RESOURCE NAME. SEE LOGS. CONTRACT SERVER DEVELOPER.', true)
-			UTIL:Print('^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS "^3lvc^1" (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.', true)
+			HUD:ShowNotification(Lang:t('error.invalid_resource_name_frontend'), true)
+			UTIL:Print(Lang:t('error.invalid_resource_name_console'), true)
 		end
 	else
 		Wait(1000)
-		HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~CONFLICT ERROR~h~~s~: RESOURCE CONFLICT. SEE CONSOLE.', true)
-		UTIL:Print('^1LVC ERROR: DETECTED "lux_vehcontrol" RUNNING, THIS CONFLICTS WITH LVC. PLEASE STOP "lux_vehcontrol" AND RESTART LVC.', true)
+		HUD:ShowNotification(Lang:t('error.resource_conflict_frontend'), true)
+		UTIL:Print(Lang:t('error.resource_conflict_console'), true)
 	end
 end)
 
 --On resource start/restart
 CreateThread(function()
 	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
-	TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
+	TriggerEvent('chat:addSuggestion', Lang:t('command.lock_command'), Lang:t('command.lock_desc'))
 	SetNuiFocus( false )
-							 
+	
 	UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)
 	RegisterKeyMaps()
 	STORAGE:SetBackupTable()
@@ -143,8 +143,9 @@ CreateThread(function()
 	Wait(100)
 	local resourceName = string.lower( GetCurrentResourceName() )
 	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
-end)			
-		   
+end)
+
+
 -- Auxiliary Control Handling
 --	Handles radio wheel controls and default horn on siren change playback. 
 CreateThread(function()
@@ -224,6 +225,7 @@ RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	last_veh = veh
 	UTIL:UpdateApprovedTones(veh)
+	Wait(100)	--waiting for JS event handler
 	STORAGE:ResetSettings()
 	UTIL:BuildToneOptions()
 	STORAGE:LoadSettings()
@@ -236,17 +238,17 @@ end)
 
 --------------REGISTERED COMMANDS---------------
 --Toggle Debug Mode
-RegisterCommand('lvcdebug', function(source, args)
+RegisterCommand(Lang:t('command.debug_command'), function(source, args)
 	debug_mode = not debug_mode
-	HUD:ShowNotification(('~y~~h~Info:~h~ ~s~debug mode set to %s. See console.'):format(debug_mode), true)
-	UTIL:Print(('^3LVC Info: debug mode set to %s temporarily. Debug_mode resets after resource restart unless set in fxmanifest. Make sure to run "refresh" to see fxmanifest changes.'):format(debug_mode), true)
+	HUD:ShowNotification(Lang:t('info.debug_mode_frontend', {state = debug_mode}), true)
+	UTIL:Print(Lang:t('info.debug_mode_console', {state = debug_mode}), true)
 	if debug_mode then
 		TriggerEvent('lvc:onVehicleChange')
 	end
 end)
 
 --Toggle LUX lock command
-RegisterCommand('lvclock', function(source, args)
+RegisterCommand(Lang:t('command.lock_command'), function(source, args)
 	if player_is_emerg_driver then
 		key_lock = not key_lock
 		AUDIO:Play('Key_Lock', AUDIO.lock_volume, true)
@@ -254,24 +256,24 @@ RegisterCommand('lvclock', function(source, args)
 		--if HUD is visible do not show notification
 		if not HUD:GetHudState() then
 			if key_lock then
-				HUD:ShowNotification('Siren Control Box: ~r~Locked', true)
+				HUD:ShowNotification(Lang:t('info.locked'), true)
 			else
-				HUD:ShowNotification('Siren Control Box: ~g~Unlocked', true)
+				HUD:ShowNotification(Lang:t('info.unlocked'), true)
 			end
 		end
 	end
 end)
 
-RegisterKeyMapping('lvclock', 'LVC: Lock out controls', 'keyboard', lockout_default_hotkey)
+RegisterKeyMapping(Lang:t('command.lock_command'), Lang:t('control.lock_desc'), 'keyboard', lockout_default_hotkey)
 
 ------------------------------------------------
 --Dynamically Run RegisterCommand and KeyMapping functions for all 14 possible sirens
 --Then at runtime 'slide' all sirens down removing any restricted sirens.
-function RegisterKeyMaps()
+local function RegisterKeyMaps()
 	for i, _ in ipairs(SIRENS) do
 		if i ~= 1 then
 			local command = '_lvc_siren_' .. i-1
-			local description = 'LVC Siren: ' .. MakeOrdinal(i-1)
+			local description = Lang:t('control.siren_control_desc', {ord_num = MakeOrdinal(i-1)})
 
 			RegisterCommand(command, function(source, args)
 				if veh ~= nil and player_is_emerg_driver ~= nil then
@@ -296,8 +298,8 @@ function RegisterKeyMaps()
 									end
 								end
 							else
-								HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Nil value caught.\ndetails: (' .. i .. ',' .. proposed_tone .. ',' .. UTIL:GetVehicleProfileName() .. ')', true)
-								HUD:ShowNotification('~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Try switching vehicles and switching back OR loading profile settings (if save present).', true)
+								HUD:ShowNotification(Lang:t('error.reg_keymap_nil_1', {i = i, proposed_tone = proposed_tone, profile_name = UTIL:GetVehicleProfileName()}), true)
+								HUD:ShowNotification(Lang:t('error.reg_keymap_nil_2'), true)
 							end
 						end
 					end
@@ -315,6 +317,7 @@ function RegisterKeyMaps()
 		end
 	end
 end
+
 
 ------------------------------------------------
 -------------------FUNCTIONS--------------------

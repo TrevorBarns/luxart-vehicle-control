@@ -24,14 +24,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'extrasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', 'Extra Integration Settings'))
+RMenu.Add('lvc', 'extrasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ei')))
 RMenu:Get('lvc', 'extrasettings'):DisplayGlare(false)
 
 
 CreateThread(function()
     while true do
 		RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
-			RageUI.Checkbox('Blackout', 'Disabled auto brake lights on stop.', not EI:GetAutoBrakeLightsState(), {}, {
+			RageUI.Checkbox(Lang:t('plugins.menu_ei'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
             onChecked = function()
 				EI:Blackout(true)
             end,          
@@ -40,7 +40,7 @@ CreateThread(function()
             end
             })
 
-			RageUI.List('Auto Park Mode', {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), ('How long after being stopped to disable auto brake lights and put vehicle in "park". Options are in minutes. Timer (sec): %1.0f'):format((EI:GetStoppedTimer() / 1000) or 0), {}, true, {
+			RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc'), {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}, {}, true, {
 			  onListChange = function(Index, Item)
 				if Index > 1 then
 					EI:SetParkTimeIndex(Index)

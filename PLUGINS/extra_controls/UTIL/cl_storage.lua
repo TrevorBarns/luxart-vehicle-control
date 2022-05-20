@@ -52,14 +52,14 @@ function EC:LoadSettings()
 					if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
 						shortcut.Combo = save_data.Combo
 					else
-						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for \'%s\'. See console.'):format(shortcut.Name), true)
-						UTIL:Print(('^3LVC Warning:  The saved control for \'%s\' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Combo), true)		
+						UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Combo }), true)		
+						HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
 					end
 					if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
 						shortcut.Key = save_data.Key
 					else
-						HUD:ShowNotification(('~b~LVC ~y~Warning: Unable to load control for \'%s\'. See console.'):format(shortcut.Name), true)
-						UTIL:Print(('^3LVC Warning:  The saved control for \'%s\' is no longer permitted by server developer. Reverting to default. Re-save control profile to remove this error. CONTROL: %s'):format(shortcut.Name, shortcut.Key), true)		
+						UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Key }), true)		
+						HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
 					end
 					save_data.used = true
 				end
@@ -68,7 +68,7 @@ function EC:LoadSettings()
 		
 		for i, save_data in pairs(save_paragrams) do		
 			if not save_data.used then
-				UTIL:Print('^3LVC Info: found save data that did not align with current Extra Controls configuration. Likely old data that has since been changed by a server developer. You can delete this by re-saving.', true)
+				UTIL:Print(Lang:t('plugins.ec_save_not_used'), true)
 			end
 		end
 		EC:RefreshRageIndexs()

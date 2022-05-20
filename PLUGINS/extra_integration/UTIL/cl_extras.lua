@@ -60,8 +60,8 @@ RegisterCommand('lvcblackout', function(source, args, rawCommand)
 	EI:Blackout(blackout)
 end)
 
-RegisterKeyMapping('lvcblackout', 'LVC Toggle Blackout', 'keyboard', default_blackout_control)
-TriggerEvent('chat:addSuggestion', '/lvcblackout', 'Toggle LVC Blackout Mode.')
+RegisterKeyMapping('lvcblackout', Lang:t('plugins.ei_control_desc'), 'keyboard', default_blackout_control)
+TriggerEvent('chat:addSuggestion', '/lvcblackout', Lang:t('plugins.ei_command_desc'))
 
 ----------------THREADED FUNCTIONS----------------
 --[[Startup Initialization]]
@@ -369,7 +369,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 	end
 
 	if player_is_emerg_driver and veh ~= nil then
-		extras, profile = UTIL:GetProfileFromTable('EI', EXTRA_ASSIGNMENTS, veh)
+		extras, profile = UTIL:GetProfileFromTable('EXTRA_ASSIGNMENTS', EXTRA_ASSIGNMENTS, veh)
 		if profile then
 			for extra_id, trigger_table in pairs(extras) do
 				--Initialize active tables
@@ -377,7 +377,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 				
 				--Alert if extra table found that does not align with vehicle configuration.
 				if not DoesExtraExist(veh, extra_id) then
-					UTIL:Print(('^3LVC Info: EXTRA_INTEGRATION table contains non-existent extra: %s for %s.'):format(extra_id, profile), true)
+					UTIL:Print(Lang:t('plugins.ei_invalid_exta', { extra = extra_id, profile = profile}), true)
 				end
 				
 				--Enable triggers for extras that exist
