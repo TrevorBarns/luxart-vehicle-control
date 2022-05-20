@@ -59,12 +59,12 @@ local confirm_c_desc = { }
 local profile_c_op = { }
 local profile_s_op = 75
 local profile_l_op = 75
-local hazard_state = false
-local button_sfx_scheme_id = -1
 local sl_btn_debug_msg = ''
 
+local hazard_state = false
+local button_sfx_scheme_id = -1
 local profiles = { }
-local TonesTable = { }
+local tone_table = { }
 local PMANU_POS, PMANU_ID, SMANU_POS, SMANU_ID, AUX_POS, AUX_ID
 
 Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
@@ -75,7 +75,7 @@ Keys.Register(open_menu_key, 'lvc', 'LVC: Open Menu', function()
 		else
 			sl_btn_debug_msg = ''
 		end
-		TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+		tone_table = UTIL:GetApprovedTonesTableNameAndID()
 		profiles = STORAGE:GetSavedProfiles()
 		RageUI.Visible(RMenu:Get('lvc', 'main'), not RageUI.Visible(RMenu:Get('lvc', 'main')))
 	end
@@ -188,7 +188,7 @@ CreateThread(function()
 				PMANU_POS = UTIL:GetTonePos('PMANU')
 				PMANU_ID = UTIL:GetToneID('PMANU')
 				if PMANU_POS ~= -1 then
-					RageUI.List('Primary Manual Tone', TonesTable, PMANU_POS-1, 'Change your primary manual tone.', {}, true, {
+					RageUI.List('Primary Manual Tone', tone_table, PMANU_POS-1, 'Change your primary manual tone.', {}, true, {
 					  onListChange = function(Index, Item)
 						UTIL:SetToneByID('PMANU', Item.Value)
 					  end,
@@ -196,7 +196,7 @@ CreateThread(function()
 						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[PMANU_ID].String) .. ':', SIRENS[PMANU_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(PMANU_POS, proposed_name)
-							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+							tone_table = UTIL:GetApprovedTonesTableNameAndID()
 						end
 					  end,
 					})
@@ -207,7 +207,7 @@ CreateThread(function()
 				SMANU_POS = UTIL:GetTonePos('SMANU')
 				SMANU_ID = UTIL:GetToneID('SMANU')
 				if SMANU_POS ~= -1 then
-					RageUI.List('Secondary Manual Tone', TonesTable, SMANU_POS-1, 'Change your secondary manual tone.', {}, true, {
+					RageUI.List('Secondary Manual Tone', tone_table, SMANU_POS-1, 'Change your secondary manual tone.', {}, true, {
 					  onListChange = function(Index, Item)
 						UTIL:SetToneByID('SMANU', Item.Value)
 					  end,
@@ -215,7 +215,7 @@ CreateThread(function()
 						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[SMANU_ID].String) .. ':', SIRENS[SMANU_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(SMANU_POS, proposed_name)
-							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+							tone_table = UTIL:GetApprovedTonesTableNameAndID()
 						end
 					  end,
 					})
@@ -229,7 +229,7 @@ CreateThread(function()
 				AUX_POS = UTIL:GetTonePos('AUX')
 				AUX_ID = UTIL:GetToneID('AUX')
 				if AUX_POS ~= -1 then
-					RageUI.List('Auxiliary Siren Tone', TonesTable, AUX_POS-1, 'Change your auxiliary/dual siren tone.', {}, true, {
+					RageUI.List('Auxiliary Siren Tone', tone_table, AUX_POS-1, 'Change your auxiliary/dual siren tone.', {}, true, {
 					  onListChange = function(Index, Item)
 						UTIL:SetToneByID('AUX', Item.Value)
 					  end,
@@ -237,7 +237,7 @@ CreateThread(function()
 						proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[AUX_ID].String) .. ':', SIRENS[AUX_ID].Name, 15)
 						if proposed_name ~= nil then
 							UTIL:ChangeToneString(AUX_POS, proposed_name)
-							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+							tone_table = UTIL:GetApprovedTonesTableNameAndID()
 						end
 					  end,
 					})
@@ -337,7 +337,7 @@ CreateThread(function()
 								proposed_name = HUD:KeyboardInput('Enter new tone name for ' .. TrimToneString(SIRENS[tone].String) .. ':', SIRENS[tone].Name, 15)
 								if proposed_name ~= nil then
 									UTIL:ChangeToneString(tone, proposed_name)
-									TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+									tone_table = UTIL:GetApprovedTonesTableNameAndID()
 								end
 							end,
 						})
@@ -529,7 +529,7 @@ CreateThread(function()
 			  onSelected = function()
 				if confirm_l_msg == 'Are you sure?' then
 					STORAGE:LoadSettings()
-					TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+					tone_table = UTIL:GetApprovedTonesTableNameAndID()
 					HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
 					confirm_l_msg = nil
 					confirm_l_desc = nil
@@ -600,7 +600,7 @@ CreateThread(function()
 					  onSelected = function()
 						if confirm_c_msg[i] == 'Are you sure?' then
 							STORAGE:LoadSettings(profile_name)
-							TonesTable = UTIL:GetApprovedTonesTableNameAndID()
+							tone_table = UTIL:GetApprovedTonesTableNameAndID()
 							HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
 							confirm_c_msg[i] = nil
 							confirm_c_desc[i] = nil
