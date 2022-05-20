@@ -152,7 +152,7 @@ end)
 
 -- Handle Disabling Controls while menu open
 CreateThread(function()
-Wait(1000)
+	Wait(1000)
 	while true do
 		while IsMenuOpen() do
 			DisableControlAction(0, 27, true)
@@ -380,7 +380,7 @@ CreateThread(function()
 	    RageUI.IsVisible(RMenu:Get('lvc', 'hudsettings'), function()
 			local hud_state = HUD:GetHudState()
 			local hud_backlight_mode = HUD:GetHudBacklightMode()
-			RageUI.Checkbox(Lang:t('menu.hud_enabled'), Lang:t('menu.hud_enabled_desc'), hud_state, {}, {
+			RageUI.Checkbox(Lang:t('menu.enabled'), Lang:t('menu.hud_enabled_desc'), hud_state, {}, {
 				onChecked = function()
 					HUD:SetHudState(true)
 				end,
@@ -558,7 +558,7 @@ CreateThread(function()
 				if confirm_l_msg == Lang:t('menu.confirm') then
 					STORAGE:LoadSettings()
 					tone_table = UTIL:GetApprovedTonesTableNameAndID()
-					HUD:ShowNotification(Lang:t('menu.load_sucess'), true)
+					HUD:ShowNotification(Lang:t('menu.load_success'), true)
 					confirm_l_msg = nil
 					confirm_l_desc = nil
 					profile_l_op = 75

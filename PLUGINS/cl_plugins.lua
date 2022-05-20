@@ -76,6 +76,7 @@ local ec_shortcut_menu_visible = false
 function IsPluginMenuOpen()
 	if ec_masterswitch then
 		ec_shortcut_menu_visible = EC.is_menu_open
+	end
 	
 	return 	RageUI.Visible(RMenu:Get('lvc', 'smartsiren')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
