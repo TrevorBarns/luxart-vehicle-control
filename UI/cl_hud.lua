@@ -36,7 +36,7 @@ local HUD_backlight_state = false
 ---------------------------------------------------------------------
 --[[Gets initial HUD scale from JS]]
 CreateThread(function()
-	Wait(1000)
+	Wait(500)
 	SendNUIMessage({
 	  _type = 'hud:getHudScale',
 	})
@@ -104,7 +104,6 @@ function HUD:GetHudScale()
 	SendNUIMessage({
 	  _type = 'hud:getHudScale'
 	})
-	HUD_scale = HUD_scale or 0.6
 	return HUD_scale
 end
 
@@ -119,7 +118,7 @@ function HUD:SetHudScale(scale)
 end
 
 --[[Callback for JS -> LUA to set HUD_scale with current CSS]]
-RegisterNUICallback( 'hud:sendHudScale', function(scale, cb)
+RegisterNUICallback('hud:sendHudScale', function(scale, cb)
 	HUD_scale = scale
 end )
 

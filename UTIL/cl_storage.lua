@@ -73,7 +73,6 @@ end
 ------------------------------------------------
 -- Resource Start Initialization
 CreateThread(function()
-	Wait(500)
 	TriggerServerEvent('lvc:GetRepoVersion_s')
 	STORAGE:FindSavedProfiles()
 end)

@@ -130,7 +130,21 @@ CreateThread(function()
 	end
 end)
 
-
+--On resource start/restart
+CreateThread(function()
+	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
+	TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
+	SetNuiFocus( false )
+							 
+	UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)
+	RegisterKeyMaps()
+	STORAGE:SetBackupTable()
+	
+	Wait(100)
+	local resourceName = string.lower( GetCurrentResourceName() )
+	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
+end)			
+		   
 -- Auxiliary Control Handling
 --	Handles radio wheel controls and default horn on siren change playback. 
 CreateThread(function()
@@ -192,7 +206,6 @@ end)
 
 ------VEHICLE CHANGE DETECTION AND TRIGGER------
 CreateThread(function()
-	Wait(1000)
 	while true do
 		if player_is_emerg_driver and veh ~= nil then
 			if last_veh == nil then
@@ -302,23 +315,6 @@ function RegisterKeyMaps()
 		end
 	end
 end
-
---On resource start/restart
-CreateThread(function()
-	Wait(500)
-	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
-	TriggerEvent('chat:addSuggestion', '/lvclock', 'Toggle Luxart Vehicle Control Keybinding Lockout.')
-	SetNuiFocus( false )
-	
-	if SIREN_ASSIGNMENTS ~= nil then
-		UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)
-		RegisterKeyMaps()
-		STORAGE:SetBackupTable()
-	end
-	
-	local resourceName = string.lower( GetCurrentResourceName() )
-	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
-end)
 
 ------------------------------------------------
 -------------------FUNCTIONS--------------------
