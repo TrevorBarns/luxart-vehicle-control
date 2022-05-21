@@ -82,7 +82,7 @@ local is_loop_on = false
 --[[Loop to be called when dynamically created menus are opened,
 	loop continues until closed updating the EC.is_menu_open var,
 	which is used in cl_plugins.lua for IsPluginsMenuOpen()]]
-function StartIsMenuOpenLoop()
+local function StartIsMenuOpenLoop()
 	if not is_loop_on then
 		is_loop_on = true
 		CreateThread(function()

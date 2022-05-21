@@ -32,7 +32,10 @@ local backup_tone_table = {}
 local custom_tone_names = false
 local SIRENS_backup_string = nil
 local profiles = { }
-				
+
+--	forward local fn declaration
+local IsNewerVersion
+ 
 ------------------------------------------------
 --Deletes all saved KVPs for that vehicle profile
 --	This should never be removed. It is the only easy way for end users to delete LVC data.
@@ -387,7 +390,7 @@ end
 ------------------------------------------------
 --HELPER FUNCTIONS for main siren settings saving:end
 --Compare Version Strings: Is version newer than test_version
-function IsNewerVersion(version, test_version)
+IsNewerVersion = function(version, test_version)
 	if version == nil or test_version == nil then
 		return 'unknown'
 	end

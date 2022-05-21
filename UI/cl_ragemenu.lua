@@ -98,7 +98,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 end)
 
 --Trims front off tone-strings longer than 36 characters for front-end display
-function TrimToneString(tone_string)
+local function TrimToneString(tone_string)
 	if #tone_string > 36 then
 		local trim_amount = #tone_string - 33
 		tone_string = string.format("...%s", string.sub(tone_string, trim_amount, 37))

@@ -86,6 +86,9 @@ local snd_lxsiren = {}
 local snd_pwrcall = {}
 local snd_airmanu = {}
 
+--	Local fn forward declaration
+local RegisterKeyMaps, MakeOrdinal
+
 ----------------THREADED FUNCTIONS----------------
 -- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
 -- Disables controls faster than previous thread.
@@ -145,7 +148,6 @@ CreateThread(function()
 	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
 end)
 
-
 -- Auxiliary Control Handling
 --	Handles radio wheel controls and default horn on siren change playback. 
 CreateThread(function()
@@ -204,7 +206,6 @@ CreateThread(function()
 	end
 end)
 
-
 ------VEHICLE CHANGE DETECTION AND TRIGGER------
 CreateThread(function()
 	while true do
@@ -234,7 +235,6 @@ AddEventHandler('lvc:onVehicleChange', function()
 	Wait(500)
 	SetVehRadioStation(veh, 'OFF')
 end)
-
 
 --------------REGISTERED COMMANDS---------------
 --Toggle Debug Mode
@@ -267,9 +267,12 @@ end)
 RegisterKeyMapping(Lang:t('command.lock_command'), Lang:t('control.lock_desc'), 'keyboard', lockout_default_hotkey)
 
 ------------------------------------------------
+-------------------FUNCTIONS--------------------
+------------------------------------------------
+------------------------------------------------
 --Dynamically Run RegisterCommand and KeyMapping functions for all 14 possible sirens
 --Then at runtime 'slide' all sirens down removing any restricted sirens.
-local function RegisterKeyMaps()
+RegisterKeyMaps = function()
 	for i, _ in ipairs(SIRENS) do
 		if i ~= 1 then
 			local command = '_lvc_siren_' .. i-1
@@ -318,12 +321,8 @@ local function RegisterKeyMaps()
 	end
 end
 
-
-------------------------------------------------
--------------------FUNCTIONS--------------------
-------------------------------------------------
 --Make number into ordinal number, used for FiveM RegisterKeys
-function MakeOrdinal(number)
+MakeOrdinal = function(number)
 	local sufixes = { 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' }
 	local mod = (number % 100)
 	if mod == 11 or mod == 12 or mod == 13 then
@@ -334,7 +333,7 @@ function MakeOrdinal(number)
 end
 
 ---------------------------------------------------------------------
-function CleanupSounds()
+local function CleanupSounds()
 	if count_sndclean_timer > delay_sndclean_timer then
 		count_sndclean_timer = 0
 		for k, v in pairs(state_lxsiren) do
@@ -378,7 +377,7 @@ function CleanupSounds()
 	end
 end
 ---------------------------------------------------------------------
-function TogIndicStateForVeh(veh, newstate)
+local function TogIndicStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate == ind_state_o then
 			SetVehicleIndicatorLights(veh, 0, false) -- R
@@ -398,14 +397,14 @@ function TogIndicStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-function TogMuteDfltSrnForVeh(veh, toggle)
+local function TogMuteDfltSrnForVeh(veh, toggle)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		DisableVehicleImpactExplosionActivation(veh, toggle)
 	end
 end
 
 ---------------------------------------------------------------------
-function SetLxSirenStateForVeh(veh, newstate)
+local function SetLxSirenStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_lxsiren[veh] and newstate ~= nil then
 
@@ -425,7 +424,7 @@ function SetLxSirenStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-function SetPowercallStateForVeh(veh, newstate)
+local function SetPowercallStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_pwrcall[veh] and newstate ~= nil then
 			if snd_pwrcall[veh] ~= nil then
@@ -443,7 +442,7 @@ function SetPowercallStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-function SetAirManuStateForVeh(veh, newstate)
+local function SetAirManuStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_airmanu[veh] and newstate ~= nil then
 			if snd_airmanu[veh] ~= nil then
