@@ -31,35 +31,35 @@ CreateThread(function()
 	    RageUI.IsVisible(RMenu:Get('lvc', 'plugins'), function()
 			-----------------------------------------------------------------------------------------------------------------
 			if tkd_masterswitch then
-				RageUI.Button('Takedown Settings', 'Open takedown lights menu. (takedowns)', {RightLabel = '→→→'}, true, {
+				RageUI.Button(Lang:t('plugins.menu_tkd'), Lang:t('plugins.menu_tkd_desc'), {RightLabel = '→→→'}, true, {
 				  onSelected = function()
 				  end,
 				}, RMenu:Get('lvc', 'tkdsettings'))	
 			end
 			-----------------------------------------------------------------------------------------------------------------
 			if ei_masterswitch then
-				RageUI.Button('Extra Integration Settings', 'Open extra integration menu. (extra_integration)', {RightLabel = '→→→'}, true, {
+				RageUI.Button(Lang:t('plugins.menu_ei'), Lang:t('plugins.menu_ei_desc'), {RightLabel = '→→→'}, true, {
 				  onSelected = function()
 				  end,
 				}, RMenu:Get('lvc', 'extrasettings'))	
 			end		
 			-----------------------------------------------------------------------------------------------------------------
 			if ta_masterswitch then
-				RageUI.Button('Traffic Advisor Settings', 'Open traffic advisor menu. (traffic_advisor)', {RightLabel = '→→→'}, true, {
+				RageUI.Button(Lang:t('plugins.menu_ta'), Lang:t('plugins.menu_ta_desc'), {RightLabel = '→→→'}, true, {
 				  onSelected = function()
 				  end,
 				}, RMenu:Get('lvc', 'tasettings'))	
 			end		
 			-----------------------------------------------------------------------------------------------------------------
 			if trailer_masterswitch then
-				RageUI.Button('Trailer Support Settings', 'Open trailer support settings menu. (trailer_support)', {RightLabel = '→→→'}, true, {
+				RageUI.Button(Lang:t('plugins.menu_ts'), Lang:t('plugins.menu_ts_desc'), {RightLabel = '→→→'}, true, {
 				  onSelected = function()
 				  end,
 				}, RMenu:Get('lvc', 'trailersettings'))	
 			end		
 			-----------------------------------------------------------------------------------------------------------------
 			if ec_masterswitch then
-				RageUI.Button('Extra Controls Settings', 'Open extra controls settings menu. (extra_controls)', {RightLabel = '→→→'}, true, {
+				RageUI.Button(Lang:t('plugins.menu_ec'), Lang:t('plugins.menu_ec_desc'), {RightLabel = '→→→'}, true, {
 				  onSelected = function()
 				  end,
 				}, RMenu:Get('lvc', 'extracontrols'))	
@@ -78,8 +78,7 @@ function IsPluginMenuOpen()
 		ec_shortcut_menu_visible = EC.is_menu_open
 	end
 	
-	return 	RageUI.Visible(RMenu:Get('lvc', 'smartsiren')) or 
-			RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
+	return  RageUI.Visible(RMenu:Get('lvc', 'tkdsettings')) or 
 			RageUI.Visible(RMenu:Get('lvc', 'extrasettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'tasettings')) or
 			RageUI.Visible(RMenu:Get('lvc', 'trailersettings')) or
