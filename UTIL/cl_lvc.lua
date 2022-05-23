@@ -377,7 +377,7 @@ local function CleanupSounds()
 	end
 end
 ---------------------------------------------------------------------
-local function TogIndicStateForVeh(veh, newstate)
+function TogIndicStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate == ind_state_o then
 			SetVehicleIndicatorLights(veh, 0, false) -- R
@@ -397,14 +397,14 @@ local function TogIndicStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-local function TogMuteDfltSrnForVeh(veh, toggle)
+function TogMuteDfltSrnForVeh(veh, toggle)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		DisableVehicleImpactExplosionActivation(veh, toggle)
 	end
 end
 
 ---------------------------------------------------------------------
-local function SetLxSirenStateForVeh(veh, newstate)
+function SetLxSirenStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_lxsiren[veh] and newstate ~= nil then
 
@@ -424,7 +424,7 @@ local function SetLxSirenStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-local function SetPowercallStateForVeh(veh, newstate)
+function SetPowercallStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_pwrcall[veh] and newstate ~= nil then
 			if snd_pwrcall[veh] ~= nil then
@@ -442,7 +442,7 @@ local function SetPowercallStateForVeh(veh, newstate)
 end
 
 ---------------------------------------------------------------------
-local function SetAirManuStateForVeh(veh, newstate)
+function SetAirManuStateForVeh(veh, newstate)
 	if DoesEntityExist(veh) and not IsEntityDead(veh) then
 		if newstate ~= state_airmanu[veh] and newstate ~= nil then
 			if snd_airmanu[veh] ~= nil then
