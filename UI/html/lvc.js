@@ -125,8 +125,11 @@ window.addEventListener('message', function(event) {
 	}else if ( type == "hud:getHudScale" ){
 		sendData( "hud:sendHudScale", scale = scale );
 	}else if ( type == "hud:setHudPosition" ){
-		elements.sirenbox.style.left = event.data.pos.left;
-		elements.sirenbox.style.top = event.data.pos.top;
+		try{
+			elements.sirenbox.style.left = event.data.pos.left;
+			elements.sirenbox.style.top = event.data.pos.top;
+		}catch(error)
+		{}
 	}else if ( type == "hud:resetPosition" ){
 		elements.sirenbox.style.left = backup.left;
 		elements.sirenbox.style.top = backup.top;
