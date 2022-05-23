@@ -48,7 +48,7 @@ end)
 
 function TRAIL:GetTrailerDisplayName()
 	if GetDisplayNameFromVehicleModel(GetEntityModel(trailer)) == 'CARNOTFOUND' then
-		return 'NOT FOUND'
+		return Lang:t('plugins.ts_not_found')
 	else
 		return GetDisplayNameFromVehicleModel(GetEntityModel(trailer))
 	end

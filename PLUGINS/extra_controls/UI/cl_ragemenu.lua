@@ -24,25 +24,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', 'Extra Controls Settings'))
-RMenu:Get('lvc', 'extracontrols'):DisplayGlare(false)
-RMenu:Get('lvc', 'extracontrols'):SetTotalItemsPerPage(13)
+if ec_masterswitch then
+	RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ec')))
+	RMenu:Get('lvc', 'extracontrols'):DisplayGlare(false)
+	RMenu:Get('lvc', 'extracontrols'):SetTotalItemsPerPage(13)
 
---RageUI Confirm UI elements
-local confirm_d_msg
-local confirm_s_msg
-local confirm_l_msg
-local confirm_s_desc
-local confirm_l_desc
-local profile_s_op = 75
-local profile_l_op = 75
+	--RageUI Confirm UI elements
+	local confirm_d_msg
+	local confirm_s_msg
+	local confirm_l_msg
+	local confirm_s_desc
+	local confirm_l_desc
+	local profile_s_op = 75
+	local profile_l_op = 75
 
---Create Menus
-RegisterNetEvent('lvc:onVehicleChange')
-AddEventHandler('lvc:onVehicleChange', function()
-	CreateThread(function()
-		Wait(500)
-		if player_is_emerg_driver and veh ~= nil then
+		--	Dynamically create shortcut menus
+		function EC:BuildShortCutMenus()
 			if #EC.table > 0 then
 				for i, extra_shortcut in ipairs(EC.table) do
 					RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
@@ -50,204 +47,199 @@ AddEventHandler('lvc:onVehicleChange', function()
 				end
 			end
 		end
-	end)
-end)
 
---Handle user input to cancel confirmation message for SAVE/LOAD
-CreateThread(function()
-	while true do 
-		while not RageUI.Settings.Controls.Back.Enabled do
-			for Index = 1, #RageUI.Settings.Controls.Back.Keys do
-				if IsDisabledControlJustPressed(RageUI.Settings.Controls.Back.Keys[Index][1], RageUI.Settings.Controls.Back.Keys[Index][2]) then
-					confirm_s_msg = nil
-					confirm_s_desc = nil
-					profile_s_op = 75
-					confirm_l_msg = nil
-					confirm_l_desc = nil
-					profile_l_op = 75
-					confirm_r_msg = nil
-					confirm_d_msg = nil
-					Wait(10)
-					RageUI.Settings.Controls.Back.Enabled = true
-					break
-				end
-			end
-			Wait(0)
-		end
-		Wait(100)
-	end
-end)
-
-local is_loop_on = false
---[[Loop to be called when dynamically created menus are opened,
-	loop continues until closed updating the EC.is_menu_open var,
-	which is used in cl_plugins.lua for IsPluginsMenuOpen()]]
-local function StartIsMenuOpenLoop()
-	if not is_loop_on then
-		is_loop_on = true
-		CreateThread(function()
-			while is_loop_on do
-				EC.is_menu_open = false
-				for i, extra_shortcut in ipairs(EC.table) do
-					if RageUI.Visible(RMenu:Get('lvc', 'extracontrols_'..i)) then
-						EC.is_menu_open = true
+	--	Handle user input to cancel confirmation message for SAVE/LOAD
+	CreateThread(function()
+		while true do 
+			while not RageUI.Settings.Controls.Back.Enabled do
+				for Index = 1, #RageUI.Settings.Controls.Back.Keys do
+					if IsDisabledControlJustPressed(RageUI.Settings.Controls.Back.Keys[Index][1], RageUI.Settings.Controls.Back.Keys[Index][2]) then
+						confirm_s_msg = nil
+						confirm_s_desc = nil
+						profile_s_op = 75
+						confirm_l_msg = nil
+						confirm_l_desc = nil
+						profile_l_op = 75
+						confirm_r_msg = nil
+						confirm_d_msg = nil
+						Wait(10)
+						RageUI.Settings.Controls.Back.Enabled = true
+						break
 					end
 				end
-				if not EC.is_menu_open then
-					is_loop_on = false
-				end
-				Wait(1)
+				Wait(0)
 			end
-		end) 
-	end
-end
+			Wait(100)
+		end
+	end)
 
-CreateThread(function()
-	Wait(1000)
-	local choice
-	local shortcut_prefix
-	if allow_custom_controls then
-		shortcut_prefix = "Change"
-	else
-		shortcut_prefix = "View"
-	end
-	
-    while true do
-			RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'), function()
-				RageUI.Checkbox('Enabled', 'Toggle extra controls functionality.', EC.controls_enabled, {}, {
-				onChecked = function()
-					EC.controls_enabled = true
-				end,          
-				onUnChecked = function()
-					EC.controls_enabled = false
+	local is_loop_on = false
+	--[[Loop to be called when dynamically created menus are opened,
+		loop continues until closed updating the EC.is_menu_open var,
+		which is used in cl_plugins.lua for IsPluginsMenuOpen()]]
+	local function StartIsMenuOpenLoop()
+		if not is_loop_on then
+			is_loop_on = true
+			CreateThread(function()
+				while is_loop_on do
+					EC.is_menu_open = false
+					for i, extra_shortcut in ipairs(EC.table) do
+						if RageUI.Visible(RMenu:Get('lvc', 'extracontrols_'..i)) then
+							EC.is_menu_open = true
+						end
+					end
+					if not EC.is_menu_open then
+						is_loop_on = false
+					end
+					Wait(1)
 				end
-				})
-				
-					RageUI.Separator('Shortcuts')
+			end) 
+		end
+	end
+
+	CreateThread(function()
+		Wait(1000)
+		local choice
+		local shortcut_prefix
+		if allow_custom_controls then
+			shortcut_prefix = Lang:t('plugins.ec_shortcut_prefix_change')
+		else
+			shortcut_prefix = Lang:t('plugins.ec_shortcut_prefix_view')
+		end
+		
+		while true do
+				RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols'), function()
+					RageUI.Checkbox(Lang:t('menu.enabled'), Lang:t('plugins.ec_enabled_desc'), EC.controls_enabled, {}, {
+					  onChecked = function()
+						EC.controls_enabled = true
+					  end,          
+					  onUnChecked = function()
+						EC.controls_enabled = false
+					  end
+					})
+					
+					RageUI.Separator(Lang:t('plugins.ec_shortcuts_separator'))
+					--	Buttons for dynamic shortcut menu
 					if #EC.table > 0 then
 						for i, extra_shortcut in ipairs(EC.table) do
-							RageUI.Button(extra_shortcut.Name, shortcut_prefix..' shortcut settings.', {RightLabel = '→→→'}, true, {
-							  onSelected = function()
-								StartIsMenuOpenLoop()							
+							RageUI.Button(extra_shortcut.Name, Lang:t('plugins.ec_shortcut_desc', { prefix = shortcut_prefix }), {RightLabel = '→→→'}, true, {
+							  onSelected = function()												
+								StartIsMenuOpenLoop()
 							  end,
 							}, RMenu:Get('lvc', 'extracontrols'..'_'..i))					
 						end
-					if allow_custom_controls then
-						RageUI.Separator('Storage Management')
-						RageUI.Button('Save Profile Controls', confirm_s_desc or 'Store new controls to client-side storage (KVP).', {RightLabel = confirm_s_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_s_op}, true, {
+						if allow_custom_controls then
+							RageUI.Separator(Lang:t('menu.storage'))
+							RageUI.Button(Lang:t('plugins.ec_save'), confirm_s_desc or Lang:t('plugins.ec_save_desc'), {RightLabel = confirm_s_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_s_op}, true, {
+							  onSelected = function()
+								if confirm_s_msg == Lang:t('menu.save_override') then
+									EC:SaveSettings()
+									HUD:ShowNotification(Lang:t('menu.save_success'), true)
+									confirm_s_msg = nil
+									confirm_s_desc = nil
+									profile_s_op = 75
+								else 
+									RageUI.Settings.Controls.Back.Enabled = false 
+									profile_s_op = 255
+									confirm_c_msg = Lang:t('menu.save_override')
+									confirm_s_desc = Lang:t('menu.save_override_desc', { profile = EC.Profile })
+									confirm_l_msg = nil
+									profile_l_op = 75
+									confirm_r_msg = nil
+									confirm_d_msg = nil
+								end
+							  end,
+							})								
+							RageUI.Button(Lang:t('plugins.ec_load'), confirm_l_desc or Lang:t('plugins.ec_load_desc'), {RightLabel = confirm_l_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_l_op}, true, {
+							  onSelected = function()
+								if confirm_l_msg == Lang:t('menu.save_override') then
+									EC:LoadSettings()
+									HUD:ShowNotification(Lang:t('menu.load_sucess'), true)
+									confirm_l_msg = nil
+									confirm_l_desc = nil
+									profile_l_op = 75
+								else 
+									RageUI.Settings.Controls.Back.Enabled = false 
+									profile_l_op = 255
+									confirm_l_msg = Lang:t('menu.save_override')
+									confirm_l_desc = Lang:t('menu.load_override')
+									confirm_s_msg = nil
+									profile_s_op = 75
+									confirm_r_msg = nil
+									confirm_d_msg = nil
+								end						  
+							  end,
+							})			
+							RageUI.Button(Lang:t('plugins.ec_reset'), Lang:t('plugins.ec_reset_desc'), {RightLabel = confirm_r_msg}, true, {
+							  onSelected = function()
+								if confirm_r_msg == Lang:t('menu.save_override') then
+									EC:LoadBackupTable()
+									HUD:ShowNotification(Lang:t('menu.reset_success'), true)
+									confirm_r_msg = nil
+								else 
+									RageUI.Settings.Controls.Back.Enabled = false 
+									confirm_r_msg = Lang:t('menu.save_override')
+									confirm_l_msg = nil
+									profile_l_op = 75
+									confirm_s_msg = nil
+									profile_s_op = 75
+									confirm_d_msg = nil
+								end
+							  end,
+							})						
+							RageUI.Button(Lang:t('plugins.ec_factory_reset'), Lang:t('plugins.ec_factory_reset_desc'), {RightLabel = confirm_d_msg}, true, {
+							  onSelected = function()
+								if confirm_d_msg == Lang:t('menu.save_override') then
+									EC:DeleteProfiles()
+									UTIL:Print(Lang:t('plugins.ec_factory_reset_success_console'), true)
+									HUD:ShowNotification(Lang:t('plugins.ec_factory_reset_success_frontend'), true)
+									confirm_d_msg = nil
+								else 
+									RageUI.Settings.Controls.Back.Enabled = false 
+									confirm_d_msg = Lang:t('menu.save_override')
+									confirm_l_msg = nil
+									profile_l_op = 75
+									confirm_s_msg = nil
+									profile_s_op = 75
+									confirm_r_msg = nil
+								end
+							  end,
+							})	
+						end
+					else
+						RageUI.Button(Lang:t('plugins.ec_no_shortcuts'), Lang:t('plugins.ec_no_shortcuts_desc'), {RightLabel = '→→→'}, false, {
 						  onSelected = function()
-							if confirm_s_msg == 'Are you sure?' then
-								EC:SaveSettings()
-								HUD:ShowNotification('~g~Success~s~: Your settings have been saved.', true)
-								confirm_s_msg = nil
-								confirm_s_desc = nil
-								profile_s_op = 75
-							else 
-								RageUI.Settings.Controls.Back.Enabled = false 
-								profile_s_op = 255
-								confirm_s_msg = 'Are you sure?' 
-								confirm_s_desc = '~r~This will override any existing extra controls data for this vehicle profile ('..EC.profile..').'
-								confirm_l_msg = nil
-								profile_l_op = 75
-								confirm_r_msg = nil
-								confirm_d_msg = nil
-							end
-						  end,
-						})								
-						RageUI.Button('Load Profile Controls', confirm_l_desc or 'Load saved controls from client-side storage (KVP).', {RightLabel = confirm_l_msg or '('.. EC.profile .. ')', RightLabelOpacity = profile_l_op}, true, {
-						  onSelected = function()
-							if confirm_l_msg == 'Are you sure?' then
-								EC:LoadSettings()
-								HUD:ShowNotification('~g~Success~s~: Your settings have been loaded.', true)
-								confirm_l_msg = nil
-								confirm_l_desc = nil
-								profile_l_op = 75
-							else 
-								RageUI.Settings.Controls.Back.Enabled = false 
-								profile_l_op = 255
-								confirm_l_msg = 'Are you sure?' 
-								confirm_l_desc = '~r~This will override any unsaved settings.'
-								confirm_s_msg = nil
-								profile_s_op = 75
-								confirm_r_msg = nil
-								confirm_d_msg = nil
-							end						  
-						  end,
-						})			
-						RageUI.Button('Reset Profile Controls', '~r~Reset this profiles controls to default, preserves existing saves. Will override any unsaved settings.', {RightLabel = confirm_r_msg}, true, {
-						  onSelected = function()
-							if confirm_r_msg == 'Are you sure?' then
-								EC:LoadBackupTable()
-								HUD:ShowNotification('~g~Success~s~: Settings have been reset.', true)
-								confirm_r_msg = nil
-							else 
-								RageUI.Settings.Controls.Back.Enabled = false 
-								confirm_r_msg = 'Are you sure?' 
-								confirm_l_msg = nil
-								profile_l_op = 75
-								confirm_s_msg = nil
-								profile_s_op = 75
-								confirm_d_msg = nil
-							end
-						  end,
-						})						
-						RageUI.Button('Delete All Profile Controls', '~r~Delete all Extra Controls saved data from client-side storage (KVP).', {RightLabel = confirm_d_msg}, true, {
-						  onSelected = function()
-							if confirm_d_msg == 'Are you sure?' then
-								EC:DeleteProfiles()
-								UTIL:Print('Success: cleared all extra controls data.', true)
-								HUD:ShowNotification('~g~Success~s~: You have deleted all extra controls data and reset the plugin.', true)
-								confirm_d_msg = nil
-							else 
-								RageUI.Settings.Controls.Back.Enabled = false 
-								confirm_d_msg = 'Are you sure?' 
-								confirm_l_msg = nil
-								profile_l_op = 75
-								confirm_s_msg = nil
-								profile_s_op = 75
-								confirm_r_msg = nil
-							end
-						  end,
-						})	
-					end
-				else
-					RageUI.Button('(None)', 'No shortcuts found.', {RightLabel = '→→→'}, false, {
-					  onSelected = function()
-					  end,
-					})					
-				end
-			end)
-			if allow_custom_controls then
-				for i, extra_shortcut in ipairs(EC.table) do
-					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
-						--DisableControls()
-						RageUI.List('Combo', EC.approved_combo_strings, EC.combo_id[i], 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, EC.combo_id[i] ~= nil, {
-						  onListChange = function(Index, Item)
-							EC.combo_id[i] = Index
-								extra_shortcut.Combo = CONTROLS.COMBOS[Index]
 						  end,
 						})					
-						RageUI.List('Key', EC.approved_key_strings, EC.key_id[i], 'Control that needs to be pressed in addition to combo-key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {}, true, {
-						  onListChange = function(Index, Item)
-							EC.key_id[i] = Index
-								extra_shortcut.Key = CONTROLS.KEYS[Index]
-						  end,
-						})	
-					end)
+					end
+				end)
+				if allow_custom_controls then
+					for i, extra_shortcut in ipairs(EC.table) do
+						RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
+							RageUI.List(Lang:t('plugins.ec_combo'), EC.approved_combo_strings, EC.combo_id[i], Lang:t('plugins.ec_combo_desc'), {}, EC.combo_id[i] ~= nil, {
+							  onListChange = function(Index, Item)
+								EC.combo_id[i] = Index
+									extra_shortcut.Combo = CONTROLS.COMBOS[Index]
+							  end,
+							})					
+							RageUI.List(Lang:t('plugins.ec_key'), EC.approved_key_strings, EC.key_id[i], Lang:t('plugins.ec_key_desc'), {}, true, {
+							  onListChange = function(Index, Item)
+								EC.key_id[i] = Index
+									extra_shortcut.Key = CONTROLS.KEYS[Index]
+							  end,
+							})	
+						end)
+					end
+				else
+					for i, extra_shortcut in ipairs(EC.table) do
+						RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
+							RageUI.Button(Lang:t('plugins.ec_combo'), Lang:t('plugins.ec_combo_desc'), {RightLabel = EC.approved_combo_strings[EC.combo_id[i]]}, true, {})							
+							RageUI.Button(Lang:t('plugins.ec_key'), Lang:t('plugins.ec_key_desc'), {RightLabel = EC.approved_key_strings[EC.key_id[i]]}, true, {})	
+						end)
+					end
 				end
-			else
-				for i, extra_shortcut in ipairs(EC.table) do
-					RageUI.IsVisible(RMenu:Get('lvc', 'extracontrols_'..i), function()
-						RageUI.Button('Combo', 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {RightLabel = EC.approved_combo_strings[EC.combo_id[i]]}, true, {})							
-						RageUI.Button('Key', 'Control that needs to be pressed in addition to key to toggle extras. ~m~Format: (KEYBOARD | CONTROLLER)', {RightLabel = EC.approved_key_strings[EC.key_id[i]]}, true, {})	
-					end)
-				end
-			end
 
-        Wait(0)
-	end
-end)
-
-
-	
-
+			Wait(0)
+		end
+	end)
+end

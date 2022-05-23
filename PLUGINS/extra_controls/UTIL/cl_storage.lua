@@ -79,13 +79,6 @@ function EC:DeleteProfiles()
 	STORAGE:DeleteKVPs(save_prefix)
 end
 
-function EC:RefreshRageIndexs()
-	for i, extra_shortcut in ipairs(EC.table) do
-		EC.combo_id[i] = UTIL:IndexOf(CONTROLS.COMBOS, EC.table[i].Combo)
-		EC.key_id[i] = UTIL:IndexOf(CONTROLS.KEYS, EC.table[i].Key)
-	end
-end
-
 function EC:SetBackupTable()
 	backup_table = json.encode(EC.table)
 end
