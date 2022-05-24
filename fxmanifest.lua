@@ -5,7 +5,8 @@ games { 'gta5' }
 
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
-version '3.2.7'	
+
+version '3.2.9'	
 compatible '3.2.2'
 
 ------------------------------
@@ -34,6 +35,8 @@ files({
 
 
 shared_script {
+	'/UI/cl_locale.lua',
+	'/UI/locale/en.lua',	-- Set locale / language file here.
 	'SETTINGS.lua',
 }
 
