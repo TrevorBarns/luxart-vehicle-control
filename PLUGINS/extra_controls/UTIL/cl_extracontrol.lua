@@ -101,7 +101,14 @@ if ec_masterswitch then
 			
 			EC:SetBackupTable()
 			EC:LoadSettings()		
-			EC:BuildShortCutMenus()
+
+		--	Dynamically create shortcut menus
+			if #EC.table > 0 then
+				for i, extra_shortcut in ipairs(EC.table) do
+					RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
+					RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
+				end
+			end
 
 			--[[Verify all controls are approved, if not reset to none and notify]]
 			for i, tog_table in pairs(EC.table) do

@@ -38,16 +38,6 @@ if ec_masterswitch then
 	local profile_s_op = 75
 	local profile_l_op = 75
 
-		--	Dynamically create shortcut menus
-		function EC:BuildShortCutMenus()
-			if #EC.table > 0 then
-				for i, extra_shortcut in ipairs(EC.table) do
-					RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
-					RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
-				end
-			end
-		end
-
 	--	Handle user input to cancel confirmation message for SAVE/LOAD
 	CreateThread(function()
 		while true do 
@@ -142,7 +132,7 @@ if ec_masterswitch then
 									RageUI.Settings.Controls.Back.Enabled = false 
 									profile_s_op = 255
 									confirm_c_msg = Lang:t('menu.save_override')
-									confirm_s_desc = Lang:t('menu.save_override_desc', { profile = EC.Profile })
+									confirm_s_desc = Lang:t('menu.save_override_desc', { profile = EC.profile })
 									confirm_l_msg = nil
 									profile_l_op = 75
 									confirm_r_msg = nil
