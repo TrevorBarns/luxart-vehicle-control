@@ -43,10 +43,9 @@ local enabled_triggers = {
 	['Manu']		= false
 }
 
-local ei_active = false
 local accel_pedal = 0
 local extras = { }
-local auto_park_time_lookup = { [2] = 30000, [3] = 60000, [4] = 300000 }
+local auto_park_time_lookup = { [1] = 0, [2] = 30000, [3] = 60000, [4] = 300000 }
 local profile = ''
 local stopped_timer = 0
 local auto_park_time_index = 2
@@ -70,19 +69,12 @@ TriggerEvent('chat:addSuggestion', '/lvcblackout', Lang:t('plugins.ei_command_de
 	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
 end) 
 
-CreateThread( function()
-	while ei_masterswitch do
-		ei_active = player_is_emerg_driver
-		Wait(2000)
-	end
-end)
-
 --[[Function caller for extra state checking.]]
 --	If driver then call RefreshExtras ever 50ms to toggle states.
 CreateThread( function()
     while true do
         while ei_masterswitch do
-			if ei_active and veh ~= nil and extras ~= false then
+			if player_is_emerg_driver and veh ~= nil and extras ~= false then
 				EI:RefreshExtras() 
 			end
 			Wait(50)
@@ -96,13 +88,14 @@ end)
 CreateThread( function()
     while true do
         while ei_masterswitch do
-			if ei_active and veh ~= nil and extras ~= false then
+			if player_is_emerg_driver and veh ~= nil and extras ~= false then
 				for extra_id, trigger_table in pairs(extras) do
 					if trigger_table.toggle ~= nil then
 						local t = trigger_table.toggle
 						------------------------------------------------------------
 						--BRAKE LIGHTS
 						if brakes_ei_enabled and enabled_triggers['Brake'] then
+							accel_pedal = GetVehicleThrottleOffset(veh)
 							if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
 							   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
 							   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
@@ -174,19 +167,6 @@ CreateThread( function()
 								end
 							end
 						end						
-						------------------------------------------------------------
-						--SEATS--
-						if seat_ei_enabled then
-							if enabled_triggers['DSeat'] then
-								if not IsVehicleSeatFree(veh, -1) then
-									EI:SetState('DSeat', true)			
-									Wait(1750)
-								elseif trigger_table.active['DSeat'] == true then
-									EI:SetState('DSeat', false)
-									Wait(1750)									
-								end
-							end
-						end
 						------------------------------------------------------------
 						--MAIN SIREN
 						if siren_controller_ei_enabled then
@@ -360,6 +340,29 @@ function EI:GetAutoBrakeLightsState()
 end
 
 ---------------------------------------------------------------------
+--Clear brakelights and handle exit vehicle state
+RegisterNetEvent('lvc:onVehicleExit')
+AddEventHandler('lvc:onVehicleExit', function()
+	if ei_masterswitch then
+		if player_is_emerg_driver and veh ~= nil and extras ~= false then
+			print('exit detection')
+			-- Reset brakelights on exit
+			--EI:SetState('Brake', false)
+			
+			-- Seat detection
+			if seat_ei_enabled then
+				if enabled_triggers['DSeat'] then
+					if not IsVehicleSeatFree(veh, -1) then
+						EI:SetState('DSeat', true)			
+					elseif trigger_table.active['DSeat'] == true then
+						EI:SetState('DSeat', false)
+					end
+				end
+			end
+		end
+	end
+end)
+
 --Triggered when vehicle changes (cl_lvc.lua)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
