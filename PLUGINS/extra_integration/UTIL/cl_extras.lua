@@ -102,7 +102,7 @@ CreateThread( function()
 						local t = trigger_table.toggle
 						------------------------------------------------------------
 						--BRAKE LIGHTS
-						if brakes_ei_enabled and enabled_triggers['Brakes'] then
+						if brakes_ei_enabled and enabled_triggers['Brake'] then
 							if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
 							   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
 							   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
@@ -369,7 +369,7 @@ AddEventHandler('lvc:onVehicleChange', function()
 	end
 
 	if player_is_emerg_driver and veh ~= nil then
-		extras, profile = UTIL:GetProfileFromTable('EXTRA_ASSIGNMENTS', EXTRA_ASSIGNMENTS, veh)
+		extras, profile = UTIL:GetProfileFromTable('EXTRA INTEGRATIONS', EXTRA_ASSIGNMENTS, veh)
 		if profile then
 			for extra_id, trigger_table in pairs(extras) do
 				--Initialize active tables
