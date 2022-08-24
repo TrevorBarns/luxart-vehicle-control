@@ -575,8 +575,7 @@ CreateThread(function()
 			  end,
 			})
 			RageUI.Separator(Lang:t('menu.advanced_separator'))
-			RageUI.Button(Lang:t('menu.copy'), Lang:t('menu.copy_desc'), {RightLabel = '→→→'}, #profiles > 0, {
-			}, RMenu:Get('lvc', 'copyprofile'))
+			RageUI.Button(Lang:t('menu.copy'), Lang:t('menu.copy_desc'), {RightLabel = '→→→'}, #profiles > 0, {}, RMenu:Get('lvc', 'copyprofile'))
 			RageUI.Button(Lang:t('menu.reset'), Lang:t('menu.reset_desc'), {RightLabel = confirm_r_msg}, true, {
 			  onSelected = function()
 				if confirm_r_msg == Lang:t('menu.confirm') then
@@ -622,33 +621,31 @@ CreateThread(function()
 		--Copy Profiles Menu
 	    RageUI.IsVisible(RMenu:Get('lvc', 'copyprofile'), function()
 			for i, profile_name in ipairs(profiles) do
-				if profile_name ~= UTIL:GetVehicleProfileName() then
-					profile_c_op[i] = profile_c_op[i] or 75
-					RageUI.Button(profile_name, confirm_c_desc[i] or Lang:t('menu.load_copy_desc', { profile = profile_name }), {RightLabel = confirm_c_msg[i] or Lang:t('load_copy'), RightLabelOpacity = profile_c_op[i]}, true, {
-					  onSelected = function()
-						if confirm_c_msg[i] == Lang:t('menu.confirm') then
-							STORAGE:LoadSettings(profile_name)
-							tone_table = UTIL:GetApprovedTonesTableNameAndID()
-							HUD:ShowNotification(Lang:t('menu.load_success'), true)
-							confirm_c_msg[i] = nil
-							confirm_c_desc[i] = nil
-							profile_c_op[i] = 75
-						else
-							RageUI.Settings.Controls.Back.Enabled = false
-							for j, _ in ipairs(profiles) do
-								if i ~= j then
-									profile_c_op[j] = 75
-									confirm_c_msg[j] = nil
-									confirm_c_desc[j] = nil
-								end
+				profile_c_op[i] = profile_c_op[i] or 75
+				RageUI.Button(profile_name, confirm_c_desc[i] or Lang:t('menu.load_copy_desc', { profile = profile_name }), {RightLabel = confirm_c_msg[i] or Lang:t('menu.load_copy'), RightLabelOpacity = profile_c_op[i]}, true, {
+				  onSelected = function()
+					if confirm_c_msg[i] == Lang:t('menu.confirm') then
+						STORAGE:LoadSettings(profile_name)
+						tone_table = UTIL:GetApprovedTonesTableNameAndID()
+						HUD:ShowNotification(Lang:t('menu.load_success'), true)
+						confirm_c_msg[i] = nil
+						confirm_c_desc[i] = nil
+						profile_c_op[i] = 75
+					else
+						RageUI.Settings.Controls.Back.Enabled = false
+						for j, _ in ipairs(profiles) do
+							if i ~= j then
+								profile_c_op[j] = 75
+								confirm_c_msg[j] = nil
+								confirm_c_desc[j] = nil
 							end
-							profile_c_op[i] = 255
-							confirm_c_msg[i] = Lang:t('menu.confirm')
-							confirm_c_desc[i] = Lang:t('menu.load_override')
 						end
-					  end,
-					})
-				end
+						profile_c_op[i] = 255
+						confirm_c_msg[i] = Lang:t('menu.confirm')
+						confirm_c_desc[i] = Lang:t('menu.load_override')
+					end
+				  end,
+				})
 			end
 		end)
 		---------------------------------------------------------------------

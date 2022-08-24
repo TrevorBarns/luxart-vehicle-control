@@ -369,6 +369,14 @@ function STORAGE:FindSavedProfiles()
 end
 
 function STORAGE:GetSavedProfiles()
+	--remove the current profile from profiles list for copying
+	local current_profile = UTIL:GetVehicleProfileName()
+	for i, profile in ipairs(profiles) do
+		if profile == cur_profile then
+			table.remove(profiles, i)
+		end
+	end
+	
 	return profiles
 end
 ------------------------------------------------
