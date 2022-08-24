@@ -147,7 +147,8 @@ CreateThread( function()
 						if door_ei_enabled then
 							if enabled_triggers['DDoor'] then
 								if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
-									EI:SetState('DDoor', true)							
+									EI:SetState('DDoor', true)		
+									Wait(100)
 								elseif trigger_table.active['DDoor'] == true then
 									EI:SetState('DDoor', false)		
 								end
@@ -155,6 +156,7 @@ CreateThread( function()
 							if enabled_triggers['PDoor'] then
 								if GetVehicleDoorAngleRatio(veh, 1) > 0.0 then
 									EI:SetState('PDoor', true)		
+									Wait(100)
 								elseif trigger_table.active['PDoor'] == true then
 									EI:SetState('PDoor', false)		
 								end
@@ -162,8 +164,19 @@ CreateThread( function()
 							if enabled_triggers['Trunk'] then
 								if GetVehicleDoorAngleRatio(veh, 5) > 0.0 then
 									EI:SetState('Trunk', true)	
+									Wait(100)
 								elseif trigger_table.active['Trunk'] == true then
 									EI:SetState('Trunk', false)	
+								end
+							end
+						end	
+						------------------------------------------------------------
+						-- SEAT DETECTION (deactivate)
+						if seat_ei_enabled then
+							if enabled_triggers['DSeat'] then
+								if trigger_table.active['DSeat'] == true then
+									Wait(1000)
+									EI:SetState('DSeat', false)
 								end
 							end
 						end						
@@ -299,7 +312,6 @@ function EI:RefreshExtras()
 	for extra_id, trigger_table in pairs(extras) do
 		local count = 0
 		for i,v in pairs(trigger_table.active) do
-			--print(i, v)
 			count = count + 1
 		end
 		
@@ -345,17 +357,11 @@ RegisterNetEvent('lvc:onVehicleExit')
 AddEventHandler('lvc:onVehicleExit', function()
 	if ei_masterswitch then
 		if player_is_emerg_driver and veh ~= nil and extras ~= false then
-			print('exit detection')
-			-- Reset brakelights on exit
-			--EI:SetState('Brake', false)
-			
-			-- Seat detection
+			-- SEAT DETECTION (activation)
 			if seat_ei_enabled then
 				if enabled_triggers['DSeat'] then
 					if not IsVehicleSeatFree(veh, -1) then
-						EI:SetState('DSeat', true)			
-					elseif trigger_table.active['DSeat'] == true then
-						EI:SetState('DSeat', false)
+						EI:SetState('DSeat', true)
 					end
 				end
 			end
