@@ -25,82 +25,83 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
-TA = {}
-local taExtras = {}
-local temp_hud_disable
-TA.preserve_ta_state = false
-TA.sync_ta_state = false
-TA.block_incorrect_combo = false
-state_ta = {}
+if ta_masterswitch then
+	TA = {}
+	local taExtras = {}
+	local profile = false
+	local temp_hud_disable
+	TA.preserve_ta_state = false
+	TA.sync_ta_state = false
+	TA.block_incorrect_combo = false
+	state_ta = {}
 
-local count_taclean_timer = 0
-local delay_taclean_timer = 400
-local count_bcast_timer = 0
-local delay_bcast_timer = 200
+	local count_taclean_timer = 0
+	local delay_taclean_timer = 400
+	local count_bcast_timer = 0
+	local delay_bcast_timer = 200
 
-----------------THREADED FUNCTIONS----------------
---[[TA State Syncing]]
---Broadcasts TA states to other players and cleans up invalid entities. 
-CreateThread(function()
-	while ta_masterswitch and false do --Disabled until syncing implemented.
-		--CLEANUP DEAD TA States
-		if count_taclean_timer > delay_taclean_timer then
-			count_taclean_timer = 0
-			for k, v in pairs(state_ta) do
-				if v > 0 then
-					if not DoesEntityExist(k) or IsEntityDead(k) then
-						state_ta[k] = nil
+	----------------THREADED FUNCTIONS----------------
+	--[[TA State Syncing]]
+	--Broadcasts TA states to other players and cleans up invalid entities. 
+	CreateThread(function()
+		while false do --Disabled until syncing implemented.
+			--CLEANUP DEAD TA States
+			if count_taclean_timer > delay_taclean_timer then
+				count_taclean_timer = 0
+				for k, v in pairs(state_ta) do
+					if v > 0 then
+						if not DoesEntityExist(k) or IsEntityDead(k) then
+							state_ta[k] = nil
+						end
 					end
 				end
+			else
+				count_taclean_timer = count_taclean_timer + 1
 			end
-		else
-			count_taclean_timer = count_taclean_timer + 1
+			
+			----- AUTO BROADCAST TA STATES -----
+			if count_bcast_timer > delay_bcast_timer then
+				count_bcast_timer = 0
+				TriggerServerEvent('lvc:SetTAState_s', state_ta[veh])
+			else
+				count_bcast_timer = count_bcast_timer + 1
+			end		
+			Wait(0)
 		end
-		
-		----- AUTO BROADCAST TA STATES -----
-		if count_bcast_timer > delay_bcast_timer then
-			count_bcast_timer = 0
-			TriggerServerEvent('lvc:SetTAState_s', state_ta[veh])
-		else
-			count_bcast_timer = count_bcast_timer + 1
-		end		
-		Wait(0)
-	end
-end)
+	end)
 
---[[Toggle TA when lights are turned on.]]
-CreateThread(function()
-	while ta_masterswitch do 
-		if player_is_emerg_driver then
-			if state_ta[veh] ~= nil and state_ta[veh] > 0 then
-				if not IsVehicleSirenOn(veh) and not temp_hud_disable then
-					HUD:SetItemState('ta', false)
-					temp_hud_disable = true
-					if not TA.preserve_ta_state then
-						if state_ta[veh] == 1 then
-							UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
-						elseif state_ta[veh] == 2 then
-							UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
-						elseif state_ta[veh] == 3 then
-							UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
+	--[[Toggle TA when lights are turned on.]]
+	CreateThread(function()
+		while true do 
+			if player_is_emerg_driver then
+				if state_ta[veh] ~= nil and state_ta[veh] > 0 then
+					if not IsVehicleSirenOn(veh) and not temp_hud_disable then
+						HUD:SetItemState('ta', false)
+						temp_hud_disable = true
+						if not TA.preserve_ta_state then
+							if state_ta[veh] == 1 then
+								UTIL:TogVehicleExtras(veh, taExtras.left.off, true)
+							elseif state_ta[veh] == 2 then
+								UTIL:TogVehicleExtras(veh, taExtras.right.off, true)
+							elseif state_ta[veh] == 3 then
+								UTIL:TogVehicleExtras(veh, taExtras.middle.off, true)
+							end
+							state_ta[veh] = 0
 						end
-						state_ta[veh] = 0
+					elseif IsVehicleSirenOn(veh) and temp_hud_disable then
+						HUD:SetItemState('ta', state_ta[veh])
+						temp_hud_disable = false
 					end
-				elseif IsVehicleSirenOn(veh) and temp_hud_disable then
-					HUD:SetItemState('ta', state_ta[veh])
-					temp_hud_disable = false
+				else
+					Wait(500)
 				end
 			else
 				Wait(500)
 			end
-		else
-			Wait(500)
+			Wait(0)
 		end
-		Wait(0)
-	end
-end) 
+	end) 
 
-if ta_masterswitch then
 	RegisterCommand('lvctogleftta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
@@ -119,7 +120,7 @@ if ta_masterswitch then
 			end
 		end
 	end)
-	
+
 	RegisterCommand('lvctogrightta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
@@ -138,7 +139,7 @@ if ta_masterswitch then
 			end
 		end
 	end)
-	
+
 	RegisterCommand('lvctogmidta', function(source, args, rawCommand)
 		if ta_combokey == false or IsControlPressed(0, ta_combokey) then
 			if player_is_emerg_driver and ( taExtras.lightbar ~= nil or taExtras.lightbar == -1 ) and veh ~= nil and not IsMenuOpen() and not key_lock then
@@ -161,45 +162,44 @@ if ta_masterswitch then
 	RegisterKeyMapping('lvctogleftta', Lang:t('plugins.ta_control_desc_left'), 'keyboard', 'left')
 	RegisterKeyMapping('lvctogrightta', Lang:t('plugins.ta_control_desc_right'), 'keyboard', 'right')
 	RegisterKeyMapping('lvctogmidta', Lang:t('plugins.ta_control_desc_middle'), 'keyboard', 'down')
-end
 
-CreateThread(function()
-	Wait(500)
-	UTIL:FixOversizeKeys(TA_ASSIGNMENTS)
-end) 
+	CreateThread(function()
+		Wait(500)
+		UTIL:FixOversizeKeys(TA_ASSIGNMENTS)
+	end) 
 
-RegisterNetEvent('lvc:onVehicleChange')
-AddEventHandler('lvc:onVehicleChange', function()
-	if player_is_emerg_driver and veh ~= nil then
-		taExtras, profile = UTIL:GetProfileFromTable('TA_ASSIGNMENTS', TA_ASSIGNMENTS, veh)
-		hud_pattern = taExtras.hud_pattern or 1
-		HUD:SetItemState('ta_pattern', hud_pattern)
+	RegisterNetEvent('lvc:onVehicleChange')
+	AddEventHandler('lvc:onVehicleChange', function()
+		if player_is_emerg_driver and veh ~= nil then
+			taExtras, profile = UTIL:GetProfileFromTable('TA ASSIGNMENTS', TA_ASSIGNMENTS, veh, true)
+			hud_pattern = taExtras.hud_pattern or 1
+			HUD:SetItemState('ta_pattern', hud_pattern)
 
-		if state_ta[veh] == nil then
-			state_ta[veh] = 0
+			if state_ta[veh] == nil then
+				state_ta[veh] = 0
+			end
 		end
-	end
-end)
+	end)
 
-RegisterNetEvent('lvc:SetTAState_c')
-AddEventHandler('lvc:SetTAState_c', function(sender, newstate)
-	local player_s = GetPlayerFromServerId(sender)
-	local ped_s = GetPlayerPed(player_s)
-	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
-		if ped_s ~= GetPlayerPed(-1) then
-			if IsPedInAnyVehicle(ped_s, false) then
-				local veh = GetVehiclePedIsUsing(ped_s)
-				TA:SetTAStateForVeh(veh, newstate)
+	RegisterNetEvent('lvc:SetTAState_c')
+	AddEventHandler('lvc:SetTAState_c', function(sender, newstate)
+		local player_s = GetPlayerFromServerId(sender)
+		local ped_s = GetPlayerPed(player_s)
+		if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
+			if ped_s ~= GetPlayerPed(-1) then
+				if IsPedInAnyVehicle(ped_s, false) then
+					local veh = GetVehiclePedIsUsing(ped_s)
+					TA:SetTAStateForVeh(veh, newstate)
+				end
+			end
+		end
+	end)
+
+	function TA:SetTAStateForVeh(veh, newstate)
+		if DoesEntityExist(veh) and not IsEntityDead(veh) then
+			if newstate ~= state_ta[veh] then
+			  state_ta[veh] = newstate
 			end
 		end
 	end
-end)
-
-function TA:SetTAStateForVeh(veh, newstate)
-	if DoesEntityExist(veh) and not IsEntityDead(veh) then
-		if newstate ~= state_ta[veh] then
-		  state_ta[veh] = newstate
-		end
-	end
 end
-

@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 local plugin_name = 'traffic_advisor'
-local plugin_version = '1.0.3'
+local plugin_version = '1.0.4'
 
 RegisterServerEvent('lvc:plugins_getVersions') 
 AddEventHandler('lvc:plugins_getVersions', function()
