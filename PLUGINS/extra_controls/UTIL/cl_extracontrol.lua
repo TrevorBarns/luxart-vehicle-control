@@ -97,50 +97,52 @@ if ec_masterswitch then
 	RegisterNetEvent('lvc:onVehicleChange')
 	AddEventHandler('lvc:onVehicleChange', function()
 		if player_is_emerg_driver and veh ~= nil then
-			EC.table, EC.profile = UTIL:GetProfileFromTable('EC', EXTRA_CONTROLS, veh)
+			EC.table, EC.profile = UTIL:GetProfileFromTable('EXTRA CONTROLS', EXTRA_CONTROLS, veh, true)
 			
-			EC:SetBackupTable()
-			EC:LoadSettings()		
+			if EC.profile ~= false then
+				EC:SetBackupTable()
+				EC:LoadSettings()		
 
-		--	Dynamically create shortcut menus
-			if #EC.table > 0 then
-				for i, extra_shortcut in ipairs(EC.table) do
-					RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
-					RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
-				end
-			end
-
-			--[[Verify all controls are approved, if not reset to none and notify]]
-			for i, tog_table in pairs(EC.table) do
-				local found_combo = false
-				local found_key = false
-				
-				for i, control in pairs(CONTROLS.COMBOS) do 
-					if tog_table.Combo == control then
-						found_combo = true
-					end		
-				end	
-
-				if not found_combo then
-					HUD:ShowNotification(Lang:t('plugins.ec_not_approved_frontend'), true)
-					UTIL:Print(Lang:t('plugins.ec_not_approved_console', { control = tog_table.Combo, type = 'COMBO' }), true)
-					tog_table.Combo = 0
-				end				
-				
-				for i, control in pairs(CONTROLS.KEYS) do 
-					if tog_table.Key == control then
-						found_key = true
+				--	Dynamically create shortcut menus
+				if #EC.table > 0 then
+					for i, extra_shortcut in ipairs(EC.table) do
+						RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
+						RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
 					end
 				end
+
+				--[[Verify all controls are approved, if not reset to none and notify]]
+				for i, tog_table in pairs(EC.table) do
+					local found_combo = false
+					local found_key = false
+					
+					for i, control in pairs(CONTROLS.COMBOS) do 
+						if tog_table.Combo == control then
+							found_combo = true
+						end		
+					end	
+
+					if not found_combo then
+						HUD:ShowNotification(Lang:t('plugins.ec_not_approved_frontend'), true)
+						UTIL:Print(Lang:t('plugins.ec_not_approved_console', { control = tog_table.Combo, type = 'COMBO' }), true)
+						tog_table.Combo = 0
+					end				
+					
+					for i, control in pairs(CONTROLS.KEYS) do 
+						if tog_table.Key == control then
+							found_key = true
+						end
+					end
+					
+					if not found_key then
+						HUD:ShowNotification(Lang:t('plugins.ec_not_approved_frontend'), true)
+						UTIL:Print(Lang:t('plugins.ec_not_approved_console', { control = tog_table.Key, type = 'KEY' }), true)
+						tog_table.Key = 0
+					end	
+				end
 				
-				if not found_key then
-					HUD:ShowNotification(Lang:t('plugins.ec_not_approved_frontend'), true)
-					UTIL:Print(Lang:t('plugins.ec_not_approved_console', { control = tog_table.Key, type = 'KEY' }), true)
-					tog_table.Key = 0
-				end	
+				EC:RefreshRageIndexs()
 			end
-			
-			EC:RefreshRageIndexs()
 		end
 	end)
 end
