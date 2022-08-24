@@ -24,74 +24,73 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
-EI = { }
+if ei_masterswitch then
+	EI = { }
 
--- Local variable to be set, do not edit.
-local enabled_triggers = {
-	['Brake'] 		= false,
-	['Reverse'] 	= false,
-	['RIndicator'] 	= false,
-	['LIndicator'] 	= false,
-	['Takedowns'] 	= false,
-	['DSeat']		= false,
-	['DDoor']		= false,
-	['PDoor'] 		= false,
-	['Trunk'] 		= false,
-	['MainSiren'] 	= false,
-	['AuxSiren'] 	= false,
-	['AirHorn'] 	= false,
-	['Manu']		= false
-}
+	-- Local variable to be set, do not edit.
+	local enabled_triggers = {
+		['Brake'] 		= false,
+		['Reverse'] 	= false,
+		['RIndicator'] 	= false,
+		['LIndicator'] 	= false,
+		['Takedowns'] 	= false,
+		['DSeat']		= false,
+		['DDoor']		= false,
+		['PDoor'] 		= false,
+		['Trunk'] 		= false,
+		['MainSiren'] 	= false,
+		['AuxSiren'] 	= false,
+		['AirHorn'] 	= false,
+		['Manu']		= false
+	}
 
-local accel_pedal = 0
-local extras = { }
-local auto_park_time_lookup = { [1] = 0, [2] = 30000, [3] = 60000, [4] = 300000 }
-local profile = ''
-local stopped_timer = 0
-local auto_park_time_index = 2
-local prior_state = { }
-local blackout = false
+	local auto_park_time_lookup = { [1] = 0, [2] = 30000, [3] = 60000, [4] = 300000 }
+	local auto_park_time_index = 2
 
-----------------REGISTERED COMMANDS---------------
---Toggles blackout mode
-RegisterCommand('lvcblackout', function(source, args, rawCommand)
-	blackout = not blackout
-	EI:Blackout(blackout)
-end)
+	local accel_pedal = 0
+	local stopped_timer = 0
+	local blackout = false
+	local prior_state = { }
+	local extras = { }
+	local profile = false
+	
+	----------------REGISTERED COMMANDS---------------
+	--Toggles blackout mode
+	RegisterCommand('lvcblackout', function(source, args, rawCommand)
+		blackout = not blackout
+		EI:Blackout(blackout)
+	end)
 
-RegisterKeyMapping('lvcblackout', Lang:t('plugins.ei_control_desc'), 'keyboard', default_blackout_control)
-TriggerEvent('chat:addSuggestion', '/lvcblackout', Lang:t('plugins.ei_command_desc'))
+	RegisterKeyMapping('lvcblackout', Lang:t('plugins.ei_control_desc'), 'keyboard', default_blackout_control)
+	TriggerEvent('chat:addSuggestion', '/lvcblackout', Lang:t('plugins.ei_command_desc'))
 
-----------------THREADED FUNCTIONS----------------
---[[Startup Initialization]]
- CreateThread(function()
-	Wait(500)
-	UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
-end) 
+	----------------THREADED FUNCTIONS----------------
+	--[[Startup Initialization]]
+	 CreateThread(function()
+		Wait(500)
+		UTIL:FixOversizeKeys(EXTRA_ASSIGNMENTS)
+	end) 
 
---[[Function caller for extra state checking.]]
---	If driver then call RefreshExtras ever 50ms to toggle states.
-CreateThread( function()
-    while true do
-        while ei_masterswitch do
-			if player_is_emerg_driver and veh ~= nil and extras ~= false then
+	--[[Function caller for extra state checking.]]
+	--	If driver then call RefreshExtras ever 50ms to toggle states.
+	CreateThread( function()
+		while true do
+			if veh ~= nil and profile ~= false then
 				EI:RefreshExtras() 
+			else
+				Wait(500)
 			end
 			Wait(50)
-        end
-		Wait(500)
-    end
-end)
+		end
+	end)
 
---[[Extra State Trigger Control]]
---	Determines vehicles state and sets Triggers
-CreateThread( function()
-    while true do
-        while ei_masterswitch do
-			if player_is_emerg_driver and veh ~= nil and extras ~= false then
-				for extra_id, trigger_table in pairs(extras) do
+	--[[Extra State Trigger Control]]
+	--	Determines vehicles state and sets Triggers
+	CreateThread( function()
+		while true do
+			if veh ~= nil and profile ~= false then
+				for _, trigger_table in pairs(extras) do
 					if trigger_table.toggle ~= nil then
-						local t = trigger_table.toggle
 						------------------------------------------------------------
 						--BRAKE LIGHTS
 						if brakes_ei_enabled and enabled_triggers['Brake'] then
@@ -102,11 +101,9 @@ CreateThread( function()
 							   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
 							   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == '-0.0')) then						-- Is vehicle not reversing or at max reverse speed
 								EI:SetState('Brake', true)
-							else
+							elseif trigger_table.active['Brake'] == true then
 								EI:SetState('Brake', false)				
 							end
-						elseif t['Brake'] ~= nil then
-							EI:SetState('Brake', false)
 						end
 						------------------------------------------------------------
 						--REVERSE LIGHTS
@@ -114,13 +111,13 @@ CreateThread( function()
 							accel_pedal = GetVehicleThrottleOffset(veh)
 							if accel_pedal < 0 or tostring(accel_pedal) == '-0.0' then
 								EI:SetState('Reverse', true)
-							else
+							elseif trigger_table.active['Reverse'] == true then
 								EI:SetState('Reverse', false)
 							end
 						end	
 						------------------------------------------------------------
 						--INDICATORS
-						if indicators_ei_enabled and enabled_triggers['LIndicator'] and enabled_triggers['RIndicator'] then
+						if indicators_ei_enabled and enabled_triggers['LIndicator'] or enabled_triggers['RIndicator'] then
 							if state_indic[veh] == 1 then
 								EI:SetState('LIndicator', true)
 							elseif state_indic[veh] == 2 then
@@ -128,7 +125,7 @@ CreateThread( function()
 							elseif state_indic[veh] == 3 then
 								EI:SetState('LIndicator', true)
 								EI:SetState('RIndicator', true)							
-							else
+							elseif trigger_table.active['LIndicator'] or trigger_table.active['RIndicator'] then
 								EI:SetState('LIndicator', false)
 								EI:SetState('RIndicator', false)											
 							end
@@ -218,145 +215,152 @@ CreateThread( function()
 						------------------------------------------------------------
 					end 
 				end
+				Wait(50)
+			else
+				Wait(500)
 			end
-			Wait(50)
-        end
-		Wait(1000)
-    end
-end)
+		end
+	end)
 
---[[Auto Brake Light Control]]
---	Automatically turns on vehicle brake lights and forces off when in blackout mode.
-CreateThread(function()
-	while ei_masterswitch do
-		if auto_brake_lights then
-			if temp_blackout then
-				SetVehicleLights(veh, 0)
+	--[[Auto Brake Light Control]]
+	--	Automatically turns on vehicle brake lights and forces off when in blackout mode.
+	CreateThread(function()
+		while true do
+			if veh ~= nil and profile ~= false then
+				if auto_brake_lights then
+					if temp_blackout then
+						SetVehicleLights(veh, 0)
+					end
+					
+					if player_is_emerg_driver and veh ~= nil then
+						if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) then
+							SetVehicleBrakeLights(veh, true)
+						end
+					else
+						Wait(500)
+					end
+				else
+					temp_blackout = true
+					SetVehicleLights(veh, 1)
+					SetVehicleBrakeLights(veh, false)
+				end
+			else
+				Wait(500)
+			end
+			Wait(0)
+		end
+	end)
+
+	--[[Auto Park Control]]
+	--	Turns off brakelights after being stopped for extended period of time
+	CreateThread(function()
+		while true do
+			if veh ~= nil and profile ~= false then
+				if auto_brake_lights and auto_park then
+					if player_is_emerg_driver and veh ~= nil then
+						while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
+							if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
+								Wait(1000)
+								stopped_timer = stopped_timer + 1000	
+							end
+							Wait(0)
+						end
+						stopped_timer = 0
+					else
+						Wait(500)
+					end
+				else
+					Wait(500)
+				end
+				Wait(0)
+			else
+				Wait(500)
+			end
+		end
+	end)
+
+	---------------------FUNCTIONS--------------------
+	--[Toggles blackout mode]
+	--	Disabled vehicles headlights, 
+	function EI:Blackout(state)
+		if state then
+			prior_state.auto_brake_lights = auto_brake_lights
+			prior_state.brakes_ei_enabled = brakes_ei_enabled
+			
+			auto_brake_lights = false
+			brakes_ei_enabled = false
+		else
+			auto_brake_lights = prior_state.auto_brake_lights
+			brakes_ei_enabled = prior_state.brakes_ei_enabled
+		end
+	end
+
+	--[[Set state table]]
+	function EI:SetState(trigger_to_set, state)
+		for extra_id, trigger_table in pairs(extras) do
+			if trigger_table.toggle ~= nil then
+				for i, trigger in ipairs(trigger_table.toggle) do
+					if trigger == trigger_to_set then
+						if state then
+							trigger_table.active[trigger_to_set] = true
+						else
+							trigger_table.active[trigger_to_set] = nil						
+						end
+					end
+				end
+			end
+		end
+	end
+
+	--[[Set extras state based on state table]]
+	function EI:RefreshExtras() 
+		for extra_id, trigger_table in pairs(extras) do
+			local count = 0
+			for i,v in pairs(trigger_table.active) do
+				count = count + 1
 			end
 			
-			if player_is_emerg_driver and veh ~= nil then
-				if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) then
-					SetVehicleBrakeLights(veh, true)
-				end
+			local active = true
+			if trigger_table.reverse then
+				active = false
+			end
+			
+			if count > 0 then
+				UTIL:TogVehicleExtras(veh, extra_id, active, trigger_table.repair or false)
 			else
-				Wait(500)
-			end
-		else
-			temp_blackout = true
-			SetVehicleLights(veh, 1)
-			SetVehicleBrakeLights(veh, false)
-		end
-		Wait(0)
-	end
-end)
-
---[[Auto Park Control]]
---	Turns off brakelights after being stopped for extended period of time
-CreateThread(function()
-	while ei_masterswitch do
-		if auto_brake_lights and auto_park then
-			if player_is_emerg_driver and veh ~= nil then
-				while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
-					if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
-						Wait(1000)
-						stopped_timer = stopped_timer + 1000	
-					end
-					Wait(0)
-				end
-				stopped_timer = 0
-			else
-				Wait(500)
-			end
-		else
-			Wait(500)
-		end
-		Wait(0)
-	end
-end)
-
----------------------FUNCTIONS--------------------
---[Toggles blackout mode]
---	Disabled vehicles headlights, 
-function EI:Blackout(state)
-	if state then
-		prior_state.auto_brake_lights = auto_brake_lights
-		prior_state.brakes_ei_enabled = brakes_ei_enabled
-		
-		auto_brake_lights = false
-		brakes_ei_enabled = false
-	else
-		auto_brake_lights = prior_state.auto_brake_lights
-		brakes_ei_enabled = prior_state.brakes_ei_enabled
-	end
-end
-
---[[Set state table]]
-function EI:SetState(trigger_to_set, state)
-	for extra_id, trigger_table in pairs(extras) do
-		if trigger_table.toggle ~= nil then
-			for i, trigger in ipairs(trigger_table.toggle) do
-				if trigger == trigger_to_set then
-					if state then
-						trigger_table.active[trigger_to_set] = true
-					else
-						trigger_table.active[trigger_to_set] = nil						
-					end
-				end
+				UTIL:TogVehicleExtras(veh, extra_id, not active, trigger_table.repair or false)
 			end
 		end
 	end
-end
 
---[[Set extras state based on state table]]
-function EI:RefreshExtras() 
-	for extra_id, trigger_table in pairs(extras) do
-		local count = 0
-		for i,v in pairs(trigger_table.active) do
-			count = count + 1
-		end
-		
-		local active = true
-		if trigger_table.reverse then
-			active = false
-		end
-		
-		if count > 0 then
-			UTIL:TogVehicleExtras(veh, extra_id, active, trigger_table.repair or false)
-		else
-			UTIL:TogVehicleExtras(veh, extra_id, not active, trigger_table.repair or false)
+	--[[RageUI Menu Getter/Setters]]
+	function EI:GetStoppedTimer()
+		return stopped_timer
+	end
+
+	function EI:GetParkTimeIndex()
+		return auto_park_time_index
+	end
+
+	function EI:SetParkTimeIndex(index)
+		if index ~= nil and auto_park_time_lookup[index] ~= nil then
+			auto_park_time_index = index
 		end
 	end
-end
 
---[[RageUI Menu Getter/Setters]]
-function EI:GetStoppedTimer()
-	return stopped_timer
-end
-
-function EI:GetParkTimeIndex()
-	return auto_park_time_index
-end
-
-function EI:SetParkTimeIndex(index)
-	if index ~= nil and auto_park_time_lookup[index] ~= nil then
-		auto_park_time_index = index
+	function EI:SetAutoPark(state)
+		auto_park = state
 	end
-end
 
-function EI:SetAutoPark(state)
-	auto_park = state
-end
+	function EI:GetAutoBrakeLightsState()
+		return auto_brake_lights
+	end
 
-function EI:GetAutoBrakeLightsState()
-	return auto_brake_lights
-end
-
----------------------------------------------------------------------
---Clear brakelights and handle exit vehicle state
-RegisterNetEvent('lvc:onVehicleExit')
-AddEventHandler('lvc:onVehicleExit', function()
-	if ei_masterswitch then
-		if player_is_emerg_driver and veh ~= nil and extras ~= false then
+	---------------------------------------------------------------------
+	--Clear brakelights and handle exit vehicle state
+	RegisterNetEvent('lvc:onVehicleExit')
+	AddEventHandler('lvc:onVehicleExit', function()
+		if veh ~= nil and profile ~= false then
 			-- SEAT DETECTION (activation)
 			if seat_ei_enabled then
 				if enabled_triggers['DSeat'] then
@@ -366,19 +370,17 @@ AddEventHandler('lvc:onVehicleExit', function()
 				end
 			end
 		end
-	end
-end)
+	end)
 
---Triggered when vehicle changes (cl_lvc.lua)
-RegisterNetEvent('lvc:onVehicleChange')
-AddEventHandler('lvc:onVehicleChange', function()
-	--disable (reset) all triggers to off before setting assigned triggers
-	for trigger, state in ipairs(enabled_triggers) do
-		state = false
-	end
+	--Triggered when vehicle changes (cl_lvc.lua)
+	RegisterNetEvent('lvc:onVehicleChange')
+	AddEventHandler('lvc:onVehicleChange', function()
+		--disable (reset) all triggers to off before setting assigned triggers
+		for trigger, state in ipairs(enabled_triggers) do
+			state = false
+		end
 
-	if player_is_emerg_driver and veh ~= nil then
-		extras, profile = UTIL:GetProfileFromTable('EXTRA INTEGRATIONS', EXTRA_ASSIGNMENTS, veh)
+		extras, profile = UTIL:GetProfileFromTable('EXTRA INTEGRATIONS', EXTRA_ASSIGNMENTS, veh, true)
 		if profile then
 			for extra_id, trigger_table in pairs(extras) do
 				--Initialize active tables
@@ -413,5 +415,5 @@ AddEventHandler('lvc:onVehicleChange', function()
 				end
 			end
 		end
-	end
-end)
+	end)
+end

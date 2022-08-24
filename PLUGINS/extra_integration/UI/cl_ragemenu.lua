@@ -23,35 +23,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
+if ei_masterswitch then
+	RMenu.Add('lvc', 'extrasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ei')))
+	RMenu:Get('lvc', 'extrasettings'):DisplayGlare(false)
 
-RMenu.Add('lvc', 'extrasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ei')))
-RMenu:Get('lvc', 'extrasettings'):DisplayGlare(false)
 
-
-CreateThread(function()
-    while true do
-		RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
-			RageUI.Checkbox(Lang:t('plugins.ei_blackout'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
-            onChecked = function()
-				EI:Blackout(true)
-            end,          
-			onUnChecked = function()
-				EI:Blackout(false)
-            end
-            })
-			RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc', {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}), {}, true, {
-			  onListChange = function(Index, Item)
-				if Index > 1 then
-					EI:SetParkTimeIndex(Index)
-					EI:SetAutoPark(true)
-				else
-					EI:SetParkTimeIndex(Index)
-					EI:SetAutoPark(false) 
+	CreateThread(function()
+		while true do
+			RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
+				RageUI.Checkbox(Lang:t('plugins.ei_blackout'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
+				onChecked = function()
+					EI:Blackout(true)
+				end,          
+				onUnChecked = function()
+					EI:Blackout(false)
 				end
-			  end,
-			})		
-        end)
-		
-        Wait(0)
-	end
-end)
+				})
+				RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc', {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}), {}, true, {
+				  onListChange = function(Index, Item)
+					if Index > 1 then
+						EI:SetParkTimeIndex(Index)
+						EI:SetAutoPark(true)
+					else
+						EI:SetParkTimeIndex(Index)
+						EI:SetAutoPark(false) 
+					end
+				  end,
+				})		
+			end)
+			
+			Wait(0)
+		end
+	end)
+end
