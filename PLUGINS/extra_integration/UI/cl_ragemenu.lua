@@ -13,10 +13,12 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
@@ -29,7 +31,7 @@ RMenu:Get('lvc', 'extrasettings'):DisplayGlare(false)
 CreateThread(function()
     while true do
 		RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
-			RageUI.Checkbox(Lang:t('plugins.menu_ei'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
+			RageUI.Checkbox(Lang:t('plugins.ei_blackout'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
             onChecked = function()
 				EI:Blackout(true)
             end,          
@@ -37,7 +39,6 @@ CreateThread(function()
 				EI:Blackout(false)
             end
             })
-
 			RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc', {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}), {}, true, {
 			  onListChange = function(Index, Item)
 				if Index > 1 then
