@@ -24,6 +24,9 @@ local Translations = {
 		invalid_resource_name_console = '^1CONFIG ERROR: INVALID RESOURCE NAME. PLEASE VERIFY RESOURCE FOLDER NAME READS "^3lvc^1" (CASE-SENSITIVE). THIS IS REQUIRED FOR PROPER SAVE / LOAD FUNCTIONALITY. PLEASE RENAME, REFRESH, AND ENSURE.',
 		resource_conflict_frontend = '~b~~h~LVC~h~ ~r~~h~CONFLICT ERROR~h~~s~: RESOURCE CONFLICT. SEE CONSOLE.',
 		resource_conflict_console = '^1LVC ERROR: DETECTED "lux_vehcontrol" RUNNING, THIS CONFLICTS WITH LVC. PLEASE STOP "lux_vehcontrol" AND RESTART LVC.',
+		profile_none_found_frontend = '~b~~h~LVC~h~ ~r~~h~CONFIG ERROR~h~~s~: DEFAULT TABLE MISSING. SEE LOGS. CONTACT SERVER DEVELOPER.',
+		profile_none_found_console = '^1CONFIG ERROR: UNABLE TO FIND A PROFILE FOR \'^3%{game_name}^1\', AND REQUIRED FALLBACK TABLE \'DEFAULT\' IS NOT PRESENT. (https://bit.ly/LVC-CSATS)',
+
 		-- FRONTEND ERRORS --
 		reg_keymap_nil_1 = '~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Nil value caught.\ndetails: (%{i}, %{proposed_tone}, %{profile_name})',
 		reg_keymap_nil_2 = '~b~~h~LVC~h~ ~r~~h~ERROR 2~h~~s~: Try switching vehicles and switching back OR loading profile settings (if save present).',

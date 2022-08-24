@@ -103,6 +103,12 @@ end
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
 	approved_tones, profile = UTIL:GetProfileFromTable('SIRENS', SIREN_ASSIGNMENTS, veh)
+	
+	if profile == false then
+		UTIL:Print(Lang:t('error.profile_none_found_console', {game_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))}), true)
+		HUD:ShowNotification(Lang:t('error.profile_none_found_frontend'), true)
+	end
+
 	if profile then
 		if not UTIL:IsApprovedTone('MAIN_MEM') then
 			UTIL:SetToneByPos('MAIN_MEM', 2)

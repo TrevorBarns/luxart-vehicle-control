@@ -229,7 +229,7 @@ function STORAGE:LoadSettings(profile_name)
 		end
 		
 		--Profile Specific Settings
-		if UTIL:GetVehicleProfileName() ~= nil then
+		if UTIL:GetVehicleProfileName() ~= false then
 			local profile_name = profile_name or string.gsub(UTIL:GetVehicleProfileName(), ' ', '_')	
 			if profile_name ~= nil then
 				local profile_save_data = GetResourceKvpString(save_prefix..'profile_'..profile_name..'!')
@@ -369,8 +369,7 @@ function STORAGE:FindSavedProfiles()
 end
 
 function STORAGE:GetSavedProfiles()
-	--remove the current profile from profiles list for copying
-	local current_profile = UTIL:GetVehicleProfileName()
+	local cur_profile = UTIL:GetVehicleProfileName()
 	for i, profile in ipairs(profiles) do
 		if profile == cur_profile then
 			table.remove(profiles, i)
