@@ -183,24 +183,17 @@ CreateThread(function()
 	end
 end)
 
-----------------PARK KILL THREADS----------------
---Kill siren on Exit
+------ON VEHICLE EXIT EVENT TRIGGER------
 CreateThread(function()
-	while park_kill or park_kill_masterswitch do
-		while park_kill and playerped ~= nil and veh ~= nil do
-			if GetIsTaskActive(playerped, 2) then
-				if not tone_main_reset_standby and state_lxsiren[veh] ~= 0 then
-					UTIL:SetToneByID('MAIN_MEM', state_lxsiren[veh])
+	while true do
+		if player_is_emerg_driver then
+			while playerped ~= nil and veh ~= nil do
+				if GetIsTaskActive(playerped, 2) and GetVehiclePedIsIn(ped, true) then
+					TriggerEvent('lvc:onVehicleExit')
+					Wait(1000)
 				end
-				SetLxSirenStateForVeh(veh, 0)
-				SetPowercallStateForVeh(veh, 0)
-				SetAirManuStateForVeh(veh, 0)
-				HUD:SetItemState('siren', false)
-				HUD:SetItemState('horn', false)
-				count_bcast_timer = delay_bcast_timer
-				Wait(1000)
+				Wait(0)
 			end
-			Wait(0)
 		end
 		Wait(1000)
 	end
@@ -219,6 +212,23 @@ CreateThread(function()
 			end
 		end
 		Wait(1000)
+	end
+end)
+
+------------REGISTERED VEHICLE EVENTS------------
+--Kill siren on Exit
+RegisterNetEvent('lvc:onVehicleExit')
+AddEventHandler('lvc:onVehicleExit', function()
+	if park_kill_masterswitch and park_kill then
+		if not tone_main_reset_standby and state_lxsiren[veh] ~= 0 then
+			UTIL:SetToneByID('MAIN_MEM', state_lxsiren[veh])
+		end
+		SetLxSirenStateForVeh(veh, 0)
+		SetPowercallStateForVeh(veh, 0)
+		SetAirManuStateForVeh(veh, 0)
+		HUD:SetItemState('siren', false)
+		HUD:SetItemState('horn', false)
+		count_bcast_timer = delay_bcast_timer
 	end
 end)
 
