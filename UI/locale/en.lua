@@ -12,7 +12,7 @@ local Translations = {
 		tone_position_nil_frontend = '~b~LVC ~y~Warning %{code}:~s~ attempted to set tone but, was unable to locate approved_tones. See console.',
 		tone_position_nil_console = '^3LVC(%{ver}) Warning %{code}: attempted to set tone "%{tone_string}" but, was unable to locate approved_tones table. (UTIL:SetToneByPos(%{tone_string}, %{pos}). Try factory resetting as this may occur after siren tone assignments change.',
 		tone_id_nil_frontend = '~b~LVC ~y~Warning %{code}:~s~ attempted to set tone but, was unable to locate in approved_tones. See console.',
-		tone_id_nil_console = '^3LVC(%{ver}) Warning %{code}: attempted to set tone %{tone_string} but, was unable to located pos: %{tone_id} in approved_tones. (UTIL:SetToneByPos(%{tone_string}, %{pos}). Try factory resetting as this may occur after siren tone assignments change.',
+		tone_id_nil_console = '^3LVC(%{ver}) Warning %{code}: attempted to set tone %{tone_string} but, was unable to locate position: %{tone_id} in approved_tones. (UTIL:SetToneByPos(%{tone_string}, %{pos}). Try factory resetting as this may occur after siren tone assignments change.',
 		factory_reset = 'Are you sure you want to delete all saved LVC data and Factory Reset?',
 		facory_reset_options= '~g~No: Escape \t ~r~Yes: Enter',
 	},
