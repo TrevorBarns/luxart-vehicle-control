@@ -89,133 +89,137 @@ if ei_masterswitch then
 	CreateThread( function()
 		while true do
 			if veh ~= nil and profile ~= false then
-				for _, trigger_table in pairs(extras) do
-					if trigger_table.toggle ~= nil then
-						------------------------------------------------------------
-						--BRAKE LIGHTS
-						if brakes_ei_enabled and enabled_triggers['Brake'] then
-							accel_pedal = GetVehicleThrottleOffset(veh)
-							if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
-							   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
-							   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
-							   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
-							   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == '-0.0')) then						-- Is vehicle not reversing or at max reverse speed
-								EI:SetState('Brake', true)
-							elseif trigger_table.active['Brake'] == true then
-								EI:SetState('Brake', false)				
-							end
-						end
-						------------------------------------------------------------
-						--REVERSE LIGHTS
-						if reverse_ei_enabled and enabled_triggers['Reverse'] then
-							accel_pedal = GetVehicleThrottleOffset(veh)
-							if accel_pedal < 0 or tostring(accel_pedal) == '-0.0' then
-								EI:SetState('Reverse', true)
-							elseif trigger_table.active['Reverse'] == true then
-								EI:SetState('Reverse', false)
-							end
-						end	
-						------------------------------------------------------------
-						--INDICATORS
-						if indicators_ei_enabled and enabled_triggers['LIndicator'] or enabled_triggers['RIndicator'] then
-							if state_indic[veh] == 1 then
-								EI:SetState('LIndicator', true)
-							elseif state_indic[veh] == 2 then
-								EI:SetState('RIndicator', true)				
-							elseif state_indic[veh] == 3 then
-								EI:SetState('LIndicator', true)
-								EI:SetState('RIndicator', true)							
-							elseif trigger_table.active['LIndicator'] or trigger_table.active['RIndicator'] then
-								EI:SetState('LIndicator', false)
-								EI:SetState('RIndicator', false)											
-							end
-						end
-						------------------------------------------------------------
-						--TAKEDOWNS--
-						if takedown_ei_enabled and tkd_masterswitch and enabled_triggers['Takedowns'] then
-							if state_tkd[veh] ~= nil and state_tkd[veh] then
-								EI:SetState('Takedowns', true)
-							elseif trigger_table.active['Takedowns'] == true then
-								EI:SetState('Takedowns', false)
-							end
-						end
-						------------------------------------------------------------
-						--DOORS--
-						if door_ei_enabled then
-							if enabled_triggers['DDoor'] then
-								if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
-									EI:SetState('DDoor', true)		
-									Wait(100)
-								elseif trigger_table.active['DDoor'] == true then
-									EI:SetState('DDoor', false)		
+				if player_is_emerg_driver or run_when_out_of_vehicle then
+					for _, trigger_table in pairs(extras) do
+						if trigger_table.toggle ~= nil then
+							------------------------------------------------------------
+							--BRAKE LIGHTS
+							if brakes_ei_enabled and enabled_triggers['Brake'] then
+								accel_pedal = GetVehicleThrottleOffset(veh)
+								if ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) and 	-- Auto Park Check
+								   ( GetControlNormal(1, 72) > 0.1 or 														-- Brake (LTrigger) 0.0-1.0
+								   ( GetControlNormal(1, 72) > 0.0 and GetControlNormal(1, 71) > 0.0 ) or 					-- Brake & Gas at same time
+								   ( GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) )) and					-- Vehicle is stopped 
+								   ( not ( accel_pedal < 0.0 or tostring(accel_pedal) == '-0.0')) then						-- Is vehicle not reversing or at max reverse speed
+									EI:SetState('Brake', true)
+								elseif trigger_table.active['Brake'] == true then
+									EI:SetState('Brake', false)				
 								end
 							end
-							if enabled_triggers['PDoor'] then
-								if GetVehicleDoorAngleRatio(veh, 1) > 0.0 then
-									EI:SetState('PDoor', true)		
-									Wait(100)
-								elseif trigger_table.active['PDoor'] == true then
-									EI:SetState('PDoor', false)		
-								end
-							end
-							if enabled_triggers['Trunk'] then
-								if GetVehicleDoorAngleRatio(veh, 5) > 0.0 then
-									EI:SetState('Trunk', true)	
-									Wait(100)
-								elseif trigger_table.active['Trunk'] == true then
-									EI:SetState('Trunk', false)	
-								end
-							end
-						end	
-						------------------------------------------------------------
-						-- SEAT DETECTION (deactivate)
-						if seat_ei_enabled then
-							if enabled_triggers['DSeat'] then
-								if trigger_table.active['DSeat'] == true then
-									Wait(1000)
-									EI:SetState('DSeat', false)
-								end
-							end
-						end						
-						------------------------------------------------------------
-						--MAIN SIREN
-						if siren_controller_ei_enabled then
-							if enabled_triggers['MainSiren'] then
-								if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
-									EI:SetState('MainSiren', true)							
-								elseif trigger_table.active['MainSiren'] == true then
-									EI:SetState('MainSiren', false)		
-								end
-							end
-							--AUXILARY SIREN
-							if enabled_triggers['AuxSiren'] then
-								if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
-									EI:SetState('AuxSiren', true)							
-								elseif trigger_table.active['AuxSiren'] == true then
-									EI:SetState('AuxSiren', false)		
+							------------------------------------------------------------
+							--REVERSE LIGHTS
+							if reverse_ei_enabled and enabled_triggers['Reverse'] then
+								accel_pedal = GetVehicleThrottleOffset(veh)
+								if accel_pedal < 0 or tostring(accel_pedal) == '-0.0' then
+									EI:SetState('Reverse', true)
+								elseif trigger_table.active['Reverse'] == true then
+									EI:SetState('Reverse', false)
 								end
 							end	
-							--AIRHORN
-							if enabled_triggers['AirHorn'] then
-								if actv_horn ~= nil and actv_horn and not actv_manu then
-									EI:SetState('AirHorn', true)							
-								elseif trigger_table.active['AirHorn'] == true then
-									EI:SetState('AirHorn', false)		
+							------------------------------------------------------------
+							--INDICATORS
+							if indicators_ei_enabled and enabled_triggers['LIndicator'] or enabled_triggers['RIndicator'] then
+								if state_indic[veh] == 1 then
+									EI:SetState('LIndicator', true)
+								elseif state_indic[veh] == 2 then
+									EI:SetState('RIndicator', true)				
+								elseif state_indic[veh] == 3 then
+									EI:SetState('LIndicator', true)
+									EI:SetState('RIndicator', true)							
+								elseif trigger_table.active['LIndicator'] or trigger_table.active['RIndicator'] then
+									EI:SetState('LIndicator', false)
+									EI:SetState('RIndicator', false)											
 								end
 							end
-							--MANUAL TONE
-							if enabled_triggers['Manu'] then
-								if actv_manu ~= nil and actv_manu then
-									EI:SetState('Manu', true)							
-								elseif trigger_table.active['Manu'] == true then
-									EI:SetState('Manu', false)		
+							------------------------------------------------------------
+							--TAKEDOWNS--
+							if takedown_ei_enabled and tkd_masterswitch and enabled_triggers['Takedowns'] then
+								if state_tkd[veh] ~= nil and state_tkd[veh] then
+									EI:SetState('Takedowns', true)
+								elseif trigger_table.active['Takedowns'] == true then
+									EI:SetState('Takedowns', false)
 								end
 							end
-						end
-						------------------------------------------------------------
-					end 
+							------------------------------------------------------------
+							--DOORS--
+							if door_ei_enabled then
+								if enabled_triggers['DDoor'] then
+									if GetVehicleDoorAngleRatio(veh, 0) > 0.0 then
+										EI:SetState('DDoor', true)		
+										Wait(100)
+									elseif trigger_table.active['DDoor'] == true then
+										EI:SetState('DDoor', false)		
+									end
+								end
+								if enabled_triggers['PDoor'] then
+									if GetVehicleDoorAngleRatio(veh, 1) > 0.0 then
+										EI:SetState('PDoor', true)		
+										Wait(100)
+									elseif trigger_table.active['PDoor'] == true then
+										EI:SetState('PDoor', false)		
+									end
+								end
+								if enabled_triggers['Trunk'] then
+									if GetVehicleDoorAngleRatio(veh, 5) > 0.0 then
+										EI:SetState('Trunk', true)	
+										Wait(100)
+									elseif trigger_table.active['Trunk'] == true then
+										EI:SetState('Trunk', false)	
+									end
+								end
+							end	
+							------------------------------------------------------------
+							-- SEAT DETECTION (deactivate)
+							if seat_ei_enabled then
+								if enabled_triggers['DSeat'] then
+									if trigger_table.active['DSeat'] == true then
+										Wait(1000)
+										EI:SetState('DSeat', false)
+									end
+								end
+							end						
+							------------------------------------------------------------
+							--MAIN SIREN
+							if siren_controller_ei_enabled then
+								if enabled_triggers['MainSiren'] then
+									if state_lxsiren[veh] ~= nil and state_lxsiren[veh] > 0 then
+										EI:SetState('MainSiren', true)							
+									elseif trigger_table.active['MainSiren'] == true then
+										EI:SetState('MainSiren', false)		
+									end
+								end
+								--AUXILARY SIREN
+								if enabled_triggers['AuxSiren'] then
+									if state_pwrcall[veh] ~= nil and state_pwrcall[veh] > 0 then
+										EI:SetState('AuxSiren', true)							
+									elseif trigger_table.active['AuxSiren'] == true then
+										EI:SetState('AuxSiren', false)		
+									end
+								end	
+								--AIRHORN
+								if enabled_triggers['AirHorn'] then
+									if actv_horn ~= nil and actv_horn and not actv_manu then
+										EI:SetState('AirHorn', true)							
+									elseif trigger_table.active['AirHorn'] == true then
+										EI:SetState('AirHorn', false)		
+									end
+								end
+								--MANUAL TONE
+								if enabled_triggers['Manu'] then
+									if actv_manu ~= nil and actv_manu then
+										EI:SetState('Manu', true)							
+									elseif trigger_table.active['Manu'] == true then
+										EI:SetState('Manu', false)		
+									end
+								end
+							end
+							------------------------------------------------------------
+						end 
+					end
+					Wait(50)
+				else
+					Wait(50)
 				end
-				Wait(50)
 			else
 				Wait(500)
 			end
