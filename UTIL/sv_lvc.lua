@@ -26,7 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true'
-local curr_version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+local curr_version = semver(GetResourceMetadata(GetCurrentResourceName(), 'version', 0))
 local repo_version = ''
 
 local plugin_count = 0
@@ -71,7 +71,7 @@ CreateThread( function()
 -- Get LVC repo version from github
 	PerformHttpRequest('https://raw.githubusercontent.com/TrevorBarns/luxart-vehicle-control/master/version', function(err, responseText, headers)
 		if responseText ~= nil and responseText ~= '' then
-			repo_version = responseText
+			repo_version = semver(responseText)
 		end
 	end)
 
@@ -97,8 +97,8 @@ CreateThread( function()
 	print('\t|\t^8   \\____/uxart   ^7\\_/ ehicle ^9\\____/ontrol         ^7|')
 	print('\t|\t                                                 |')
 	print(('\t|\t            COMMUNITY ID: %-23s|'):format(community_id))
-	print('\t|\t         INSTALLED VERSION: '..curr_version..'                |')
-	print('\t|\t           LATEST VERSION:  '..repo_version..'                |')
+	print(('\t|\t         INSTALLED VERSION: %-21s|'):format(curr_version))
+	print(('\t|\t           LATEST VERSION:  %-21s|'):format(repo_version))
 	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
 		if GetCurrentResourceName() == 'lvc' then
 			if community_id ~= nil and community_id ~= '' then

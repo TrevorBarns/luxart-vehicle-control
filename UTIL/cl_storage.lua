@@ -401,28 +401,20 @@ IsNewerVersion = function(version, test_version)
 	if version == nil or test_version == nil then
 		return 'unknown'
 	end
-	
-	_, _, s1, s2, s3 = string.find( version, '(%d+)%.(%d+)%.(%d+)' )
-	_, _, c1, c2, c3 = string.find( test_version, '(%d+)%.(%d+)%.(%d+)' )
-	
-	if s1 > c1 then				-- s1.0.0 Vs c1.0.0
+
+	if type(version) == 'string' then
+		version = semver(version)
+	end
+	if type(test_version) == 'string' then
+		test_version = semver(test_version)
+	end
+
+	if version > test_version then
 		return 'older'
-	elseif s1 < c1 then
+	elseif version < test_version then
 		return 'newer'
-	else
-		if s2 > c2 then			-- 0.s2.0 Vs 0.c2.0
-			return 'older'
-		elseif s2 < c2 then
-			return 'newer'
-		else
-			if s3 > c3 then		-- 0.0.s3 Vs 0.0.c3
-				return 'older'
-			elseif s3 < c3 then
-				return 'newer'
-			else
-				return 'equal'
-			end
-		end
+	elseif version == test_version then
+		return 'equal'
 	end
 end
 
