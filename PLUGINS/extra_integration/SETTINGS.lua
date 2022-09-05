@@ -1,9 +1,9 @@
 --------------------EXTRA INTEGRATION SETTINGS---------------------
 ei_masterswitch = false
 --	Determines if extra_integration plugin can be activated.
-ei_run_out_of_vehicle = true
+ei_run_out_of_vehicle = false
 --  Continue running state checks when player is out of vehicle, only after EI vehicle was last driven. (this is necessary for proper seat / door check)
---		Disable this to improve runtime efficency. (Default: Enabled / True)
+--		Disable this to improve runtime efficiency. (Default: Disabled / False)
 brakes_ei_enabled = true
 --	Enables brake pressure integration.
 reverse_ei_enabled = true
