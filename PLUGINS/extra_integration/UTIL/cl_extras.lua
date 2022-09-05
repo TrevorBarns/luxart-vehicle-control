@@ -26,6 +26,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 if ei_masterswitch then
 	EI = { }
+	EI.blackout = false
+	EI.auto_park_state = false
 
 	-- Local variable to be set, do not edit.
 	local enabled_triggers = {
@@ -44,21 +46,21 @@ if ei_masterswitch then
 		['Manu']		= false
 	}
 
-	local auto_park_time_lookup = { [1] = 0, [2] = 30000, [3] = 60000, [4] = 300000 }
+	local auto_park_time_lookup = { [1] = 0, [2] = 15000, [3] = 30000, [4] = 60000, [5] = 300000 }
 	local auto_park_time_index = 2
 
 	local accel_pedal = 0
 	local stopped_timer = 0
-	local blackout = false
-	local prior_state = { }
 	local extras = { }
 	local profile = false
-	
+	local previous_brake_ei_enabled = false
+
 	----------------REGISTERED COMMANDS---------------
 	--Toggles blackout mode
 	RegisterCommand('lvcblackout', function(source, args, rawCommand)
-		blackout = not blackout
-		EI:Blackout(blackout)
+		if player_is_emerg_driver then
+			EI:SetBlackoutState(not EI.blackout)
+		end
 	end)
 
 	RegisterKeyMapping('lvcblackout', Lang:t('plugins.ei_control_desc'), 'keyboard', default_blackout_control)
@@ -225,44 +227,15 @@ if ei_masterswitch then
 			end
 		end
 	end)
-
-	--[[Auto Brake Light Control]]
-	--	Automatically turns on vehicle brake lights and forces off when in blackout mode.
-	CreateThread(function()
-		while true do
-			if veh ~= nil and profile ~= false then
-				if auto_brake_lights then
-					if temp_blackout then
-						SetVehicleLights(veh, 0)
-					end
-					
-					if player_is_emerg_driver and veh ~= nil then
-						if GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and ( not auto_park or stopped_timer < auto_park_time_lookup[auto_park_time_index] ) then
-							SetVehicleBrakeLights(veh, true)
-						end
-					else
-						Wait(500)
-					end
-				else
-					temp_blackout = true
-					SetVehicleLights(veh, 1)
-					SetVehicleBrakeLights(veh, false)
-				end
-			else
-				Wait(500)
-			end
-			Wait(0)
-		end
-	end)
-
+	
 	--[[Auto Park Control]]
-	--	Turns off brakelights after being stopped for extended period of time
+	--	Turns off brakelights after being stopped for extended period of time, only for LVC menu enabled vehicles (emergency class)
 	CreateThread(function()
 		while true do
 			if veh ~= nil and profile ~= false then
-				if auto_brake_lights and auto_park then
-					if player_is_emerg_driver and veh ~= nil then
-						while GetEntitySpeed(veh) < 0.2 and GetIsVehicleEngineRunning(veh) and auto_park do
+				if auto_brake_lights and auto_park and not EI.blackout then
+					if player_is_emerg_driver then
+						while GetEntitySpeed(veh) < 0.1 and GetIsVehicleEngineRunning(veh) and auto_park and not EI.blackout do
 							if stopped_timer < auto_park_time_lookup[auto_park_time_index] then
 								Wait(1000)
 								stopped_timer = stopped_timer + 1000	
@@ -270,32 +243,49 @@ if ei_masterswitch then
 							Wait(0)
 						end
 						stopped_timer = 0
+						EI.auto_park_state = false
 					else
 						Wait(500)
 					end
 				else
 					Wait(500)
 				end
-				Wait(0)
 			else
 				Wait(500)
 			end
+			Wait(0)
 		end
-	end)
+	end)	
+		
+	CreateThread(function()
+		while true do
+			if stopped_timer > 0 and not EI.auto_park_state then
+				if stopped_timer >= auto_park_time_lookup[auto_park_time_index] then
+					EI.auto_park_state = true
+				end
+			else
+				Wait(1000)
+			end
+			Wait(0)
+		end
+	end)	
+	
 
 	---------------------FUNCTIONS--------------------
 	--[Toggles blackout mode]
 	--	Disabled vehicles headlights, 
-	function EI:Blackout(state)
-		if state then
-			prior_state.auto_brake_lights = auto_brake_lights
-			prior_state.brakes_ei_enabled = brakes_ei_enabled
-			
-			auto_brake_lights = false
+	function EI:SetBlackoutState(state)
+		EI.blackout = state
+		stopped_timer = 0
+		if EI.blackout then
+			SetVehicleLights(veh, 1)
+			previous_brake_ei_enabled = brakes_ei_enabled
 			brakes_ei_enabled = false
+			AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
 		else
-			auto_brake_lights = prior_state.auto_brake_lights
-			brakes_ei_enabled = prior_state.brakes_ei_enabled
+			SetVehicleLights(veh, 0)
+			brakes_ei_enabled = previous_brake_ei_enabled
+			AUDIO:Play('Downgrade', AUDIO.downgrade_volume)
 		end
 	end
 
@@ -356,8 +346,8 @@ if ei_masterswitch then
 		auto_park = state
 	end
 
-	function EI:GetAutoBrakeLightsState()
-		return auto_brake_lights
+	function EI:GetBlackOutState()
+		return EI.blackout
 	end
 
 	---------------------------------------------------------------------

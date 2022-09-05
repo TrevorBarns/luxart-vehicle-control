@@ -31,15 +31,15 @@ if ei_masterswitch then
 	CreateThread(function()
 		while true do
 			RageUI.IsVisible(RMenu:Get('lvc', 'extrasettings'), function()
-				RageUI.Checkbox(Lang:t('plugins.ei_blackout'), Lang:t('plugins.ei_blackout_desc'), not EI:GetAutoBrakeLightsState(), {}, {
+				RageUI.Checkbox(Lang:t('plugins.ei_blackout'), Lang:t('plugins.ei_blackout_desc'), EI:GetBlackOutState(), {Enabled = auto_brake_lights}, {
 				onChecked = function()
-					EI:Blackout(true)
+					EI:SetBlackoutState(true)
 				end,          
 				onUnChecked = function()
-					EI:Blackout(false)
+					EI:SetBlackoutState(false)
 				end
 				})
-				RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc', {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}), {}, true, {
+				RageUI.List(Lang:t('plugins.ei_auto_park'), {'Off', '1/4', '1/2', '1', '5'}, EI:GetParkTimeIndex(), Lang:t('plugins.ei_auto_park_desc', {timer = ("%1.0f"):format((EI:GetStoppedTimer() / 1000) or 0)}), {}, auto_brake_lights and not EI:GetBlackOutState(), {
 				  onListChange = function(Index, Item)
 					if Index > 1 then
 						EI:SetParkTimeIndex(Index)
