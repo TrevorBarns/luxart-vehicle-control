@@ -542,7 +542,7 @@ CreateThread(function()
 		CleanupSounds()
 		DistantCopCarSirens(false)
 		----- IS IN VEHICLE -----
-		if player_is_emerg_driver then
+		if GetPedInVehicleSeat(veh, -1) == playerped then
 			if state_indic[veh] == nil then
 				state_indic[veh] = ind_state_o
 			end
@@ -566,7 +566,6 @@ CreateThread(function()
 				end
 			end
 
-
 			--- IS EMERG VEHICLE ---
 			if GetVehicleClass(veh) == 18 then
 				lights_on = IsVehicleSirenOn(veh)
@@ -586,8 +585,6 @@ CreateThread(function()
 					if state_airmanu[veh] == nil then
 							state_airmanu[veh] = 0
 					end
-					TogMuteDfltSrnForVeh(veh, true)
-					dsrn_mute = true
 
 					--- IF LIGHTS ARE OFF TURN OFF SIREN ---
 					if not lights_on and state_lxsiren[veh] > 0 then
