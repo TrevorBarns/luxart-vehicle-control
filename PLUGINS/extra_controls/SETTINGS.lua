@@ -1,5 +1,5 @@
 --------------------EXTRA INTEGRATION SETTINGS---------------------
-ec_masterswitch = true
+ec_masterswitch = false
 --	Determines if extra_integration plugin can be activated.
 allow_custom_controls = true
 --	Enabled/Disables menu which allows for custom controls to be set.

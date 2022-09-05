@@ -3,6 +3,7 @@ ei_masterswitch = false
 --	Determines if extra_integration plugin can be activated.
 ei_run_out_of_vehicle = true
 --  Continue running state checks when player is out of vehicle, only after EI vehicle was last driven. (this is necessary for proper seat / door check)
+--		Disable this to improve runtime efficency. (Default: Enabled / True)
 brakes_ei_enabled = true
 --	Enables brake pressure integration.
 reverse_ei_enabled = true
@@ -18,7 +19,7 @@ door_ei_enabled = true
 siren_controller_ei_enabled = true
 --	Enables air horn, siren, aux siren, and manual tone state triggers.
 auto_brake_lights = true
---	Enables auto-set client side brake lights on stop (speed = 0).
+--	Enables auto-set client side brake lights on stop (speed = 0) for both emergency and non-emergency vehicles.
 auto_park = true
 --	Turns off brake lights after being stopped for auto_park_time. 
 default_blackout_control = ''
@@ -26,7 +27,7 @@ default_blackout_control = ''
 
 --[[ Documentation / Wiki: https://github.com/TrevorBarns/luxart-vehicle-control/wiki/Extra-Integrations ]]
 EXTRA_ASSIGNMENTS = {
-	['DEFAULT'] = { 
+	--[<gameName>] = { 
 					--[<extra_id>] = { repair = <true/false>, toggle = {<string(s)>}, reverse = <true/false>}
-				},
+	--			},
 }
