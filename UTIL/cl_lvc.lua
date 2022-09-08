@@ -575,6 +575,7 @@ CreateThread(function()
 				end
 
 				if not IsEntityDead(veh) then
+					TogMuteDfltSrnForVeh(veh, true)
 					--- SET INIT TABLE VALUES ---
 					if state_lxsiren[veh] == nil then
 						state_lxsiren[veh] = 0
