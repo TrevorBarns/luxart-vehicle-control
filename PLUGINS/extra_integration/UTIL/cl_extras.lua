@@ -24,11 +24,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
-if ei_masterswitch then
-	EI = { }
-	EI.blackout = false
-	EI.auto_park_state = false
+EI = { }
+EI.blackout = false
+EI.auto_park_state = false
 
+if ei_masterswitch then
 	-- Local variable to be set, do not edit.
 	local enabled_triggers = {
 		['Brake'] 		= false,
