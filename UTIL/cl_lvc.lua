@@ -491,6 +491,21 @@ AddEventHandler('lvc:TogIndicState_c', function(sender, newstate)
 end)
 
 ---------------------------------------------------------------------
+RegisterNetEvent('lvc:TogDfltSrnMuted_c')
+AddEventHandler('lvc:TogDfltSrnMuted_c', function(sender)
+	local player_s = GetPlayerFromServerId(sender)
+	local ped_s = GetPlayerPed(player_s)
+	if DoesEntityExist(ped_s) and not IsEntityDead(ped_s) then
+		if ped_s ~= GetPlayerPed(-1) then
+			if IsPedInAnyVehicle(ped_s, false) then
+				local veh = GetVehiclePedIsUsing(ped_s)
+				TogMuteDfltSrnForVeh(veh, true)
+			end
+		end
+	end
+end)
+
+---------------------------------------------------------------------
 RegisterNetEvent('lvc:SetLxSirenState_c')
 AddEventHandler('lvc:SetLxSirenState_c', function(sender, newstate)
 	local player_s = GetPlayerFromServerId(sender)
@@ -863,6 +878,7 @@ CreateThread(function()
 					count_bcast_timer = 0
 					--- IS EMERG VEHICLE ---
 					if GetVehicleClass(veh) == 18 then
+						TriggerServerEvent('lvc:TogDfltSrnMuted_s')
 						TriggerServerEvent('lvc:SetLxSirenState_s', state_lxsiren[veh])
 						TriggerServerEvent('lvc:SetPwrcallState_s', state_pwrcall[veh])
 						TriggerServerEvent('lvc:SetAirManuState_s', state_airmanu[veh])

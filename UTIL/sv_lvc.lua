@@ -39,6 +39,12 @@ AddEventHandler('lvc:GetRepoVersion_s', function()
 	TriggerClientEvent('lvc:SendRepoVersion_c', source, repo_version)
 end)
 
+RegisterServerEvent('lvc:TogDfltSrnMuted_s')
+AddEventHandler('lvc:TogDfltSrnMuted_s', function()
+	TriggerClientEvent('lvc:TogDfltSrnMuted_c', -1, source)
+end)
+
+
 RegisterServerEvent('lvc:SetLxSirenState_s')
 AddEventHandler('lvc:SetLxSirenState_s', function(newstate)
 	TriggerClientEvent('lvc:SetLxSirenState_c', -1, source, newstate)
