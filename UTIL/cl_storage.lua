@@ -126,7 +126,6 @@ end
 --[[Saves all KVP values.]]
 function STORAGE:SaveSettings()
 	UTIL:Print('^4LVC: ^5STORAGE: ^7Saving Settings...')
-	local settings_string = nil
 	SetResourceKvp(save_prefix..'save_version', STORAGE:GetCurrentVersion())
 
 	--HUD Settings
