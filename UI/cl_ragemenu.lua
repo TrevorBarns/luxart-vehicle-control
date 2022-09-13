@@ -307,15 +307,6 @@ CreateThread(function()
 		---------------------------------------------------------------------
 	    RageUI.IsVisible(RMenu:Get('lvc', 'maintone'), function()
 			local approved_tones = UTIL:GetApprovedTonesTable()
-			--[[ Disabled stock horn syncing does not work.
-			if airhorn_behavior_masterswitch then
-				RageUI.List('Airhorn Behavior', { 'Off', 'Lights', 'Siren', 'Always' }, airhorn_behavior, 'Determines when the airhorn/vehicle horn should be used.', {}, true, {
-				  onListChange = function(Index, Item)
-					  airhorn_behavior = Index
-				  end,
-				})	
-			end
-			]]
 			if airhorn_interrupt_masterswitch then
 				RageUI.Checkbox(Lang:t('menu.airhorn_interrupt'), Lang:t('menu.airhorn_interrupt_desc'), tone_airhorn_intrp, {}, {
 				  onChecked = function()
@@ -326,18 +317,6 @@ CreateThread(function()
 				  end,
 				})
 			end
-			--[[ Disabled stock horn syncing does not work.
-			if horn_on_cycle_masterswitch then
-				RageUI.Checkbox('Horn on Cycle', 'When enabled, your default horn will sound when cycling siren tones.', horn_on_cycle, {}, {
-				  onChecked = function()
-					  horn_on_cycle = true
-				  end,
-				  onUnChecked = function()
-					  horn_on_cycle = false
-				  end,
-				})
-			end
-			]]
 			if reset_to_standby_masterswitch then
 				RageUI.Checkbox(Lang:t('menu.reset_standby'), Lang:t('menu.reset_standby_desc'), tone_main_reset_standby, {}, {
 				  onChecked = function()

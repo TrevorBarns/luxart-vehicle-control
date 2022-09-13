@@ -49,8 +49,7 @@ debug_mode = false
 tone_main_reset_standby 	= reset_to_standby_default
 tone_airhorn_intrp 			= airhorn_interrupt_default
 park_kill 					= park_kill_default
-horn_on_cycle				= horn_on_cycle_default or false
-airhorn_behavior			= airhorn_behavior_default or 4
+
 --LOCAL VARIABLES
 local radio_wheel_active = false
 
@@ -158,18 +157,6 @@ end)
 CreateThread(function()
 	while true do
 		if player_is_emerg_driver then
-			-- HORN ON CYCLE
-			if IsDisabledControlPressed(0, 80) and horn_on_cycle then
-				if state_lxsiren[veh] ~= nil and state_lxsiren ~= 0 and not actv_manu then
-					while IsDisabledControlPressed(0, 80) and state_lxsiren ~= 0 do
-						Wait(10)
-						if not actv_manu then
-							StartVehicleHorn(veh, 1, 0 , false)
-						end
-					end
-				end
-			end
-			
 			-- RADIO WHEEL
 			if IsControlPressed(0, 243) and AUDIO.radio_masterswitch then
 				while IsControlPressed(0, 243) do
@@ -708,9 +695,7 @@ CreateThread(function()
 							-- CYCLE LX SRN TONES
 							if state_lxsiren[veh] > 0 then
 								if IsDisabledControlJustReleased(0, 80) then
-									if not horn_on_cycle then
-										AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
-									end
+									AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
 									HUD:SetItemState('horn', false)
 									SetLxSirenStateForVeh(veh, UTIL:GetNextSirenTone(state_lxsiren[veh], veh, true))
 									count_bcast_timer = delay_bcast_timer
@@ -740,11 +725,7 @@ CreateThread(function()
 
 							-- HORN
 							if IsDisabledControlPressed(0, 86) then
-								if actv_manu or airhorn_behavior == 4 or (airhorn_behavior == 2 and lights_on) or (airhorn_behavior == 3 and (state_lxsiren[veh] > 0 or state_pwrcall[veh] > 0)) then
-									actv_horn = true
-								elseif not actv_horn and not actv_manu then
-									StartVehicleHorn(veh, 1, 0 , false)
-								end
+								actv_horn = true
 								AUDIO:ResetActivityTimer()
 								HUD:SetItemState('horn', true)
 							else
@@ -756,7 +737,7 @@ CreateThread(function()
 
 
 							--AIRHORN AND MANU BUTTON SFX
-							if AUDIO.airhorn_button_SFX and airhorn_behavior == 4 or (airhorn_behavior == 2 and lights_on) or (airhorn_behavior == 3 and (state_lxsiren[veh] > 0 or state_pwrcall[veh] > 0)) then
+							if AUDIO.airhorn_button_SFX then
 								if IsDisabledControlJustPressed(0, 86) then
 									AUDIO:Play('Press', AUDIO.upgrade_volume)
 								end

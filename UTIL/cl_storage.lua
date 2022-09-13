@@ -153,8 +153,6 @@ function STORAGE:SaveSettings()
 										 airhorn_intrp 		= tone_airhorn_intrp,
 										 main_reset_standby = tone_main_reset_standby,
 										 park_kill 			= park_kill,
-										 horn_on_cycle		= horn_on_cycle,
-										 airhorn_behavior	= airhorn_behavior,
 										 tone_options 		= tone_options_encoded,															  
 									   }
 							
@@ -242,12 +240,6 @@ function STORAGE:LoadSettings(profile_name)
 						tone_airhorn_intrp 		= profile_save_data.airhorn_intrp
 						tone_main_reset_standby = profile_save_data.main_reset_standby
 						park_kill 				= profile_save_data.park_kill
-						if profile_save_data.horn_on_cycle ~= nil then
-							horn_on_cycle			= profile_save_data.horn_on_cycle		
-						end
-						if profile_save_data.airhorn_behavior ~= nil then
-							airhorn_behavior		= profile_save_data.airhorn_behavior		
-						end
 						local tone_options = json.decode(profile_save_data.tone_options)
 							if tone_options ~= nil then
 								for tone_id, option in pairs(tone_options) do
@@ -305,8 +297,6 @@ function STORAGE:ResetSettings()
 	tone_main_reset_standby = reset_to_standby_default
 	tone_airhorn_intrp 		= airhorn_interrupt_default
 	park_kill 				= park_kill_default
-	horn_on_cycle			= horn_on_cycle_default or false
-	airhorn_behavior		= airhorn_behavior_default or 4
 
 	--HUD State
 	HUD:SetHudState(hud_first_default)
