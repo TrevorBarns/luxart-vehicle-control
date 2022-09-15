@@ -144,7 +144,7 @@ if ec_masterswitch then
 							  onSelected = function()
 								if confirm_l_msg == Lang:t('menu.save_override') then
 									EC:LoadSettings()
-									HUD:ShowNotification(Lang:t('menu.load_sucess'), true)
+									HUD:ShowNotification(Lang:t('menu.load_success'), true)
 									confirm_l_msg = nil
 									confirm_l_desc = nil
 									profile_l_op = 75
@@ -209,13 +209,13 @@ if ec_masterswitch then
 							RageUI.List(Lang:t('plugins.ec_combo'), EC.approved_combo_strings, EC.combo_id[i], Lang:t('plugins.ec_combo_desc'), {}, EC.combo_id[i] ~= nil, {
 							  onListChange = function(Index, Item)
 								EC.combo_id[i] = Index
-									extra_shortcut.Combo = CONTROLS.COMBOS[Index]
+								extra_shortcut.Combo = CONTROLS.COMBOS[Index]
 							  end,
 							})					
 							RageUI.List(Lang:t('plugins.ec_key'), EC.approved_key_strings, EC.key_id[i], Lang:t('plugins.ec_key_desc'), {}, true, {
 							  onListChange = function(Index, Item)
 								EC.key_id[i] = Index
-									extra_shortcut.Key = CONTROLS.KEYS[Index]
+								extra_shortcut.Key = CONTROLS.KEYS[Index]
 							  end,
 							})	
 						end)
