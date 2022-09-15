@@ -131,7 +131,7 @@ if ec_masterswitch then
 								else 
 									RageUI.Settings.Controls.Back.Enabled = false 
 									profile_s_op = 255
-									confirm_c_msg = Lang:t('menu.save_override')
+									confirm_s_msg = Lang:t('menu.save_override')
 									confirm_s_desc = Lang:t('menu.save_override_desc', { profile = EC.profile })
 									confirm_l_msg = nil
 									profile_l_op = 75
