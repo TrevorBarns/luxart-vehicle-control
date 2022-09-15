@@ -68,13 +68,13 @@ if ec_masterswitch then
 			if EC.controls_enabled and not IsMenuOpen() and not key_lock then
 				if player_is_emerg_driver and #EC.table > 0 then
 					for _, tog_table in ipairs(EC.table) do
-						if tog_table.Combo == 0 or IsControlPressed(0, tog_table.Combo) then
-							if IsControlJustPressed(0, tog_table.Key) then
+						if ( tog_table.Combo == 0 or IsControlPressed(0, tog_table.Combo) ) and ( IsUsingKeyboard(0) or tog_table.Controller_Support ) then
+							if IsControlJustPressed(0, tog_table.Key) and ( IsUsingKeyboard(0) or tog_table.Controller_Support ) then
 								if tog_table.State == nil then
 									tog_table.State = true
 								else
 									tog_table.State = not tog_table.State
-									if tog_table.Audio ~= nil and tog_table.Audio then
+									if tog_table.Audio then
 										AUDIO:Play('Upgrade', AUDIO.upgrade_volume)
 									end
 								end
@@ -98,8 +98,8 @@ if ec_masterswitch then
 	AddEventHandler('lvc:onVehicleChange', function()
 		if player_is_emerg_driver and veh ~= nil then
 			EC.table, EC.profile = UTIL:GetProfileFromTable('EXTRA CONTROLS', EXTRA_CONTROLS, veh, true)
-			
 			if EC.profile ~= false then
+				Wait(500)
 				EC:SetBackupTable()
 				EC:LoadSettings()		
 
@@ -111,7 +111,7 @@ if ec_masterswitch then
 					end
 				end
 
-				--[[Verify all controls are approved, if not reset to none and notify]]
+				--[[Verify all controls are approved, if not reset to none and notify and set default parameters]]
 				for i, tog_table in pairs(EC.table) do
 					local found_combo = false
 					local found_key = false
@@ -140,7 +140,7 @@ if ec_masterswitch then
 						tog_table.Key = 0
 					end	
 				end
-				
+
 				EC:RefreshRageIndexs()
 			end
 		end

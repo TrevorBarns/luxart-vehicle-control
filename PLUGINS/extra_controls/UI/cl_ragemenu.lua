@@ -218,6 +218,14 @@ if ec_masterswitch then
 								extra_shortcut.Key = CONTROLS.KEYS[Index]
 							  end,
 							})	
+							RageUI.Checkbox(Lang:t('plugins.ec_controller_support'), Lang:t('plugins.ec_controller_support_desc'), extra_shortcut.Controller_Support, { Enabled = EC.combo_id[i] == 1}, {
+							  onChecked = function()
+								extra_shortcut.Controller_Support = true
+							  end,          
+							  onUnChecked = function()
+								extra_shortcut.Controller_Support = false
+							  end
+							})
 						end)
 					end
 				else
