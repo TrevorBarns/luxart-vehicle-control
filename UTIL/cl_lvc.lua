@@ -729,7 +729,7 @@ CreateThread(function()
 								AUDIO:ResetActivityTimer()
 								HUD:SetItemState('horn', true)
 							else
-								if actv_horn then
+								if actv_horn or actv_manu then
 									HUD:SetItemState('horn', false)
 								end
 								actv_horn = false
