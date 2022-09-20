@@ -147,8 +147,10 @@ CreateThread(function()
 			_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 			if (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
 				TKDS:TogTkdStateForVeh(veh, true)
-			else
+				HUD:SetItemState('tkd', state_tkd[veh]) 
+			elseif state_tkd[veh] then
 				TKDS:TogTkdStateForVeh(veh, false)
+				HUD:SetItemState('tkd', state_tkd[veh]) 
 			end
 			Wait(50)
 		else
