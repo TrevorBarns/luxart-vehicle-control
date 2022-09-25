@@ -27,46 +27,49 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- RAGE UI
 --	Draws specific button with callback to plugins menu if the plugin is found and enabled. (controlled in plugins settings file)
 CreateThread(function()
-    while plugins_installed do
-	    RageUI.IsVisible(RMenu:Get('lvc', 'plugins'), function()
-			-----------------------------------------------------------------------------------------------------------------
-			if tkd_masterswitch then
-				RageUI.Button(Lang:t('plugins.menu_tkd'), Lang:t('plugins.menu_tkd_desc'), {RightLabel = '→→→'}, true, {
-				  onSelected = function()
-				  end,
-				}, RMenu:Get('lvc', 'tkdsettings'))	
-			end
-			-----------------------------------------------------------------------------------------------------------------
-			if ei_masterswitch then
-				RageUI.Button(Lang:t('plugins.menu_ei'), Lang:t('plugins.menu_ei_desc'), {RightLabel = '→→→'}, true, {
-				  onSelected = function()
-				  end,
-				}, RMenu:Get('lvc', 'extrasettings'))	
-			end		
-			-----------------------------------------------------------------------------------------------------------------
-			if ta_masterswitch then
-				RageUI.Button(Lang:t('plugins.menu_ta'), Lang:t('plugins.menu_ta_desc'), {RightLabel = '→→→'}, true, {
-				  onSelected = function()
-				  end,
-				}, RMenu:Get('lvc', 'tasettings'))	
-			end		
-			-----------------------------------------------------------------------------------------------------------------
-			if trailer_masterswitch then
-				RageUI.Button(Lang:t('plugins.menu_ts'), Lang:t('plugins.menu_ts_desc'), {RightLabel = '→→→'}, true, {
-				  onSelected = function()
-				  end,
-				}, RMenu:Get('lvc', 'trailersettings'))	
-			end		
-			-----------------------------------------------------------------------------------------------------------------
-			if ec_masterswitch then
-				RageUI.Button(Lang:t('plugins.menu_ec'), Lang:t('plugins.menu_ec_desc'), {RightLabel = '→→→'}, true, {
-				  onSelected = function()
-				  end,
-				}, RMenu:Get('lvc', 'extracontrols'))	
-			end		
-			-----------------------------------------------------------------------------------------------------------------
-		end)
-        Wait(0)
+	while true do
+		while plugins_installed and IsMenuOpen() do
+			RageUI.IsVisible(RMenu:Get('lvc', 'plugins'), function()
+				-----------------------------------------------------------------------------------------------------------------
+				if tkd_masterswitch then
+					RageUI.Button(Lang:t('plugins.menu_tkd'), Lang:t('plugins.menu_tkd_desc'), {RightLabel = '→→→'}, true, {
+					  onSelected = function()
+					  end,
+					}, RMenu:Get('lvc', 'tkdsettings'))	
+				end
+				-----------------------------------------------------------------------------------------------------------------
+				if ei_masterswitch then
+					RageUI.Button(Lang:t('plugins.menu_ei'), Lang:t('plugins.menu_ei_desc'), {RightLabel = '→→→'}, true, {
+					  onSelected = function()
+					  end,
+					}, RMenu:Get('lvc', 'extrasettings'))	
+				end		
+				-----------------------------------------------------------------------------------------------------------------
+				if ta_masterswitch then
+					RageUI.Button(Lang:t('plugins.menu_ta'), Lang:t('plugins.menu_ta_desc'), {RightLabel = '→→→'}, true, {
+					  onSelected = function()
+					  end,
+					}, RMenu:Get('lvc', 'tasettings'))	
+				end		
+				-----------------------------------------------------------------------------------------------------------------
+				if trailer_masterswitch then
+					RageUI.Button(Lang:t('plugins.menu_ts'), Lang:t('plugins.menu_ts_desc'), {RightLabel = '→→→'}, true, {
+					  onSelected = function()
+					  end,
+					}, RMenu:Get('lvc', 'trailersettings'))	
+				end		
+				-----------------------------------------------------------------------------------------------------------------
+				if ec_masterswitch then
+					RageUI.Button(Lang:t('plugins.menu_ec'), Lang:t('plugins.menu_ec_desc'), {RightLabel = '→→→'}, true, {
+					  onSelected = function()
+					  end,
+					}, RMenu:Get('lvc', 'extracontrols'))	
+				end		
+				-----------------------------------------------------------------------------------------------------------------
+			end)
+			Wait(0)
+		end
+		Wait(500)
 	end
 end)
 
