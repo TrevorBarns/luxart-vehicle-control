@@ -378,7 +378,7 @@ CreateThread(function()
 					HUD:SetHudScale(Index/4)
 				end,
 			});
-			RageUI.List(Lang:t('menu.hud_backlight'), {Lang:t('menu.hud_backlight_auto'), Lang:t('menu.hud_backlight_off'), Lang:t('menu.hud_backlight_on') }, hud_backlight_mode, Lang:t('menu.hud_backlight_desc'), {}, true, {
+			RageUI.List(Lang:t('menu.hud_backlight'), {Lang:t('menu.hud_backlight_auto'), Lang:t('menu.hud_backlight_off'), Lang:t('menu.hud_backlight_on') }, hud_backlight_mode, Lang:t('menu.hud_backlight_desc'), {}, hud_state, {
 			  onListChange = function(Index, Item)
 				hud_backlight_mode = Index
 				HUD:SetHudBacklightMode(hud_backlight_mode)
