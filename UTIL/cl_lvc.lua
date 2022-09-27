@@ -146,10 +146,6 @@ CreateThread(function()
 	UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)
 	RegisterKeyMaps()
 	STORAGE:SetBackupTable()
-	
-	Wait(100)
-	local resourceName = string.lower( GetCurrentResourceName() )
-	SendNUIMessage( { _type = 'setResourceName', name = resourceName } )
 end)
 
 -- Auxiliary Control Handling
