@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 */
 
-var resourceName = "";
 var time_folder = "day/";
 var ta_pattern = "ta/pattern_3/";
 var audioPlayer = null;
@@ -155,7 +154,7 @@ $( document ).contextmenu( function() {
 
 // This function is used to send data back through to the LUA side 
 function sendData( name, data ) {
-	$.post( "https://"+ resourceName +"/" + name, JSON.stringify( data ), function( datab ) {
+	$.post( "https://lvc/" + name, JSON.stringify( data ), function( datab ) {
 		if ( datab != "ok" ) {
 			console.log( datab );
 		}            
