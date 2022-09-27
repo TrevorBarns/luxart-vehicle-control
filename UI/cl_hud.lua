@@ -104,7 +104,7 @@ function HUD:GetHudScale()
 	SendNUIMessage({
 	  _type = 'hud:getHudScale'
 	})
-	return HUD_scale
+	return HUD_scale or 0.6
 end
 
 --[[Setter for HUD scale. Updates JS & CSS.]]
