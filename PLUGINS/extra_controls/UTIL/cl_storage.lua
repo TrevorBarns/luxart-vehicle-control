@@ -23,78 +23,68 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
+if ec_masterswitch then
+	local save_prefix = 'lvc_'..community_id..'_EC_'
+	local backup_table
 
-local save_prefix = 'lvc_'..community_id..'_EC_'
-local backup_table
-
-function EC:SaveSettings()
-	local save_paragrams = { }
-	for i, shortcut in pairs(EC.table) do
-		local save_paragram	= { }
-		save_paragram.Name = shortcut.Name
-		save_paragram.Combo = shortcut.Combo
-		save_paragram.Key = shortcut.Key
-		save_paragram.Controller_Support = shortcut.Controller_Support
-		table.insert(save_paragrams, save_paragram)
+	function EC:SaveSettings()
+		local save_paragrams = { }
+		for i, shortcut in pairs(EC.table) do
+			local save_paragram	= { }
+			save_paragram.Name = shortcut.Name
+			save_paragram.Combo = shortcut.Combo
+			save_paragram.Key = shortcut.Key
+			table.insert(save_paragrams, save_paragram)
+		end
+		SetResourceKvp(save_prefix..EC.profile, json.encode(save_paragrams))
 	end
-	SetResourceKvp(save_prefix..EC.profile, json.encode(save_paragrams))
-end
 
-function EC:LoadSettings()
-	local save_paragrams = GetResourceKvpString(save_prefix..EC.profile)
-	if save_paragrams ~= nil then
-		save_paragrams = json.decode(save_paragrams)
-		--Iterate through all EC tables in save_paragrams (KVP table)
-		for i, save_data in pairs(save_paragrams) do
-			save_data.used = false
-			--Iterate through current EC table (does the extra specific shortcut still exist)
-			for j, shortcut in pairs(EC.table) do
-				if save_data.Name == shortcut.Name then
-					if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
-						shortcut.Combo = save_data.Combo
-					else
-						UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Combo }), true)		
-						HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
+	function EC:LoadSettings()
+		local save_paragrams = GetResourceKvpString(save_prefix..EC.profile)
+		if save_paragrams ~= nil then
+			save_paragrams = json.decode(save_paragrams)
+			--Iterate through all EC tables in save_paragrams (KVP table)
+			for i, save_data in pairs(save_paragrams) do
+				save_data.used = false
+				--Iterate through current EC table (does the extra specific shortcut still exist)
+				for j, shortcut in pairs(EC.table) do
+					if save_data.Name == shortcut.Name then
+						if UTIL:IndexOf(CONTROLS.COMBOS, shortcut.Combo) ~= nil then
+							shortcut.Combo = save_data.Combo
+						else
+							UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Combo }), true)		
+							HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
+						end
+						if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
+							shortcut.Key = save_data.Key
+						else
+							UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Key }), true)		
+							HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
+						end
+						save_data.used = true
 					end
-					if  UTIL:IndexOf(CONTROLS.KEYS, shortcut.Key) then
-						shortcut.Key = save_data.Key
-					else
-						UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Key }), true)		
-						HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
-					end
-					shortcut.Controller_Support = save_data.Controller_Support
-					save_data.used = true
 				end
 			end
-		end
-		
-		for i, save_data in pairs(save_paragrams) do		
-			if not save_data.used then
-				UTIL:Print(Lang:t('plugins.ec_save_not_used'), true)
+			
+			for i, save_data in pairs(save_paragrams) do		
+				if not save_data.used then
+					UTIL:Print(Lang:t('plugins.ec_save_not_used'), true)
+				end
 			end
+			EC:RefreshRageIndexs()
 		end
+	end
+
+	function EC:DeleteProfiles()
+		STORAGE:DeleteKVPs(save_prefix)
+	end
+
+	function EC:SetBackupTable()
+		backup_table = json.encode(EC.table)
+	end
+
+	function EC:LoadBackupTable()
+		EC.table = json.decode(backup_table)
 		EC:RefreshRageIndexs()
 	end
-end
-
-function EC:DeleteProfiles()
-	STORAGE:DeleteKVPs(save_prefix)
-end
-
-function EC:SetBackupTable()
-	--[[set default parameters if missing from backup]]
-	for i, tog_table in pairs(EC.table) do
-		if tog_table.Audio == nil then
-			tog_table.Audio = false
-		end
-		if tog_table.Controller_Support == nil then
-			tog_table.Controller_Support = true
-		end
-	end
-	backup_table = json.encode(EC.table)
-end
-
-function EC:LoadBackupTable()
-	EC.table = json.decode(backup_table)
-	EC:RefreshRageIndexs()
 end
