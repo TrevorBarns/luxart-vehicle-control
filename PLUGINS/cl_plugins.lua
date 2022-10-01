@@ -31,36 +31,36 @@ CreateThread(function()
 		while plugins_installed and IsMenuOpen() do
 			RageUI.IsVisible(RMenu:Get('lvc', 'plugins'), function()
 				-----------------------------------------------------------------------------------------------------------------
-				if tkd_masterswitch then
-					RageUI.Button(Lang:t('plugins.menu_tkd'), Lang:t('plugins.menu_tkd_desc'), {RightLabel = '→→→'}, true, {
+				if tkd_masterswitch ~= nil then
+					RageUI.Button(Lang:t('plugins.menu_tkd'), Lang:t('plugins.menu_tkd_desc'), {RightLabel = '→→→'}, tkd_masterswitch, {
 					  onSelected = function()
 					  end,
 					}, RMenu:Get('lvc', 'tkdsettings'))	
 				end
 				-----------------------------------------------------------------------------------------------------------------
-				if ei_masterswitch then
-					RageUI.Button(Lang:t('plugins.menu_ei'), Lang:t('plugins.menu_ei_desc'), {RightLabel = '→→→'}, true, {
+				if ei_masterswitch ~= nil then
+					RageUI.Button(Lang:t('plugins.menu_ei'), Lang:t('plugins.menu_ei_desc'), {RightLabel = '→→→'}, ei_masterswitch, {
 					  onSelected = function()
 					  end,
 					}, RMenu:Get('lvc', 'extrasettings'))	
 				end		
 				-----------------------------------------------------------------------------------------------------------------
-				if ta_masterswitch then
-					RageUI.Button(Lang:t('plugins.menu_ta'), Lang:t('plugins.menu_ta_desc'), {RightLabel = '→→→'}, true, {
+				if ta_masterswitch ~= nil then
+					RageUI.Button(Lang:t('plugins.menu_ta'), Lang:t('plugins.menu_ta_desc'), {RightLabel = '→→→'}, ta_masterswitch, {
 					  onSelected = function()
 					  end,
 					}, RMenu:Get('lvc', 'tasettings'))	
 				end		
 				-----------------------------------------------------------------------------------------------------------------
-				if trailer_masterswitch then
-					RageUI.Button(Lang:t('plugins.menu_ts'), Lang:t('plugins.menu_ts_desc'), {RightLabel = '→→→'}, true, {
+				if trailer_masterswitch ~= nil then
+					RageUI.Button(Lang:t('plugins.menu_ts'), Lang:t('plugins.menu_ts_desc'), {RightLabel = '→→→'}, trailer_masterswitch, {
 					  onSelected = function()
 					  end,
 					}, RMenu:Get('lvc', 'trailersettings'))	
 				end		
 				-----------------------------------------------------------------------------------------------------------------
-				if ec_masterswitch then
-					RageUI.Button(Lang:t('plugins.menu_ec'), Lang:t('plugins.menu_ec_desc'), {RightLabel = '→→→'}, true, {
+				if ec_masterswitch ~= nil then
+					RageUI.Button(Lang:t('plugins.menu_ec'), Lang:t('plugins.menu_ec_desc'), {RightLabel = '→→→'}, ec_masterswitch, {
 					  onSelected = function()
 					  end,
 					}, RMenu:Get('lvc', 'extracontrols'))	
