@@ -117,7 +117,9 @@ CreateThread( function()
 	if not beta_checking then
 		print(('\t|\t              LATEST: %-27s|'):format(repo_version))
 	else
-		print(('\t|\t         ^3LATEST BETA: %-27s^7|'):format(repo_beta_version))
+		if curr_version < repo_beta_version then
+			print(('\t|\t         ^3LATEST BETA: %-27s^7|'):format(repo_beta_version))
+		end
 		print(('\t|\t       LATEST STABLE: %-27s|'):format(repo_version))
 	end
 	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
