@@ -11,7 +11,7 @@ compatible '3.2.2'		-- Readonly save reverse compatiability.
 
 ------------------------------
 
-beta_checking 'true'	-- Notifications for beta revisions and new betas.
+beta_checking 'true'	-- Notifications for beta revisions and new beta releases.
 experimental 'false'	-- Mute unstable version warning in server console.
 debug_mode 'false' 		-- More verbose printing on client console.
 
