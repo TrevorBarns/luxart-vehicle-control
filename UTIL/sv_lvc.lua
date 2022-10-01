@@ -97,7 +97,7 @@ CreateThread( function()
 	for name, _ in pairs(plugins_cv) do
 		PerformHttpRequest('https://raw.githubusercontent.com/TrevorBarns/luxart-vehicle-control/master/PLUGINS/'..name..'/version', function(err, responseText, headers)
 			if responseText ~= nil and responseText ~= '' then
-				plugins_rv[name] = responseText
+				plugins_rv[name] = responseText:gsub('\n', '')
 			else
 				plugins_rv[name] = 'UNKWN'
 			end
