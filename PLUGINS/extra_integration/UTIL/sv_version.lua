@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 local plugin_name = 'extra_integration'
-local plugin_version = '1.2.0'
+local plugin_version = '1.2.1'
 
 RegisterServerEvent('lvc:plugins_getVersions') 
 AddEventHandler('lvc:plugins_getVersions', function()

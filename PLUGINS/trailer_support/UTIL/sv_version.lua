@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 local plugin_name = 'trailer_support'
-local plugin_version = '1.0.0'
+local plugin_version = '1.0.1'
 
 RegisterServerEvent('lvc:plugins_getVersions') 
 AddEventHandler('lvc:plugins_getVersions', function()
