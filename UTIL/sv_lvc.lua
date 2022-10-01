@@ -119,22 +119,24 @@ CreateThread( function()
 	else
 		print(('\t|\t         ^3LATEST BETA: %-27s^7|'):format(repo_beta_version))
 		print(('\t|\t       LATEST STABLE: %-27s|'):format(repo_version))
-		print('\t^7|________________________________________________________|')
 	end
 	if GetResourceState('lux_vehcontrol') ~= 'started' and GetResourceState('lux_vehcontrol') ~= 'starting' then
 		if GetCurrentResourceName() == 'lvc' then
 			if community_id ~= nil and community_id ~= '' then
 				--	STABLE UPDATE DETECTED
 				if curr_version < repo_version then
+					print('\t^7|________________________________________________________|')
 					print('\t|\t         ^8STABLE UPDATE AVAILABLE                 ^7|')
 					print('\t|^8                      DOWNLOAD AT:                      ^7|')
 					print('\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|')
 				elseif beta_checking and curr_version < repo_beta_version then
+					print('\t^7|________________________________________________________|')
 					print('\t|\t          ^4BETA UPDATE AVAILABLE                  ^7|')
 					print('\t|^4                      DOWNLOAD AT:                      ^7|')
 					print('\t|^2 github.com/TrevorBarns/luxart-vehicle-control/releases ^7|')
 				--	EXPERMENTAL VERSION
 				elseif curr_version > repo_version or curr_version == repo_beta_version then
+					print('\t^7|________________________________________________________|')
 					print('\t|\t               ^3BETA VERSION                      ^7|')
 					-- IS THE USER AWARE THEY DOWNLOADED EXPERMENTAL CHECK CONVARS
 					if not experimental then
