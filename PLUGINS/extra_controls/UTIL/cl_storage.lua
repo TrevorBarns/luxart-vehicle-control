@@ -34,6 +34,7 @@ if ec_masterswitch then
 			save_paragram.Name = shortcut.Name
 			save_paragram.Combo = shortcut.Combo
 			save_paragram.Key = shortcut.Key
+			save_paragram.Controller_Support = shortcut.Controller_Support
 			table.insert(save_paragrams, save_paragram)
 		end
 		SetResourceKvp(save_prefix..EC.profile, json.encode(save_paragrams))
@@ -61,6 +62,9 @@ if ec_masterswitch then
 							UTIL:Print(Lang:t('plugins.ec_fail_load_console', { name = shortcut.Name, control = shortcut.Key }), true)		
 							HUD:ShowNotification(Lang:t('plugins.ec_fail_load_frontend', { name = shortcut.Name }), true)
 						end
+						if shortcut.Controller_Support ~= nil then
+							shortcut.Controller_Support = save_data.Controller_Support
+						end						
 						save_data.used = true
 					end
 				end
@@ -80,7 +84,15 @@ if ec_masterswitch then
 	end
 
 	function EC:SetBackupTable()
-		backup_table = json.encode(EC.table)
+		--[[set default parameters if missing from backup]]
+		for i, tog_table in pairs(EC.table) do
+			if tog_table.Audio == nil then
+				tog_table.Audio = false
+			end
+			if tog_table.Controller_Support == nil then
+				tog_table.Controller_Support = true
+			end
+		end
 	end
 
 	function EC:LoadBackupTable()
