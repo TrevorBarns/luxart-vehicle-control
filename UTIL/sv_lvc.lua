@@ -85,8 +85,7 @@ CreateThread( function()
 -- Get LVC beta version from github
 	PerformHttpRequest('https://raw.githubusercontent.com/TrevorBarns/luxart-vehicle-control/master/beta_version', function(err, responseText, headers)
 		if responseText ~= nil and responseText ~= '' then
-			--repo_beta_version = semver(responseText:gsub('\n', ''))
-			repo_beta_version = semver(('3.2.9-BETA-R5'):gsub('\n', ''))
+			repo_beta_version = semver(responseText:gsub('\n', ''))
 		end
 	end)
 
@@ -98,7 +97,7 @@ CreateThread( function()
 	for name, _ in pairs(plugins_cv) do
 		PerformHttpRequest('https://raw.githubusercontent.com/TrevorBarns/luxart-vehicle-control/master/PLUGINS/'..name..'/version', function(err, responseText, headers)
 			if responseText ~= nil and responseText ~= '' then
-				plugins_rv[name] = responseText
+				plugins_rv[name] = responseText:gsub('\n', '')
 			else
 				plugins_rv[name] = 'UNKWN'
 			end
