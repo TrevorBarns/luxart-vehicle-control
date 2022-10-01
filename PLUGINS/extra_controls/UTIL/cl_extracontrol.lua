@@ -106,7 +106,7 @@ if ec_masterswitch then
 				--	Dynamically create shortcut menus
 				if #EC.table > 0 then
 					for i, extra_shortcut in ipairs(EC.table) do
-						RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),'Luxart Vehicle Control', extra_shortcut.Name))
+						RMenu.Add('lvc', 'extracontrols_'..i, RageUI.CreateSubMenu(RMenu:Get('lvc', 'extracontrols'),' ', extra_shortcut.Name), 0, 0, "lvc", "lvc_plugin_logo")
 						RMenu:Get('lvc', 'extracontrols_'..i):DisplayGlare(false)
 					end
 				end

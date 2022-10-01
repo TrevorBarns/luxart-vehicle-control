@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 if ta_masterswitch then
-	RMenu.Add('lvc', 'tasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ta')))
+	RMenu.Add('lvc', 'tasettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),' ', Lang:t('plugins.menu_ta'), 0, 0, "lvc", "lvc_plugin_logo"))
 	RMenu:Get('lvc', 'tasettings'):DisplayGlare(false)
 
 	CreateThread(function()

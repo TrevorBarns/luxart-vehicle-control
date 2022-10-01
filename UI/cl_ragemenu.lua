@@ -24,15 +24,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'main', RageUI.CreateMenu('Luxart Vehicle Control', Lang:t('menu.main')))
-RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.siren')))
-RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.hud')))
-RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.audio')))
-RMenu.Add('lvc', 'volumesettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'audiosettings'),'Luxart Vehicle Control', Lang:t('menu.audio')))
-RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.plugins')))
-RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.storage')))
-RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'saveload'),'Luxart Vehicle Control', Lang:t('menu.copy')))
-RMenu.Add('lvc', 'info', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),'Luxart Vehicle Control', Lang:t('menu.more_info')))
+RMenu.Add('lvc', 'main', RageUI.CreateMenu(' ', Lang:t('menu.main'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'maintone', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.siren'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'hudsettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.hud'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'audiosettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.audio'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'volumesettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'audiosettings'),' ', Lang:t('menu.audio'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'plugins', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.plugins'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'saveload', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.storage'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'copyprofile', RageUI.CreateSubMenu(RMenu:Get('lvc', 'saveload'),' ', Lang:t('menu.copy'), 0, 0, "lvc", "lvc_v3_logo"))
+RMenu.Add('lvc', 'info', RageUI.CreateSubMenu(RMenu:Get('lvc', 'main'),' ', Lang:t('menu.more_info'), 0, 0, "lvc", "lvc_v3_logo"))
 RMenu:Get('lvc', 'main'):SetTotalItemsPerPage(13)
 RMenu:Get('lvc', 'volumesettings'):SetTotalItemsPerPage(12)
 RMenu:Get('lvc', 'main'):DisplayGlare(false)
@@ -371,8 +371,7 @@ CreateThread(function()
 				onSelected = function()
 					HUD:SetMoveMode(true, true)
 				end,
-				});
-				local hud_scale = HUD:GetHudScale()*4
+			});
 			RageUI.Slider(Lang:t('menu.hud_scale'), 4*HUD:GetHudScale(), 6, 0.2, Lang:t('menu.hud_scale_desc'), false, {}, hud_state, {
 				onSliderChange = function(Index)
 					HUD:SetHudScale(Index/4)
@@ -645,7 +644,10 @@ CreateThread(function()
 				onSelected = function()
 			end,
 			});
-
+			RageUI.Button('Website', 'Learn more about Luxart Engineering and it\'s products at ~b~https://www.luxartengineering.com~w~!', {}, true, {
+				onSelected = function()
+			end,
+			});
         end)
         Wait(0)
 	end

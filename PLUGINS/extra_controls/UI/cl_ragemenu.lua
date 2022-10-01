@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 if ec_masterswitch then
-	RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ec')))
+	RMenu.Add('lvc', 'extracontrols', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),' ', Lang:t('plugins.menu_ec'), 0, 0, "lvc", "lvc_plugin_logo"))
 	RMenu:Get('lvc', 'extracontrols'):DisplayGlare(false)
 	RMenu:Get('lvc', 'extracontrols'):SetTotalItemsPerPage(13)
 

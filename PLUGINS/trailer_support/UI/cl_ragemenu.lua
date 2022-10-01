@@ -24,9 +24,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-RMenu.Add('lvc', 'trailersettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),'Luxart Vehicle Control', Lang:t('plugins.menu_ts')))
-RMenu.Add('lvc', 'trailerextras', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', Lang:t('plugins.ts_menu_extras')))
-RMenu.Add('lvc', 'trailerdoors', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),'Luxart Vehicle Control', Lang:t('plugins.ts_menu_doors')))
+RMenu.Add('lvc', 'trailersettings', RageUI.CreateSubMenu(RMenu:Get('lvc', 'plugins'),' ', Lang:t('plugins.menu_ts'), 0, 0, "lvc", "lvc_plugin_logo"))
+RMenu.Add('lvc', 'trailerextras', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),' ', Lang:t('plugins.ts_menu_extras'), 0, 0, "lvc", "lvc_plugin_logo"))
+RMenu.Add('lvc', 'trailerdoors', RageUI.CreateSubMenu(RMenu:Get('lvc', 'trailersettings'),' ', Lang:t('plugins.ts_menu_doors'), 0, 0, "lvc", "lvc_plugin_logo"))
 RMenu:Get('lvc', 'trailersettings'):DisplayGlare(false)
 RMenu:Get('lvc', 'trailerextras'):DisplayGlare(false)
 RMenu:Get('lvc', 'trailerdoors'):DisplayGlare(false)
