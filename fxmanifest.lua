@@ -6,11 +6,12 @@ games { 'gta5' }
 author 'TrevorBarns w/ credits see GitHub'
 description 'A siren / emergency lights controller for FiveM.'
 
-version '3.2.9-BETA'	
-compatible '3.2.2'
+version '3.2.9-BETA-R4'	-- Readonly version of currently installed version.
+compatible '3.2.2'		-- Readonly save reverse compatiability.
 
 ------------------------------
 
+beta_checking 'true'	-- Notifications for beta revisions and new betas.
 experimental 'false'	-- Mute unstable version warning in server console.
 debug_mode 'false' 		-- More verbose printing on client console.
 
