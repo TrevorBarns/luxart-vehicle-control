@@ -3,11 +3,12 @@
 </p>
 
 # Luxart Vehicle Control v3
+### Documentation and About: [Welcome to Luxart Engineering - Gitbook](https://www.luxartengineering.com/)
 
-## More Information:
-Documentation and About: [Welcome to Luxart Engineering - Gitbook](https://www.luxartengineering.com/)
+<a href="https://www.luxartengineering.com/"><img target="_blank" src="https://i.imgur.com/CwbNKa9.png"></a>
 
-Support, Suggestions, and Updates: [TrevorBarns Development Discord](https://discord.link/lvc/)
+### Support, Suggestions, and Updates: [TrevorBarns Development Discord](https://discord.link/lvc/)
+<a href="https://discord.link/lvc"><img target="_blank" src="https://discordapp.com/api/guilds/344333824911605762/widget.png?style=banner3"></a>
 
 ## Other Resources
 * [Luxart Vehicle Control: Fleet](https://github.com/TrevorBarns/luxart-vehicle-control-fleet)
