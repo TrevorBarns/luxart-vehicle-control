@@ -24,8 +24,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 
-local plugin_name = 'takedowns'
-local plugin_version = '1.0.3'
+local plugin_name = 'extra_controls'
+local plugin_version = '1.1.1'
 
 RegisterServerEvent('lvc:plugins_getVersions') 
 AddEventHandler('lvc:plugins_getVersions', function()

@@ -9,6 +9,19 @@ Additional Modification by TrevorBarns
 FILE: cl_tkds.lua
 PURPOSE: Contains takedown threads, functions, etc.
 ---------------------------------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+---------------------------------------------------
 ]]
 
 local count_tkdclean_timer = 0
@@ -39,7 +52,7 @@ local tkd_scheme_lookup = {
 }
 
 ------TAKE DOWN THREADS------
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			--CLEANUP DEAD TKDS
@@ -68,15 +81,15 @@ Citizen.CreateThread(function()
 										SetVehicleFullbeam(veh, false)
 									end
 									TKDS:TogTkdStateForVeh(veh, false)										
-									PlayAudio("Downgrade", downgrade_volume) 
+									AUDIO:Play('Downgrade', AUDIO.downgrade_volume) 
 								else
 									if tkd_mode == 2 then
 										SetVehicleFullbeam(veh, true)
 									end
 									TKDS:TogTkdStateForVeh(veh, true)
-									PlayAudio("Upgrade", upgrade_volume) 										
+									AUDIO:Play('Upgrade', AUDIO.upgrade_volume) 										
 								end
-								HUD:SetItemState("tkd", state_tkd[veh]) 
+								HUD:SetItemState('tkd', state_tkd[veh]) 
 								count_bcast_timer = delay_bcast_timer
 							end
 						end
@@ -91,14 +104,14 @@ Citizen.CreateThread(function()
 				count_bcast_timer = count_bcast_timer + 1
 			end		
 		else
-			Citizen.Wait(500)	
+			Wait(500)	
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 -----------------------------
 -- TKDs: DrawTakeDowns Thread of vehicles within range
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			for veh,state in pairs(state_tkd) do
@@ -109,12 +122,12 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(0)
+		Wait(0)
 	end
 end)
 
 -- Set vehicles distances in table for DrawTakeDowns Thread
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch then	
 			for veh,_ in pairs(state_tkd) do
@@ -123,23 +136,25 @@ Citizen.CreateThread(function()
 				end
 			end
 		end
-		Citizen.Wait(500)
+		Wait(500)
 	end
 end)
 
 --Get Headlight State for TKD Trigger
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		if tkd_masterswitch and player_is_emerg_driver and tkd_mode == 3 then	
 			_, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 			if (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) then
 				TKDS:TogTkdStateForVeh(veh, true)
-			else
+				HUD:SetItemState('tkd', state_tkd[veh]) 
+			elseif state_tkd[veh] then
 				TKDS:TogTkdStateForVeh(veh, false)
+				HUD:SetItemState('tkd', state_tkd[veh]) 
 			end
-			Citizen.Wait(50)
+			Wait(50)
 		else
-			Citizen.Wait(1000)
+			Wait(1000)
 		end
 	end
 end)
@@ -161,7 +176,7 @@ function TKDS:DrawTakeDown(veh)
 		light_direction = vector3(light_end_pos-light_start_pos)	
 		DrawSpotLight(light_start_pos, light_direction, 200, 200, 255, tkd_distance+0.0, tkd_intensity+0.0, 0.0, tkd_radius+0.0, tkd_falloff+veh_dist[veh]/2+0.0)
 
-		if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' then
+		if debug_mode then
 			DrawLine(light_start_pos, light_end_pos, 255, 0, 0, 255)
 		end
 	end

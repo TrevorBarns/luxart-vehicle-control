@@ -8,38 +8,47 @@ Additional Modification by TrevorBarns
 Traffic Advisor Plugin by Dawson
 ---------------------------------------------------
 FILE: cl_trailer.lua
-PURPOSE: Contains threads, functions for trailer 
+PURPOSE: Contains threads, functions for trailer
 support.
+---------------------------------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 TRAIL = {}
 TRAIL.custom_toggles_set = false
 
-Citizen.CreateThread(function()
-	Citizen.Wait(500)
+CreateThread(function()
+	Wait(500)
 	UTIL:FixOversizeKeys(TRAILERS)
-end) 
+end)
 
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	if player_is_emerg_driver and veh ~= nil then
-		local veh_name_wildcard = string.gsub(TRAIL:GetCabDisplayName(), "%d+", "#")
+		TRAIL.TBL, profile = UTIL:GetProfileFromTable('TRAILERS', TRAILERS, veh, true)
 
-		if TRAILERS[TRAIL:GetCabDisplayName()] ~= nil then
-			TRAIL.custom_toggles_set = true
-			UTIL:Print('TS: Profile found for ' .. TRAIL:GetCabDisplayName(), false)
-		elseif TRAILERS[veh_name_wildcard] ~= nil then
-			TRAIL.custom_toggles_set = true
-			UTIL:Print('TS: Wildcard profile found for ' .. TRAIL:GetCabDisplayName(), false)
-		else
+		if not profile then
 			TRAIL.custom_toggles_set = false
+		else
+			TRAIL.custom_toggles_set = true
 		end
 	end
 end)
 
 function TRAIL:GetTrailerDisplayName()
-	if GetDisplayNameFromVehicleModel(GetEntityModel(trailer)) == "CARNOTFOUND" then
-		return "NOT FOUND"
+	if GetDisplayNameFromVehicleModel(GetEntityModel(trailer)) == 'CARNOTFOUND' then
+		return Lang:t('plugins.ts_not_found')
 	else
 		return GetDisplayNameFromVehicleModel(GetEntityModel(trailer))
 	end
@@ -54,7 +63,7 @@ function TRAIL:SetExtraState(is_trailer, extra_id, state)
 		if DoesExtraExist(trailer, extra_id) then
 			SetVehicleExtra(trailer, extra_id, not state)
 		end
-	else 
+	else
 		if DoesExtraExist(veh, extra_id) then
 			SetVehicleExtra(veh, extra_id, not state)
 		end

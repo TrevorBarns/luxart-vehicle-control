@@ -7,8 +7,21 @@ ELS Clicks by Faction
 Additional Modification by TrevorBarns
 ---------------------------------------------------
 FILE: cl_utils.lua
-PURPOSE: Utilities for siren assignments and tables 
+PURPOSE: Utilities for siren assignments and tables
 		 and other common functions.
+---------------------------------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------
 ]]
 UTIL = { }
@@ -24,7 +37,57 @@ local tone_AUX_id = nil
 local tone_ARHRN_id = nil
 
 ---------------------------------------------------------------------
---[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA). 
+--[[Return sub-table for sirens or plugin settings tables, given veh, and name of whatever setting.]]
+function UTIL:GetProfileFromTable(print_name, tbl, veh, ignore_missing_default)
+	local ignore_missing_default = ignore_missing_default or false
+	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
+	local lead_and_trail_wildcard = veh_name:gsub('%d+', '#')
+	local lead = veh_name:match('%d*%a+')
+	local trail = veh_name:gsub(lead, ''):gsub('%d+', '#')
+	local trail_only_wildcard = string.format('%s%s', lead, trail)
+
+	local profile_table, profile
+	if tbl ~= nil then
+		if tbl[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
+			profile_table = tbl[veh_name]
+			profile = veh_name
+			UTIL:Print(Lang:t('info.profile_found', {ver = STORAGE:GetCurrentVersion(), tbl = print_name, profile = profile, model = veh_name}))
+		elseif tbl[trail_only_wildcard] ~= nil then				--Does profile exist using # as wildcard for any trailing digits.
+			profile_table = tbl[trail_only_wildcard]
+			profile = trail_only_wildcard
+			UTIL:Print(Lang:t('info.profile_found', {ver = STORAGE:GetCurrentVersion(), tbl = print_name, profile = profile, model = veh_name}))
+		elseif tbl[lead_and_trail_wildcard] ~= nil then			--Does profile exist using # as wildcard for any digits.
+			profile_table = tbl[lead_and_trail_wildcard]
+			profile = lead_and_trail_wildcard
+			UTIL:Print(Lang:t('info.profile_found', {ver = STORAGE:GetCurrentVersion(), tbl = print_name, profile = profile, model = veh_name}))
+		else
+			if tbl['DEFAULT'] ~= nil then
+				profile_table = tbl['DEFAULT']
+				profile = 'DEFAULT'
+				UTIL:Print(Lang:t('info.profile_default_console', {ver = STORAGE:GetCurrentVersion(), tbl = print_name, model = veh_name}))
+				if print_name == 'SIRENS' then
+					HUD:ShowNotification(Lang:t('info.profile_default_frontend', {model = veh_name}))
+				end
+			else
+				profile_table = { }
+				profile = false
+				if not ignore_missing_default then
+					UTIL:Print(Lang:t('warning.profile_missing', {ver = STORAGE:GetCurrentVersion(), tbl = print_name, model = veh_name}), true)
+				end
+			end
+		end
+	else
+		profile_table = { }
+		profile = false
+		HUD:ShowNotification(Lang:t('error.profile_nil_table', {tbl = print_name}), true)
+		UTIL:Print(Lang:t('error.profile_nil_table_console', {ver = STORAGE:GetCurrentVersion(), tbl = print_name}), true)
+	end
+	
+	return profile_table, profile
+end
+
+---------------------------------------------------------------------
+--[[Shorten oversized <gameName> strings in SIREN_ASSIGNMENTS (SIRENS.LUA).
     GTA only allows 11 characters. So to reduce confusion we'll shorten it if the user does not.]]
 function UTIL:FixOversizeKeys(TABLE)
 	for i, tbl in pairs(TABLE) do
@@ -39,35 +102,29 @@ end
 ---------------------------------------------------------------------
 --[[Sets profile name and approved_tones table a copy of SIREN_ASSIGNMENTS for this vehicle]]
 function UTIL:UpdateApprovedTones(veh)
-	local veh_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))
-	local veh_name_wildcard = string.gsub(veh_name, "%d+", "#")
-
-	if SIREN_ASSIGNMENTS[veh_name] ~= nil then							--Does profile exist as outlined in vehicle.meta
-		approved_tones = SIREN_ASSIGNMENTS[veh_name]
-		profile = veh_name
-	elseif SIREN_ASSIGNMENTS[veh_name_wildcard] ~= nil then				--Does profile exist using # as wildcard for any digits.
-		approved_tones = SIREN_ASSIGNMENTS[veh_name_wildcard]
-		profile = veh_name_wildcard
-	else 
-		approved_tones = SIREN_ASSIGNMENTS['DEFAULT']
-		profile = 'DEFAULT'
-		HUD:ShowNotification("~b~LVC~s~: Using ~b~DEFAULT~s~ profile for \"~o~"..veh_name.."~s~\".", false)
-	end
+	approved_tones, profile = UTIL:GetProfileFromTable('SIRENS', SIREN_ASSIGNMENTS, veh)
 	
-	if not UTIL:IsApprovedTone('MAIN_MEM') then
-		UTIL:SetToneByPos('MAIN_MEM', 2)
+	if profile == false then
+		UTIL:Print(Lang:t('error.profile_none_found_console', {game_name = GetDisplayNameFromVehicleModel(GetEntityModel(veh))}), true)
+		HUD:ShowNotification(Lang:t('error.profile_none_found_frontend'), true)
 	end
-	if not UTIL:IsApprovedTone('PMANU') then
-		UTIL:SetToneByPos('PMANU', 2)
-	end
-	if not UTIL:IsApprovedTone('SMANU') then
-		UTIL:SetToneByPos('SMANU', 3)
-	end	
-	if not UTIL:IsApprovedTone('AUX') then
-		UTIL:SetToneByPos('AUX', 2)
-	end	
-	if not UTIL:IsApprovedTone('ARHRN') then
-		UTIL:SetToneByPos('ARHRN', 1)
+
+	if profile then
+		if not UTIL:IsApprovedTone('MAIN_MEM') then
+			UTIL:SetToneByPos('MAIN_MEM', 2)
+		end
+		if not UTIL:IsApprovedTone('PMANU') then
+			UTIL:SetToneByPos('PMANU', 2)
+		end
+		if not UTIL:IsApprovedTone('SMANU') then
+			UTIL:SetToneByPos('SMANU', 3)
+		end
+		if not UTIL:IsApprovedTone('AUX') then
+			UTIL:SetToneByPos('AUX', 2)
+		end
+		if not UTIL:IsApprovedTone('ARHRN') then
+			UTIL:SetToneByPos('ARHRN', 1)
+		end
 	end
 end
 
@@ -83,14 +140,16 @@ function UTIL:GetApprovedTonesTable()
 	return approved_tones
 end
 ---------------------------------------------------------------------
---[[Builds a table that we store tone_options in (disabled, button & cycle, cycle only, button only). 
+--[[Builds a table that we store tone_options in (disabled, button & cycle, cycle only, button only).
     Users can set default option of siren by using optional index .Option in SIREN_ASSIGNMENTS table in SIRENS.LUA]]
 function UTIL:BuildToneOptions()
 	local temp_array = { }
 	local option
 	for i, id in pairs(approved_tones) do
-		option = SIRENS[id].Option or 1
-		temp_array[id] = option
+		if SIRENS[id] ~= nil then
+			option = SIRENS[id].Option or 1
+			temp_array[id] = option
+		end
 	end
 	tone_options = temp_array
 end
@@ -139,7 +198,7 @@ end
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and position of desired tone in approved_tones.]]
 function UTIL:SetToneByPos(tone_string, pos)
-	if approved_tones ~= nil then
+	if profile then
 		if approved_tones[pos] ~= nil then
 			if tone_string == 'MAIN_MEM' then
 				tone_main_mem_id = approved_tones[pos]
@@ -153,12 +212,12 @@ function UTIL:SetToneByPos(tone_string, pos)
 				tone_ARHRN_id = approved_tones[pos]
 			end
 		else
-			HUD:ShowNotification("~b~LVC ~y~Warning 403:~s~ Too little sirens assigned.", false)
-			UTIL:Print("^3Warning 403: Too little sirens assigned. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+			HUD:ShowNotification(Lang:t('warning.too_few_tone_frontend', {code = 403}), false)
+			UTIL:Print(Lang:t('warning.too_few_tone_console', {ver = STORAGE:GetCurrentVersion(), code = 403, tone_string = tone_string, pos = pos}), true)
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 404:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
-		UTIL:Print("^3Warning 404: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.." in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		HUD:ShowNotification(Lang:t('warning.tone_position_nil_frontend', {code = 404}), false)
+		UTIL:Print(Lang:t('warning.tone_position_nil_console', {ver = STORAGE:GetCurrentVersion(), code = 404, tone_string = tone_string, pos = pos}), true)
 	end
 end
 
@@ -174,7 +233,7 @@ function UTIL:GetTonePos(tone_string)
 end
 
 --[[Getter for Tone ID at index/pos in approved_tones]]
-function UTIL:GetToneAtPos(pos) 	
+function UTIL:GetToneAtPos(pos)
 	if approved_tones[pos] ~= nil then
 		return approved_tones[pos]
 	end
@@ -183,28 +242,28 @@ end
 
 
 --[[Setter for ToneID by passing string abbreviation of tone (MAIN_MEM, PMANU, etc.) and specific ID.]]
-function UTIL:SetToneByID(tone, tone_id)
+function UTIL:SetToneByID(tone_string, tone_id)
 	if UTIL:IsApprovedTone(tone_id) then
-		if tone == 'MAIN_MEM' then
+		if tone_string == 'MAIN_MEM' then
 			tone_main_mem_id = tone_id
-		elseif tone == 'PMANU' then
+		elseif tone_string == 'PMANU' then
 			tone_PMANU_id = tone_id
-		elseif tone == 'SMANU' then
+		elseif tone_string == 'SMANU' then
 			tone_SMANU_id = tone_id
-		elseif tone == 'AUX' then
+		elseif tone_string == 'AUX' then
 			tone_AUX_id = tone_id
-		elseif tone == 'ARHRN' then
+		elseif tone_string == 'ARHRN' then
 			tone_ARHRN_id = tone_id
 		end
 	else
-		HUD:ShowNotification("~b~LVC ~y~Warning 504:~s~ Attempted to set tone but, was unable to located approved_tones. See console.", false)
-		UTIL:Print("^3Warning 504: Attempted to set tone "..tone_string.." but, was unable to located pos: "..pos.."in approved_tones. (UTIL:SetToneByPos("..tone_string..", "..pos..")", true)
+		HUD:ShowNotification(Lang:t('warning.tone_id_nil_frontend', {ver = STORAGE:GetCurrentVersion()}), false)
+		UTIL:Print(Lang:t('warning.tone_id_nil_console', {ver = STORAGE:GetCurrentVersion(), tone_string = tone_string, tone_id = tone_id}), true)
 	end
 end
 
 ---------------------------------------------------------------------
 --[[Gets next tone based off vehicle profile and current tone.]]
-function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos) 
+function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 	local main_tone = main_tone or false
 	local last_pos = last_pos or nil
 	local result
@@ -219,7 +278,7 @@ function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 	else
 		temp_pos = last_pos
 	end
-	
+
 	if temp_pos < #approved_tones then
 		temp_pos = temp_pos+1
 		result = approved_tones[temp_pos]
@@ -234,7 +293,7 @@ function UTIL:GetNextSirenTone(current_tone, veh, main_tone, last_pos)
 			result = UTIL:GetNextSirenTone(result, veh, main_tone, temp_pos)
 		end
 	end
-	
+
 	return result
 end
 
@@ -246,7 +305,7 @@ end
 
 ---------------------------------------------------------------------
 --[[Ensure not all sirens are disabled / button only]]
-function UTIL:IsOkayToDisable() 
+function UTIL:IsOkayToDisable()
 	local count = 0
 	for i, option in pairs(tone_options) do
 		if i ~= 1 then
@@ -264,13 +323,13 @@ end
 ------------------------------------------------
 --[[Handle changing of tone_table custom names]]
 function UTIL:ChangeToneString(tone_id, new_name)
-	Storage:SetCustomToneStrings(true)
+	STORAGE:SetCustomToneStrings(true)
 	SIRENS[tone_id].Name = new_name
 end
 
 ------------------------------------------------
---[[Used to verify tone is allowed before playing.]] 
-function UTIL:IsApprovedTone(tone) 
+--[[Used to verify tone is allowed before playing.]]
+function UTIL:IsApprovedTone(tone)
 	for i, approved_tone in ipairs(approved_tones) do
 		if approved_tone == tone then
 			return true
@@ -289,7 +348,7 @@ end
 --[[Prints to FiveM console, prints more when debug flag is enabled or overridden for important information]]
 function UTIL:Print(string, override)
 	override = override or false
-	if GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true' or override then
+	if debug_mode or override then
 		print(string)
 	end
 end
@@ -306,11 +365,11 @@ function UTIL:IndexOf(tbl, tgt)
 end
 
 ---------------------------------------------------------------------
---[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness), 
-	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while 
+--[[This function looks like #!*& for user convenience (and my lack of skill or abundance of laziness),
+	it is called when needing to change an extra, it allows users to do things like ['<model>'] = { Brake = 1 } while
 	also allowing advanced users to write configs like this ['<model>'] = { Brake = { add = { 3, 4 }, remove = { 5, 6 }, repair = true } }
 	which can add and remove multiple different extras at once and adds flag to repair the vehicle
-	for extras that are too large and require the vehicle to be reloaded. Once it figures out the 
+	for extras that are too large and require the vehicle to be reloaded. Once it figures out the
 	users config layout it calls itself again (recursive) with the id we actually need toggled right now.]]
 function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 	local repair = repair or false
@@ -352,14 +411,14 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 						doors[i] = GetVehicleDoorAngleRatio(veh, i)
 					end
 				end
-				SetVehicleAutoRepairDisabled(veh, false)
+				SetVehicleAutoRepairDisabled(veh, not repair)
 				SetVehicleExtra(veh, extra_id, false)
-				UTIL:Print("UTIL:: Toggling extra "..extra_id.." on", false)
+				UTIL:Print(Lang:t('info.extra_on', {extra = extra_id}), false)
 				SetVehicleAutoRepairDisabled(veh, false)
 				if repair then
 					for i = 0,6 do
 						if doors[i] > 0.0 then
-							SetVehicleDoorOpen(veh, i, false, false)
+							SetVehicleDoorOpen(veh, i, true, false)
 						end
 					end
 				end
@@ -367,8 +426,8 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 		else
 			if IsVehicleExtraTurnedOn(veh, extra_id) then
 				SetVehicleExtra(veh, extra_id, true)
-				UTIL:Print("UTIL:: Toggling extra "..extra_id.." off", false)
-			end	
+				UTIL:Print(Lang:t('info.extra_off', {extra = extra_id}), false)
+			end
 		end
 	end
 	SetVehicleAutoRepairDisabled(veh, false)

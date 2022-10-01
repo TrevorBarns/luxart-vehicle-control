@@ -34,7 +34,7 @@ park_kill_default = false
 airhorn_interrupt_masterswitch = true
 --	Enables ability to toggle air horn interrupt. Setting this to false will not allow users to change from default behaviour this. 
 airhorn_interrupt_default = true
---	Default setting of the air horn interrupt for the main siren. (default: false) 
+--	Default setting of the airhorn interrupt for the main siren. (default: true) 
 reset_to_standby_masterswitch = true
 --	Enables ability to toggle reset to standby. Setting this to false will not allow users to change from default behaviour this. 
 reset_to_standby_default = true

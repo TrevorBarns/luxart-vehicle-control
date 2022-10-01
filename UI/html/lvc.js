@@ -4,9 +4,21 @@ LUXART VEHICLE CONTROL V3 (FOR FIVEM)
 ---------------------------------------------------
 Made by TrevorBarns
 ---------------------------------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+---------------------------------------------------
 */
 
-var resourceName = "";
 var time_folder = "day/";
 var ta_pattern = "ta/pattern_3/";
 var audioPlayer = null;
@@ -112,8 +124,11 @@ window.addEventListener('message', function(event) {
 	}else if ( type == "hud:getHudScale" ){
 		sendData( "hud:sendHudScale", scale = scale );
 	}else if ( type == "hud:setHudPosition" ){
-		elements.sirenbox.style.left = event.data.pos.left;
-		elements.sirenbox.style.top = event.data.pos.top;
+		try{
+			elements.sirenbox.style.left = event.data.pos.left;
+			elements.sirenbox.style.top = event.data.pos.top;
+		}catch(error)
+		{}
 	}else if ( type == "hud:resetPosition" ){
 		elements.sirenbox.style.left = backup.left;
 		elements.sirenbox.style.top = backup.top;
@@ -139,7 +154,7 @@ $( document ).contextmenu( function() {
 
 // This function is used to send data back through to the LUA side 
 function sendData( name, data ) {
-	$.post( "http://"+ resourceName +"/" + name, JSON.stringify( data ), function( datab ) {
+	$.post( "https://lvc/" + name, JSON.stringify( data ), function( datab ) {
 		if ( datab != "ok" ) {
 			console.log( datab );
 		}            
