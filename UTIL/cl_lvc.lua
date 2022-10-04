@@ -1,3 +1,14 @@
+-- THE 'I DOWNLOADED THE MASTER BRANCH NOTIFIER SYSTEM 3000'
+CreateThread(function()
+	local experimental = GetResourceMetadata(GetCurrentResourceName(), 'experimental', 0) == 'true' 
+	AddTextEntry('lvc_wrong_branch', Lang:t('warning.wrong_branch_info'))
+	while not experimental do
+		HUD:ShowText(0.5, 0.0, 0, Lang:t('warning.wrong_branch_warning'), 0.5)
+		HUD:ShowText(0.5, 0.04, 0, nil, nil, 'lvc_wrong_branch')
+		HUD:ShowText(0.5, 0.15, 0, Lang:t('warning.wrong_branch_mute'), 0.3)
+		Wait(0)
+	end
+end)
 --[[
 ---------------------------------------------------
 LUXART VEHICLE CONTROL V3 (FOR FIVEM)
