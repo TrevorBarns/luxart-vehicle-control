@@ -637,7 +637,7 @@ CreateThread(function()
 										else
 											default_tone = UTIL:GetToneAtPos(2)
 											default_tone_option = UTIL:GetToneOption(default_tone)
-											if option == 3 or option == 4 then
+											if default_tone_option == 3 or default_tone_option == 4 then
 												new_tone = UTIL:GetNextSirenTone(default_tone, veh, true)
 											else
 												new_tone = UTIL:GetToneAtPos(2)
