@@ -185,6 +185,7 @@ CreateThread( function()
 			print('\t|^8 LVC. PLEASE STOP "lux_vehcontrol" AND RESTART LVC.     ^7|')
 	end
 	print('\t^7|________________________________________________________|')
+	print('\t^7|   Documentation & Instructions: ^5luxartengineering.com  ^7|')
 	print('\t^7|      Updates, Support, Feedback: ^5discord.link/LVC      ^7|')
 	print('\t^7|________________________________________________________|\n\n')
 end)
