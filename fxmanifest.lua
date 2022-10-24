@@ -74,7 +74,6 @@ client_scripts {
 	'SIRENS.lua',
 	'/UTIL/cl_*.lua',
 	'/UI/cl_*.lua',
-	'/PLUGINS/cl_plugins.lua',
 	'/PLUGINS/**/SETTINGS.lua',
 	'/PLUGINS/**/cl_*.lua',
 }
