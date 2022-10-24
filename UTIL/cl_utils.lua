@@ -432,3 +432,31 @@ function UTIL:TogVehicleExtras(veh, extra_id, state, repair)
 	end
 	SetVehicleAutoRepairDisabled(veh, false)
 end
+
+---------------------------------------------------------------------
+--[[Verify LVC is configured and no known conflicting siren controllers are running]]
+function UTIL:IsValidEnviroment()
+	local lux_vehcontrol_state = GetResourceState('lux_vehcontrol') == 'started' 
+	local lvc_fleet_state = GetResourceState('lvc_fleet') == 'started' 
+	local qb_extras_state = GetResourceState('qb-extras') == 'started' 
+	
+	if GetCurrentResourceName() ~= 'lvc' then
+		Wait(1000)
+		HUD:ShowNotification(Lang:t('error.invalid_resource_name_frontend'), true)
+		UTIL:Print(Lang:t('error.invalid_resource_name_console'), true)
+		return false
+	end
+	if community_id == nil or community_id == '' then
+		Wait(1000)
+		HUD:ShowNotification(Lang:t('error.missing_community_id_frontend'), true)
+		UTIL:Print(Lang:t('error.missing_community_id_console'), true)
+		return false
+	end
+	if lux_vehcontrol_state or lvc_fleet_state or qb_extras_state then
+		Wait(1000)
+		HUD:ShowNotification(Lang:t('error.resource_conflict_frontend'), true)
+		UTIL:Print(Lang:t('error.resource_conflict_console'), true)
+		return false
+	end
+	return true
+end

@@ -97,25 +97,7 @@ local RegisterKeyMaps, MakeOrdinal
 -- Set check variable `player_is_emerg_driver` if player is driver of emergency vehicle.
 -- Disables controls faster than previous thread.
 CreateThread(function()
-	local lux_vehcontrol_state = GetResourceState('lux_vehcontrol') == 'started' 
-	local lvc_fleet_state = GetResourceState('lvc_fleet') == 'started' 
-	local qb_extras_state = GetResourceState('qb-extras') == 'started' 
-	if lux_vehcontrol_state or lvc_fleet_state or qb_extras_state then
-		Wait(1000)
-		HUD:ShowNotification(Lang:t('error.resource_conflict_frontend'), true)
-		UTIL:Print(Lang:t('error.resource_conflict_console'), true)
-		return
-	end
-	if GetCurrentResourceName() ~= 'lvc' then
-		Wait(1000)
-		HUD:ShowNotification(Lang:t('error.invalid_resource_name_frontend'), true)
-		UTIL:Print(Lang:t('error.invalid_resource_name_console'), true)
-		return
-	end
-	if community_id == nil or community_id == '' then
-		Wait(1000)
-		HUD:ShowNotification(Lang:t('error.missing_community_id_frontend'), true)
-		UTIL:Print(Lang:t('error.missing_community_id_console'), true)
+	if not UTIL:IsValidEnviroment() then
 		return
 	end
 
