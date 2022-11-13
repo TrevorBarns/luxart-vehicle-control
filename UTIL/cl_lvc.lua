@@ -34,6 +34,10 @@ trailer = nil
 player_is_emerg_driver = false
 debug_mode = false
 
+--LIVERY VARIABLES
+local livery = nil
+local last_livery = nil
+
 --	MAIN SIREN SETTINGS
 tone_main_reset_standby 	= reset_to_standby_default
 tone_airhorn_intrp 			= airhorn_interrupt_default
@@ -95,6 +99,7 @@ CreateThread(function()
 					player_is_emerg_driver = false
 					if IsPedInAnyVehicle(playerped, false) then
 						veh = GetVehiclePedIsUsing(playerped)
+						livery = GetVehicleLivery(veh)
 						_, trailer = GetVehicleTrailerVehicle(veh)
 						--IS DRIVER
 						if GetPedInVehicleSeat(veh, -1) == playerped then
@@ -183,7 +188,7 @@ CreateThread(function()
 			if last_veh == nil then
 				TriggerEvent('lvc:onVehicleChange')
 			else
-				if last_veh ~= veh then
+				if last_veh ~= veh or livery ~= last_livery then
 					TriggerEvent('lvc:onVehicleChange')
 				end
 			end
@@ -212,6 +217,7 @@ end)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	last_veh = veh
+	last_livery = livery
 	UTIL:UpdateApprovedTones(veh)
 	Wait(100)	--waiting for JS event handler
 	STORAGE:ResetSettings()
