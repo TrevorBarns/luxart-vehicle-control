@@ -66,7 +66,6 @@ state_indic = {}
 state_lxsiren = {}
 state_pwrcall = {}
 state_airmanu = {}
-
 actv_manu = nil
 actv_horn = nil
 
@@ -131,14 +130,14 @@ CreateThread(function()
 	debug_mode = GetResourceMetadata(GetCurrentResourceName(), 'debug_mode', 0) == 'true'
 	TriggerEvent('chat:addSuggestion', Lang:t('command.lock_command'), Lang:t('command.lock_desc'))
 	SetNuiFocus( false )
-	
+
 	UTIL:FixOversizeKeys(SIREN_ASSIGNMENTS)
 	RegisterKeyMaps()
 	STORAGE:SetBackupTable()
 end)
 
 -- Auxiliary Control Handling
---	Handles radio wheel controls and default horn on siren change playback. 
+--	Handles radio wheel controls and default horn on siren change playback.
 CreateThread(function()
 	while true do
 		if player_is_emerg_driver then
@@ -380,6 +379,15 @@ function TogIndicStateForVeh(veh, newstate)
 			SetVehicleIndicatorLights(veh, 1, true) -- L
 		end
 		state_indic[veh] = newstate
+		local updateArray = {
+			['state_lxsiren'] = state_lxsiren,
+			['state_indic'] = state_indic,
+			['state_pwrcall'] = state_pwrcall,
+			['state_airmanu'] = state_airmanu,
+			['actv_manu'] = actv_manu,
+			['actv_horn'] = actv_horn
+		}
+		TriggerEvent('lvc:updateThirdParty', updateArray)
 	end
 end
 
@@ -405,6 +413,15 @@ function SetLxSirenStateForVeh(veh, newstate)
 				TogMuteDfltSrnForVeh(veh, true)
 			end
 			state_lxsiren[veh] = newstate
+			local updateArray = {
+				['state_lxsiren'] = state_lxsiren,
+				['state_indic'] = state_indic,
+				['state_pwrcall'] = state_pwrcall,
+				['state_airmanu'] = state_airmanu,
+				['actv_manu'] = actv_manu,
+				['actv_horn'] = actv_horn
+			}
+			TriggerEvent('lvc:updateThirdParty', updateArray)
 		end
 	end
 end
@@ -423,6 +440,15 @@ function SetPowercallStateForVeh(veh, newstate)
 				PlaySoundFromEntity(snd_pwrcall[veh], SIRENS[newstate].String, veh, SIRENS[newstate].Ref, 0, 0)
 			end
 			state_pwrcall[veh] = newstate
+			local updateArray = {
+				['state_lxsiren'] = state_lxsiren,
+				['state_indic'] = state_indic,
+				['state_pwrcall'] = state_pwrcall,
+				['state_airmanu'] = state_airmanu,
+				['actv_manu'] = actv_manu,
+				['actv_horn'] = actv_horn
+			}
+			TriggerEvent('lvc:updateThirdParty', updateArray)
 		end
 	end
 end
@@ -441,6 +467,15 @@ function SetAirManuStateForVeh(veh, newstate)
 				PlaySoundFromEntity(snd_airmanu[veh], SIRENS[newstate].String, veh, SIRENS[newstate].Ref, 0, 0)
 			end
 			state_airmanu[veh] = newstate
+			local updateArray = {
+				['state_lxsiren'] = state_lxsiren,
+				['state_indic'] = state_indic,
+				['state_pwrcall'] = state_pwrcall,
+				['state_airmanu'] = state_airmanu,
+				['actv_manu'] = actv_manu,
+				['actv_horn'] = actv_horn
+			}
+			TriggerEvent('lvc:updateThirdParty', updateArray)
 		end
 	end
 end
