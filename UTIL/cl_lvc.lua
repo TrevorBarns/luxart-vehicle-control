@@ -331,7 +331,7 @@ BroadcastPlayerVehicleState = function(vehicle)
 			['actv_manu'] = actv_manu,
 			['actv_horn'] = actv_horn
 		}
-		TriggerEvent('lvc:updateThirdParty', update_data)
+		TriggerEvent('lvc:UpdateThirdParty', update_data)
 	end
 end	
 
