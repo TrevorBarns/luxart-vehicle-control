@@ -7,7 +7,7 @@
 
 <a href="https://www.luxartengineering.com/"><img target="_blank" src="https://i.imgur.com/CwbNKa9.png"></a>
 
-### Support, Suggestions, and Updates: [TrevorBarns Development Discord](https://discord.link/lvc/)
+### Support, Suggestions, and Updates: [TrevorBarns Development Discord](https://discord.com/invite/PXYQ4T8wB9)
 <a href="https://discord.link/lvc"><img target="_blank" src="https://discordapp.com/api/guilds/344333824911605762/widget.png?style=banner3"></a>
 
 ## Other Resources
