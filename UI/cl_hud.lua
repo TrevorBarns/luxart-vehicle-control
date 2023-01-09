@@ -52,7 +52,7 @@ CreateThread(function()
 				local _, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
 					HUD:SetHudBacklightState(true)
-				elseif (veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1) and HUD:GetHudBacklightState() == false then
+				elseif ((veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1)) and HUD:GetHudBacklightState() == false then
 					HUD:SetHudBacklightState(true)
 				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
 					HUD:SetHudBacklightState(false)
