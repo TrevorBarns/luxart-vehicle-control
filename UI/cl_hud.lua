@@ -50,9 +50,7 @@ CreateThread(function()
 		if player_is_emerg_driver then
 			while HUD:GetHudBacklightMode() == 1 do
 				local _, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
-				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
-					HUD:SetHudBacklightState(true)
-				elseif ((veh_lights == 1 and veh_headlights == 1) or (veh_lights == 0 and veh_headlights == 1)) and HUD:GetHudBacklightState() == false then
+			if (veh_lights == 1 or veh_headlights == 1) and HUD:GetHudBacklightState() == false and not actv_horn then
 					HUD:SetHudBacklightState(true)
 				elseif (veh_lights == 0 and veh_headlights == 0) and HUD:GetHudBacklightState() == true then
 					HUD:SetHudBacklightState(false)
