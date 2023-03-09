@@ -67,12 +67,12 @@ end)
 CreateThread(function()
 	while true do
 		if show_HUD or HUD_temp_hidden then
-			if (not player_is_emerg_driver) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) then
+			if (not player_is_emerg_driver) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) or (IsWarningMessageActive()) then
 				if not HUD_temp_hidden then
 					HUD:SetHudState(false, true)
 					HUD_temp_hidden = true
 				end
-			elseif player_is_emerg_driver and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) and HUD_temp_hidden then
+			elseif player_is_emerg_driver and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) and (not IsWarningMessageActive()) and HUD_temp_hidden then
 				HUD:SetHudState(true, true)
 				HUD_temp_hidden = false
 			end
@@ -285,7 +285,7 @@ function HUD:FrontEndAlert(title, subtitle, options)
 	AddTextEntry('QM_NO_0', subtitle)
 	local result = -1
 	while result == -1 do
-		DrawFrontendAlert('FACES_WARNH2', 'QM_NO_0', 0, 0, '', 0, -1, 0, '', '', false, 0)
+		SetWarningMessageWithAlert('FACES_WARNH2', 'QM_NO_0', 0, 0, '', 0, -1, 0, '', '', false, 0)
 		HUD:ShowText(0.5, 0.75, 0, options, 0.75)
 		if IsDisabledControlJustReleased(2, 202) then
 			return false
