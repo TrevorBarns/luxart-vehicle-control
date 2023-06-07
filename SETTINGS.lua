@@ -48,6 +48,9 @@ custom_aux_tones_master_switch = true
 main_siren_set_register_keys_set_defaults = true
 --	Enables RegisterKeyMapping for all main_allowed_tones and sets the default keys to numrow 1-0.
 
+----------------LIGHTS / R* SIRENS-----------------
+control_lights_switch = true
+-- Enables control of emergency lights (R* sirens) with Q key. When disabled, allows for other resource to manage emergency lights state. (default: true)
 
 --------------TURN SIGNALS / HAZARDS---------------
 hazard_key = 202	
