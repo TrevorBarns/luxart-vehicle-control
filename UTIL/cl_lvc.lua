@@ -552,7 +552,20 @@ CreateThread(function()
 
 			--- IS EMERG VEHICLE ---
 			if GetVehicleClass(veh) == 18 then
+
+				-- handle (R* Sirens) state on UI
+				if not lights_on and IsVehicleSirenOn(veh) then
+					-- SET NUI IMAGES
+					HUD:SetItemState('switch', true)
+				elseif lights_on and not IsVehicleSirenOn(veh) then
+					-- SET NUI IMAGES
+					HUD:SetItemState('switch', false)
+					HUD:SetItemState('siren', false)
+				end
+				
+				-- get new lights (R* Sirens) state
 				lights_on = IsVehicleSirenOn(veh)
+
 				--  FORCE RADIO ENABLED PER FRAME
 				if radio_masterswitch then
 					SetVehicleRadioEnabled(veh, true)
@@ -589,12 +602,9 @@ CreateThread(function()
 					if not IsPauseMenuActive() and UpdateOnscreenKeyboard() ~= 0 and not radio_wheel_active then
 						if not key_lock then
 							------ TOG DFLT SRN LIGHTS ------
-							if IsDisabledControlJustReleased(0, 85) then
+							if IsDisabledControlJustReleased(0, 85) and (control_lights_switch == nil or control_lights_switch) then
 								if lights_on then
 									AUDIO:Play('Off', AUDIO.off_volume)
-									--	SET NUI IMAGES
-									HUD:SetItemState('switch', false)
-									HUD:SetItemState('siren', false)
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, false)
 									if trailer ~= nil and trailer ~= 0 then
@@ -603,8 +613,6 @@ CreateThread(function()
 
 								else
 									AUDIO:Play('On', AUDIO.on_volume) -- On
-									--	SET NUI IMAGES
-									HUD:SetItemState('switch', true)
 									--	TURN OFF SIRENS (R* LIGHTS)
 									SetVehicleSiren(veh, true)
 									if trailer ~= nil and trailer ~= 0 then
