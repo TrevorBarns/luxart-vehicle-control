@@ -50,6 +50,7 @@ main_siren_set_register_keys_set_defaults = true
 
 
 --------------TURN SIGNALS / HAZARDS---------------
+enable_turnsig_hazard = false -- Set to false if you do not want LVC to use Turn Signals or Hazards.
 hazard_key = 202	
 left_signal_key = 84
 right_signal_key = 83
