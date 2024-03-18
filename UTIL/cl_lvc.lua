@@ -811,49 +811,51 @@ CreateThread(function()
 				----- CONTROLS -----
 				if not IsPauseMenuActive() then
 					-- IND L
-					if IsDisabledControlJustReleased(0, left_signal_key) then -- INPUT_VEH_PREV_RADIO_TRACK
-						local cstate = state_indic[veh]
-						if cstate == ind_state_l then
-							state_indic[veh] = ind_state_o
-							actv_ind_timer = false
-						else
-							state_indic[veh] = ind_state_l
-							actv_ind_timer = true
-						end
-						TogIndicStateForVeh(veh, state_indic[veh])
-						count_ind_timer = 0
-						count_bcast_timer = delay_bcast_timer
-					-- IND R
-					elseif IsDisabledControlJustReleased(0, right_signal_key) then -- INPUT_VEH_NEXT_RADIO_TRACK
-						local cstate = state_indic[veh]
-						if cstate == ind_state_r then
-							state_indic[veh] = ind_state_o
-							actv_ind_timer = false
-						else
-							state_indic[veh] = ind_state_r
-							actv_ind_timer = true
-						end
-						TogIndicStateForVeh(veh, state_indic[veh])
-						count_ind_timer = 0
-						count_bcast_timer = delay_bcast_timer
-					-- IND H
-					elseif IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
-						if GetLastInputMethod(0) then -- last input was with kb
-							Wait(hazard_hold_duration)
-							if IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
-								local cstate = state_indic[veh]
-								if cstate == ind_state_h then
-									state_indic[veh] = ind_state_o
-									AUDIO:Play('Hazards_Off', AUDIO.hazards_volume, true) -- Hazards Off
-								else
-									state_indic[veh] = ind_state_h
-									AUDIO:Play('Hazards_On', AUDIO.hazards_volume, true) -- Hazards On
-								end
-								TogIndicStateForVeh(veh, state_indic[veh])
+					if enable_turnsig_hazard == true then
+						if IsDisabledControlJustReleased(0, left_signal_key) then -- INPUT_VEH_PREV_RADIO_TRACK
+							local cstate = state_indic[veh]
+							if cstate == ind_state_l then
+								state_indic[veh] = ind_state_o
 								actv_ind_timer = false
-								count_ind_timer = 0
-								count_bcast_timer = delay_bcast_timer
-								Wait(300)
+							else
+								state_indic[veh] = ind_state_l
+								actv_ind_timer = true
+							end
+							TogIndicStateForVeh(veh, state_indic[veh])
+							count_ind_timer = 0
+							count_bcast_timer = delay_bcast_timer
+						-- IND R
+						elseif IsDisabledControlJustReleased(0, right_signal_key) then -- INPUT_VEH_NEXT_RADIO_TRACK
+							local cstate = state_indic[veh]
+							if cstate == ind_state_r then
+								state_indic[veh] = ind_state_o
+								actv_ind_timer = false
+							else
+								state_indic[veh] = ind_state_r
+								actv_ind_timer = true
+							end
+							TogIndicStateForVeh(veh, state_indic[veh])
+							count_ind_timer = 0
+							count_bcast_timer = delay_bcast_timer
+						-- IND H
+						elseif IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
+							if GetLastInputMethod(0) then -- last input was with kb
+								Wait(hazard_hold_duration)
+								if IsControlPressed(0, hazard_key) then -- INPUT_FRONTEND_CANCEL / Backspace
+									local cstate = state_indic[veh]
+									if cstate == ind_state_h then
+										state_indic[veh] = ind_state_o
+										AUDIO:Play('Hazards_Off', AUDIO.hazards_volume, true) -- Hazards Off
+									else
+										state_indic[veh] = ind_state_h
+										AUDIO:Play('Hazards_On', AUDIO.hazards_volume, true) -- Hazards On
+									end
+									TogIndicStateForVeh(veh, state_indic[veh])
+									actv_ind_timer = false
+									count_ind_timer = 0
+									count_bcast_timer = delay_bcast_timer
+									Wait(300)
+								end
 							end
 						end
 					end
