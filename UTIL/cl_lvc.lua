@@ -91,7 +91,7 @@ CreateThread(function()
 		if GetCurrentResourceName() == 'lvc' then
 			if community_id ~= nil and community_id ~= '' then
 				while true do
-					playerped = GetPlayerPed(-1)
+					playerped = PlayerPedId()
 					--IS IN VEHICLE
 					player_is_emerg_driver = false
 					if IsPedInAnyVehicle(playerped, false) then
