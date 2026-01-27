@@ -43,37 +43,33 @@ AUDIO.lock_volume 				= default_lock_volume
 AUDIO.lock_reminder_volume		= default_lock_reminder_volume
 AUDIO.activity_reminder_volume 	= default_reminder_volume
 
-------ACTIVITY REMINDER FUNCTIONALITY------
 CreateThread(function()
+	local last_check_time = 0
+	local check_interval = 1000
+
 	while true do
-		while activity_reminder_index > 1 and player_is_emerg_driver do
+		if activity_reminder_index > 1 and player_is_emerg_driver and veh ~= nil then
+			local current_time = GetGameTimer()
+
 			if IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 then
+				if current_time - last_check_time >= check_interval then
+					last_check_time = current_time
+					if activity_timer > 0 then
+						activity_timer = activity_timer - 1000
+					end
+				end
+
 				if activity_timer < 1 then
 					AUDIO:Play('Reminder', AUDIO.activity_reminder_volume)
 					AUDIO:ResetActivityTimer()
 				end
+				Wait(100)
+			else
+				Wait(500)
 			end
-			Wait(100)
+		else
+			Wait(1000)
 		end
-		Wait(1000)
-	end
-end)
-
--- Activity Reminder Timer
-CreateThread(function()
-	while true do
-		if veh ~= nil then
-			while activity_reminder_index > 1 and IsVehicleSirenOn(veh) and state_lxsiren[veh] == 0 and state_pwrcall[veh] == 0 do
-				if activity_timer > 1 then
-					Wait(1000)
-					activity_timer = activity_timer - 1000
-				else
-					Wait(100)
-					AUDIO:ResetActivityTimer()
-				end
-			end
-		end
-		Wait(1000)
 	end
 end)
 

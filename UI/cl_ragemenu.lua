@@ -87,8 +87,6 @@ Keys.Register(open_menu_key, 'lvc', Lang:t('control.menu_desc'), function()
 	end
 end)
 
----------------------------------------------------------------------
--- Triggered when vehicle changes (cl_lvc.lua)
 RegisterNetEvent('lvc:onVehicleChange')
 AddEventHandler('lvc:onVehicleChange', function()
 	CreateThread(function()
@@ -106,68 +104,69 @@ local function TrimToneString(tone_string)
 	
 	return tone_string
 end
--- Returns true if any menu is open
+local cached_menu_main = RMenu:Get('lvc', 'main')
+local cached_menu_maintone = RMenu:Get('lvc', 'maintone')
+local cached_menu_hudsettings = RMenu:Get('lvc', 'hudsettings')
+local cached_menu_audiosettings = RMenu:Get('lvc', 'audiosettings')
+local cached_menu_volumesettings = RMenu:Get('lvc', 'volumesettings')
+local cached_menu_saveload = RMenu:Get('lvc', 'saveload')
+local cached_menu_copyprofile = RMenu:Get('lvc', 'copyprofile')
+local cached_menu_info = RMenu:Get('lvc', 'info')
+local cached_menu_plugins = RMenu:Get('lvc', 'plugins')
+
 function IsMenuOpen()
-	return 	RageUI.Visible(RMenu:Get('lvc', 'main')) or
-			RageUI.Visible(RMenu:Get('lvc', 'maintone')) or
-			RageUI.Visible(RMenu:Get('lvc', 'hudsettings')) or
-			RageUI.Visible(RMenu:Get('lvc', 'audiosettings')) or
-			RageUI.Visible(RMenu:Get('lvc', 'volumesettings')) or
-			RageUI.Visible(RMenu:Get('lvc', 'saveload')) or
-			RageUI.Visible(RMenu:Get('lvc', 'copyprofile')) or
-			RageUI.Visible(RMenu:Get('lvc', 'info')) or
-			RageUI.Visible(RMenu:Get('lvc', 'plugins')) or
+	return 	RageUI.Visible(cached_menu_main) or
+			RageUI.Visible(cached_menu_maintone) or
+			RageUI.Visible(cached_menu_hudsettings) or
+			RageUI.Visible(cached_menu_audiosettings) or
+			RageUI.Visible(cached_menu_volumesettings) or
+			RageUI.Visible(cached_menu_saveload) or
+			RageUI.Visible(cached_menu_copyprofile) or
+			RageUI.Visible(cached_menu_info) or
+			RageUI.Visible(cached_menu_plugins) or
 			IsPluginMenuOpen()
 end
 
--- Handle user input to cancel confirmation message for SAVE/LOAD
-CreateThread(function()
-	while true do
-		while not RageUI.Settings.Controls.Back.Enabled do
-			for Index = 1, #RageUI.Settings.Controls.Back.Keys do
-				if IsDisabledControlJustPressed(RageUI.Settings.Controls.Back.Keys[Index][1], RageUI.Settings.Controls.Back.Keys[Index][2]) then
-					confirm_s_msg = nil
-					confirm_s_desc = nil
-					profile_s_op = 75
-					confirm_l_msg = nil
-					confirm_l_desc = nil
-					profile_l_op = 75
-					confirm_r_msg = nil
-					confirm_fr_msg = nil
-					for i, _ in ipairs(profiles) do
-						profile_c_op[i] = 75
-						confirm_c_msg[i] = nil
-						confirm_c_desc[i] = nil
-					end
-					Wait(10)
-					RageUI.Settings.Controls.Back.Enabled = true
-					break
-				end
-			end
-			Wait(0)
-		end
-		Wait(100)
-	end
-end)
-
--- Handle Disabling Controls while menu open
 CreateThread(function()
 	Wait(1000)
 	while true do
-		while IsMenuOpen() do
+		if IsMenuOpen() then
 			DisableControlAction(0, 27, true)
 			DisableControlAction(0, 99, true)
 			DisableControlAction(0, 172, true)
 			DisableControlAction(0, 173, true)
 			DisableControlAction(0, 174, true)
 			DisableControlAction(0, 175, true)
+
+			if not RageUI.Settings.Controls.Back.Enabled then
+				for Index = 1, #RageUI.Settings.Controls.Back.Keys do
+					if IsDisabledControlJustPressed(RageUI.Settings.Controls.Back.Keys[Index][1], RageUI.Settings.Controls.Back.Keys[Index][2]) then
+						confirm_s_msg = nil
+						confirm_s_desc = nil
+						profile_s_op = 75
+						confirm_l_msg = nil
+						confirm_l_desc = nil
+						profile_l_op = 75
+						confirm_r_msg = nil
+						confirm_fr_msg = nil
+						for i, _ in ipairs(profiles) do
+							profile_c_op[i] = 75
+							confirm_c_msg[i] = nil
+							confirm_c_desc[i] = nil
+						end
+						Wait(10)
+						RageUI.Settings.Controls.Back.Enabled = true
+						break
+					end
+				end
+			end
 			Wait(0)
+		else
+			Wait(100)
 		end
-		Wait(100)
 	end
 end)
 
--- Close menu when player exits vehicle
 CreateThread(function()
 	while true do
 		if IsMenuOpen() then
@@ -179,7 +178,6 @@ CreateThread(function()
 	end
 end)
 
--- Resource start version handling
 CreateThread(function()
 	Wait(500)
 	curr_version = STORAGE:GetCurrentVersion()
@@ -199,6 +197,9 @@ end)
 
 CreateThread(function()
     while true do
+		if not IsMenuOpen() then
+			Wait(100)
+		else
 		--Main Menu Visible
 	    RageUI.IsVisible(RMenu:Get('lvc', 'main'), function()
 			RageUI.Separator(Lang:t('menu.siren_settings_seperator'))
@@ -650,5 +651,6 @@ CreateThread(function()
 			});
         end)
         Wait(0)
+		end  -- end of IsMenuOpen() check
 	end
 end)
