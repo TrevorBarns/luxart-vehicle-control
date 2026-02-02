@@ -45,8 +45,8 @@ SIRENS = {
 	--[[12]]  { Name = 'Fire Horn', 	String = 'VEHICLES_HORNS_FIRETRUCK_WARNING', 			Ref = 0 }, --12
 	--[[13]]  { Name = 'Fire Yelp', 	String = 'RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01', 	Ref = 0 }, --13
 	--[[14]]  { Name = 'Fire Wail', 	String = 'RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01', 	Ref = 0 }, --14
-	--[[13]]  { Name = 'Sheriff Wail', 	String = 'sirens_slow_dir6', 							Ref = 0 }, --15
-	--[[14]]  { Name = 'Sheriff Yelp', 	String = 'fast_9oghrv3', 								Ref = 0 }, --16
+	--[[15]]  { Name = 'Sheriff Wail', 	String = 'sirens_slow_dir6', 							Ref = 0 }, --15
+	--[[16]]  { Name = 'Sheriff Yelp', 	String = 'fast_9oghrv3', 								Ref = 0 }, --16
 }
 
 --ASSIGN SIRENS TO VEHICLES
@@ -54,9 +54,12 @@ SIREN_ASSIGNMENTS = {
 	--['<gameName>'] = {tones},
 	['DEFAULT'] = { 1, 2, 3, 4 },
 	['FIRETRUK'] = { 12, 13, 14, 11 },
-	['AMBULAN'] = { 1, 2, 3, 11 },
+	['AMBULAN'] = { 1, 5, 8, 11 },
 	['LGUARD'] = { 1, 2, 3, 11 },
-	['SHERIFF2'] = { 1, 13, 14, 4 },
+	['SHERIFF'] = { 1, 15, 16, 4 },
+	['SHERIFF2'] = { 1, 15, 16, 4 },
 	['POLICEB'] = { 1, 7, 10 },
+	['POLICEB2'] = { 1, 7, 10 },
 	['FBI'] = { 1, 6, 9 },
+	['FBI2'] = { 1, 6, 9 },
 }
