@@ -47,7 +47,7 @@ end)
 CreateThread(function()
 	local current_backlight_state
 	while true do
-		if player_is_emerg_driver then
+		if player_is_emerg_driver or player_is_emerg_passenger then
 			while HUD:GetHudBacklightMode() == 1 do
 				local _, veh_lights, veh_headlights  = GetVehicleLightsState(veh)
 				if veh_lights == 1 and veh_headlights == 0 and HUD:GetHudBacklightState() == false then
@@ -69,12 +69,12 @@ end)
 CreateThread(function()
 	while true do
 		if show_HUD or HUD_temp_hidden then
-			if (not player_is_emerg_driver) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) then
+			if (not (player_is_emerg_driver or player_is_emerg_passenger)) or (IsHudHidden() == 1) or (IsPauseMenuActive() == 1) then
 				if not HUD_temp_hidden then
 					HUD:SetHudState(false, true)
 					HUD_temp_hidden = true
 				end
-			elseif player_is_emerg_driver and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) and HUD_temp_hidden then
+			elseif (player_is_emerg_driver or player_is_emerg_passenger) and (IsHudHidden() ~= 1) and (IsPauseMenuActive() ~= 1) and HUD_temp_hidden then
 				HUD:SetHudState(true, true)
 				HUD_temp_hidden = false
 			end
